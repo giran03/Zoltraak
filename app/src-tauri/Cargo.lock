@@ -7300,7 +7300,7 @@ dependencies = [
 name = "zoltraak-app"
 version = "1.0.1"
 dependencies = [
- "base64 0.22.1",
+ "base64 0.23.1",
  "image",
  "minisign-verify",
  "reqwest 0.12.28",
@@ -7333,7 +7333,7 @@ name = "zoltraak-core"
 version = "1.0.1"
 dependencies = [
  "aes-gcm",
- "base64 0.22.1",
+ "base64 0.23.1",
  "chrono",
  "fs2",
  "futures-util",
