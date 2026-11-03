@@ -36,7 +36,7 @@ jobs:
       - name: Build the showcase and documentation
         run: npm run showcase:pages --prefix app
       - name: Upload the site
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: scratch/showcase-pages
 
