@@ -1,0 +1,52 @@
+{
+  "files": [
+    {
+      "name": "avcodec-62.dll",
+      "sha256": "ae026c3a7109f641a3da0ec22a1ba0ed0b31eb1120258e95288bc1d04f3ec445"
+    },
+    {
+      "name": "avdevice-62.dll",
+      "sha256": "e0f8579622f51ef0a087c969960cd04d4d174c009ce1591f7f375120f504dd4f"
+    },
+    {
+      "name": "avfilter-11.dll",
+      "sha256": "0af186b8a600a1a75ff2201b41edae88b8d49650b871fcb619077d2df6bc5acb"
+    },
+    {
+      "name": "avformat-62.dll",
+      "sha256": "188e9272fbb48c08c74d9be27d4682dc0b47338645c8286ba4501dd6032b4427"
+    },
+    {
+      "name": "avutil-60.dll",
+      "sha256": "6c9948e475319c71dbd849618f4fc30189052d3cdf6c6d65812301f8e9b4cff0"
+    },
+    {
+      "name": "ffmpeg.exe",
+      "sha256": "aed9365fbcdea72ff8bdcc58860a6cc71fafdca2c12f33783e81a19b490dd9c8"
+    },
+    {
+      "name": "ffprobe.exe",
+      "sha256": "e3b532206aa573f4d3a0c7425d4109caa5578bba10206c40382e3900f34e32e3"
+    },
+    {
+      "name": "swresample-6.dll",
+      "sha256": "f9e2021e32915432b109a1e0625290bff6f81248165856d952a5f50646530440"
+    },
+    {
+      "name": "swscale-9.dll",
+      "sha256": "8f657c4ea22a6ccb870a5e4db266f690181100253d8be99c024ea85a6442de64"
+    },
+    {
+      "name": "LICENSE",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "name": "README.txt",
+      "sha256": "c44e87812a1790ffca6084bf6569037145c44caa9cd4b758644185c975ad436a"
+    }
+  ],
+  "archiveSha256": "e184e012ca9a3527ed45d61f8e250c50b07b8661d90849820ea754239049efb4",
+  "directory": "ffmpeg-8.1-full_build-shared",
+  "url": "https://github.com/GyanD/codexffmpeg/releases/download/8.1/ffmpeg-8.1-full_build-shared.zip",
+  "version": "8.1"
+}

@@ -1666,6 +1666,46 @@
             "engine/core/Cargo.toml",
             "deny.toml"
           ]
+        },
+        {
+          "id": "track-build-and-signing-tooling",
+          "category": "Tooling",
+          "brief": "Track the build, release and signing scripts so a fresh clone can build.",
+          "details": [
+            "The scripts folder is now part of the repository; the Rust crates and the app build include files from it (guide and legal templates, pinned media tool list).",
+            "Updater signing scripts read the key password from TAURI_SIGNING_PRIVATE_KEY_PASSWORD instead of hardcoding it; set it before building or signing a release.",
+            "Personal helpers (cache cleaning, window-drag measurement, retired server packaging) stay ignored."
+          ],
+          "files": [
+            ".gitignore",
+            "scripts/.gitkeep",
+            "scripts/bat/build.bat",
+            "scripts/bat/build_app.bat",
+            "scripts/bat/package_chrome_extension.bat",
+            "scripts/bat/run.bat",
+            "scripts/bat/sign_extension.bat",
+            "scripts/bat/update_extension_version.bat",
+            "scripts/bat/update_version.bat",
+            "scripts/changelog-view.js",
+            "scripts/changelog.mjs",
+            "scripts/generate_latest_json.ps1",
+            "scripts/generate_update_keys.ps1",
+            "scripts/media_tools.lock.json",
+            "scripts/package_chrome_extension.ps1",
+            "scripts/read_release_notes.ps1",
+            "scripts/set_version.ps1",
+            "scripts/sign_extension.ps1",
+            "scripts/stage_media_tools.ps1",
+            "scripts/templates/guide.html",
+            "scripts/templates/legal.html",
+            "scripts/tests/build_changelog.test.mjs",
+            "scripts/tests/changelog.test.mjs",
+            "scripts/tests/extension_version.test.ps1",
+            "scripts/tests/media_tools.test.ps1",
+            "scripts/tests/release_notes.test.ps1",
+            "scripts/update_extension_version.ps1",
+            "scripts/update_version.ps1"
+          ]
         }
       ],
       "updatedAt": "2026-11-04"
@@ -1679,6 +1719,7 @@
     "fileHashes": {
       ".github/workflows/security.yml": "bd3d4721d8a78fd0482aee952fbdd5038856d81d75828de3c8c91203a4ef16a7",
       ".github/workflows/showcase-pages.yml": "8a09dbef02ddff0ce4550b23724978a19682826b8d843b7a9ed8eed5b672642e",
+      ".gitignore": "163116aae5db2b44d743f0d07cd52a4a69009510742fde8703cf80712eb93a0b",
       "app/package-lock.json": "fedf15a9fc5b3656e55bce809b8f28cbbf143d27457c549f6e95ac8f2ea015b2",
       "app/src-tauri/Cargo.lock": "4db6fd7e36c39e8651f321946614a36c456085676eb24205453e41516639288b",
       "app/src-tauri/Cargo.toml": "56371f5297ec710dacb334a5e5a94b9609a6677ad9dcc450eaa4798be47f503a",
@@ -1686,7 +1727,34 @@
       "engine/Cargo.lock": "6f0bad466054153c83172dedb942f76e424461c7ab6317303965d75c3f3bd1be",
       "engine/api/Cargo.toml": "5955c5cc2a6a5a3ffa29da07f205b1cdd2aee5ee6aa1d1755096bdca98612c6a",
       "engine/cli/Cargo.toml": "6bb29505dd104f6bcae3c83691da1e8329ddbffcec486d68553f9571b8e14c06",
-      "engine/core/Cargo.toml": "ff22065623f0363764f3e7683676dea5ae7b99a612bc359a51f5105628e09bf3"
+      "engine/core/Cargo.toml": "ff22065623f0363764f3e7683676dea5ae7b99a612bc359a51f5105628e09bf3",
+      "scripts/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scripts/bat/build.bat": "4b1ef471e190e9d277f54859a4d613c01c429a1efc705b4f9ac8caed85a9a6f0",
+      "scripts/bat/build_app.bat": "417549131f4608cf0139f6e6c62f00436e5805e5e4fdda0f3d821cf396ae0f8b",
+      "scripts/bat/package_chrome_extension.bat": "b07bb9445f91540c668f3b6fd5ed1b4b2957e8ee544fe1374ed5a03b117ce269",
+      "scripts/bat/run.bat": "ac91d74a1f4af9cb4f2b0f044da5b6c54d8eaa6f138e8a2355ef5af0488e6b2c",
+      "scripts/bat/sign_extension.bat": "68b6ff9f6d9e775bb3fa63a465cad7d53d5539f7af7c63d3c9125c14783c1de7",
+      "scripts/bat/update_extension_version.bat": "97ca263281b5bb1822b37d4630b6ad8cb84873b9a5b34a4c3f8c770297a036c8",
+      "scripts/bat/update_version.bat": "b76e009b5fe4d9d6aae062eb309ab7e86fc97705c01ca096a589df6d20ce7ed2",
+      "scripts/changelog-view.js": "9b12a3a8bde3b73b85cc5f4392f44c951ba4cbbc59559d297a074789f75aa63a",
+      "scripts/changelog.mjs": "702ab5d54c81a4ffb88dc415afe5e7fcb787e87216bdca90f7e4ac26476f4513",
+      "scripts/generate_latest_json.ps1": "b22516ee939cb73557a2b044a4b3f5c703dff134e6fb9a85895acf6d5d84ad2b",
+      "scripts/generate_update_keys.ps1": "4dd2ccbd01383a1c8c3214d32039f837e5cdfa4053c78189e88280bf68896775",
+      "scripts/media_tools.lock.json": "ef9ee36b9f1942efdcde7d29eb3bf5ba89eaa82c8bdd8ebb10cfca00191a9af0",
+      "scripts/package_chrome_extension.ps1": "63cdc7869a94431816449cd0a82d6e6d0461c3f7f4d7417bed7da8f91802c616",
+      "scripts/read_release_notes.ps1": "fe9de95dd4e41f77403d1084e6ab653100b451676d949e445819f5ada778c6e1",
+      "scripts/set_version.ps1": "6274ec1470ee6792843268142311d126daef4c75af1976fc6f9fddf29a5d836f",
+      "scripts/sign_extension.ps1": "34bb22d9e4822fe43f44b511ba13ba47bf0030e774cfb2e0c5dedab5668c1544",
+      "scripts/stage_media_tools.ps1": "15e4dfcf4c9bf5c650216dd8c0f008b8c8126df58f6b61bc3cd6a1dd739e5630",
+      "scripts/templates/guide.html": "18a71e95348433f4492925e46cb6e81547d27ced5220d8eec6a8cb35a8742b85",
+      "scripts/templates/legal.html": "fac16cb3ada04d26151924f6c1c66ff9924d9d36ecdc79c6d6a29e5ae5236071",
+      "scripts/tests/build_changelog.test.mjs": "a760c56c6e56caae94132f70c7151d2e5af7569301bba55c7b1625a0199887db",
+      "scripts/tests/changelog.test.mjs": "4470ff0529f45e753ef74cf3641c809bf620fda50b09603b1e171b1e6ee10791",
+      "scripts/tests/extension_version.test.ps1": "60324449ede7a4485d182c8b338ace565ac85b70fd822ace5f9dcec4e77a138c",
+      "scripts/tests/media_tools.test.ps1": "a7048239c93e1fee1f24f72511b2984fbd4fb595090e48e0a79f2ad93205af86",
+      "scripts/tests/release_notes.test.ps1": "8db31b500f92ae35121b115765e232b3d4093c0758fa7c02d074391e630ef718",
+      "scripts/update_extension_version.ps1": "4eb3aae737fc60fb0d5a6bb50cd2e2559632fb580e0c40ab9b066f45706d8d43",
+      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3"
     }
   },
   "historyStartVersion": "1.0.0"

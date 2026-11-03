@@ -82,11 +82,18 @@ app/src-tauri/resources/bin/media_tools.lock.json
 !/AGENTS.md
 !/RELEASING.md
 
-# Local root launchers; maintained build commands live in scripts/bat/.
+# Local root launchers; maintained build commands live in scripts/bat/ and are tracked.
 /*.bat
 
-# Local build, release, and changelog tooling.
-/scripts/
+# Build, release, signing and changelog tooling is tracked in scripts/. Only
+# personal helpers stay local.
+/scripts/clean_cache.ps1
+/scripts/measure_window_drag.ps1
+/scripts/package_homelab_server.ps1
+/scripts/bat/clean_cache.bat
+/scripts/bat/package_homelab_server.bat
+/scripts/tests/clean_cache.test.ps1
+/scripts/tests/update_homelab_server.*
 
 # Generated graphify knowledge graph and cache.
 /graphify-out/
