@@ -34,7 +34,7 @@ fs2 = "0.4"
 
 [target.'cfg(windows)'.dependencies]
 # DPAPI, to wrap the session vault key with the user's Windows credentials.
-windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_Storage_FileSystem"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_Storage_FileSystem"] }
 
 [dev-dependencies]
 # `multipart` is test-only: it parses the Discord upload body back apart in
