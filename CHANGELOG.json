@@ -1641,24 +1641,39 @@
           "files": [
             ".gitignore"
           ]
+        },
+        {
+          "id": "dependency-security-updates",
+          "category": "Security",
+          "brief": "Update dependencies to fix reported vulnerabilities.",
+          "details": [
+            "Lockfiles refreshed within existing version ranges: Vite, PostCSS, nanoid, browserslist, source-map-js and baseline-browser-mapping in the app, and rustls in the engine and desktop crate.",
+            "GitHub Actions used by the security and showcase workflows moved to their latest major versions.",
+            "npm audit reports no known vulnerabilities; engine, desktop crate and app tests pass."
+          ],
+          "files": [
+            ".github/workflows/security.yml",
+            ".github/workflows/showcase-pages.yml",
+            "app/package-lock.json",
+            "app/src-tauri/Cargo.lock",
+            "engine/Cargo.lock"
+          ]
         }
       ],
-      "updatedAt": "2026-11-03"
+      "updatedAt": "2026-11-04"
     }
   },
   "development": {
     "version": "1.0.1",
     "previousVersion": "1.0.0",
-    "baselineCommit": "311b83a64bea5e87c78cd2d2b599a621b469ee5c",
+    "baselineCommit": "d2b05287fc419f50a535d10e101fe58ffa499e56",
     "baselineFileHashes": {},
     "fileHashes": {
-      "app/package-lock.json": "468f25a7df3cb48c9378dade7707f77d3b627ff7094873f5c2ebce22aa494446",
-      "app/package.json": "5d7b15a340c966e78f5b5d4ff4d65f138989065bf3b80732c180d2fa582e02a9",
-      "app/src-tauri/Cargo.lock": "a2df4a99d6bb330db714c65168cf5ce7924e43b15575671c16fab8d5f1db0525",
-      "app/src-tauri/Cargo.toml": "0454665bc98432a42b69e6391f6c8f7549c24ab55ab91e021dfecdb9cb773007",
-      "app/src-tauri/tauri.conf.json": "3ad0b25890d2f65b9d7f9beb434a88be47cec9616aacb90617d0e01253ded5de",
-      "engine/Cargo.lock": "68e22fba15903f0bcd078dcd0f15086bcd10287c1d20e05bf06c4a9357e6c279",
-      "engine/Cargo.toml": "72e14c42a0f1fbd86daa6d3bece648125a53ec71b2a21b2fa2a058e77dcfc76f"
+      ".github/workflows/security.yml": "bd3d4721d8a78fd0482aee952fbdd5038856d81d75828de3c8c91203a4ef16a7",
+      ".github/workflows/showcase-pages.yml": "8a09dbef02ddff0ce4550b23724978a19682826b8d843b7a9ed8eed5b672642e",
+      "app/package-lock.json": "fedf15a9fc5b3656e55bce809b8f28cbbf143d27457c549f6e95ac8f2ea015b2",
+      "app/src-tauri/Cargo.lock": "6fc9917af7590bda63fc02cb992ba6274c1f34a67382caaaec0f7f13d9995ed7",
+      "engine/Cargo.lock": "6f0bad466054153c83172dedb942f76e424461c7ab6317303965d75c3f3bd1be"
     }
   },
   "historyStartVersion": "1.0.0"
