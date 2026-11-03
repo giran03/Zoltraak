@@ -1,0 +1,98 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { readFile, readdir, mkdir } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { build } from '../node_modules/esbuild/lib/main.js';
+const { chromium } = await import(pathToFileURL(process.env.PLAYWRIGHT_MODULE).href);
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const bundle=await build({stdin:{resolveDir:root,sourcefile:'shortcuts-fixture.tsx',loader:'tsx',contents:`
+import React,{useState} from 'react';import {createRoot} from 'react-dom/client';
+import {PanelHeader} from './src/components/PanelHeader';import {DownloadsView} from './src/components/DownloadsView';
+import {KeyboardShortcutsModal} from './src/components/KeyboardShortcutsModal';
+window.calls={pause:0,resume:0,remove:0,removalOptions:[]};
+window.entryCalls=[];
+window.feedbacks=[];
+const nativeAnimate=Element.prototype.animate;
+Element.prototype.animate=function(frames,options){if(options?.id==='file-open-feedback')window.feedbacks.push(options.duration);return nativeAnimate.call(this,frames,options);};
+const jobs=[1,2].map(n=>({id:'video-'+n,title:'Fixture '+n,webpageUrl:'https://media.test/'+n,state:'paused',downloadedBytes:100,totalBytes:200,bytesPerSecond:0,etaSeconds:null,error:null,path:null,createdAt:'2026-10-01T00:00:00Z'}));
+const actions={toggle:()=>{},pause:async()=>window.calls.pause++,resume:async()=>window.calls.resume++,remove:(items,deleteFile)=>{window.calls.remove++;window.calls.removalOptions.push({ids:items.map(i=>i.id),deleteFile});},reveal:id=>window.entryCalls.push(id)};
+function Fixture(){const [open,setOpen]=useState(false),[composing,setComposing]=useState(false),[active,setActive]=useState(true),[deleteFiles,setDeleteFiles]=useState(true);window.setDownloadActive=setActive;window.setDeleteFiles=setDeleteFiles;return <div className="flex h-dvh flex-col bg-panel"><PanelHeader active="Downloads" onSelect={()=>{}} status="live" throughput={0} onOpenShortcuts={()=>setOpen(true)}/><DownloadsView active={active} deleteFilesOnRemove={deleteFiles} items={[]} videoJobs={jobs} pendingRemoval={new Set()} status="live" error={null} onClearError={()=>{}} onAdd={async()=>true} actions={actions} destination="C:/Downloads" composing={composing} onComposingChange={setComposing}/><KeyboardShortcutsModal open={open} onClose={()=>setOpen(false)}/></div>};createRoot(document.getElementById('root')).render(<Fixture/>);
+`},bundle:true,write:false,format:'iife',platform:'browser',jsx:'automatic'});
+const assets=path.join(root,'dist','assets'),css=(await readdir(assets)).find(n=>n.endsWith('.css'));
+const server=createServer(async(req,res)=>{
+ if(req.url==='/fixture.js'){res.setHeader('Content-Type','text/javascript');res.end(bundle.outputFiles[0].text);}
+ else if(req.url.startsWith('/assets/')){res.setHeader('Content-Type',req.url.endsWith('.css')?'text/css':'font/woff2');res.end(await readFile(path.join(assets,path.basename(req.url))));}
+ else{res.setHeader('Content-Type','text/html');res.end('<!doctype html><html lang="en" data-theme="dark"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/assets/'+css+'"><div id="root"></div><script src="/fixture.js"></script></html>');}
+});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+const browser=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});
+const output=path.resolve(root,'../scratch/shortcuts');await mkdir(output,{recursive:true});
+try{
+ const page=await browser.newPage({viewport:{width:1366,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.emulateMedia({colorScheme:'dark'});
+ await page.goto('http://127.0.0.1:'+server.address().port);
+ const open=async()=>{await page.getByRole('button',{name:'Open keyboard shortcuts',exact:true}).click();await page.getByRole('dialog',{name:'Keyboard shortcuts'}).waitFor();await page.waitForFunction(()=>getComputedStyle(document.querySelector('dialog')).opacity==='1');};
+ const close=async()=>{await page.getByRole('button',{name:'Close keyboard shortcuts'}).click();await page.getByRole('dialog').waitFor({state:'hidden'});};
+ const blur=()=>page.evaluate(()=>{document.activeElement?.blur();});
+ const name=page.locator('[data-row-id="video-1"] [data-download-name]');
+ await name.click({button:'middle'});assert.deepEqual(await page.evaluate(()=>window.entryCalls),['video-1']);
+ await open();assert.equal(await page.getByRole('switch').count(),13);
+ const entryBinding=page.getByRole('button',{name:'Rebind Open download file',exact:true});
+ assert.match(await entryBinding.textContent(),/Middle click/);
+ await entryBinding.click();await page.keyboard.press('Alt+o');await close();
+ await name.click({button:'middle'});assert.equal(await page.evaluate(()=>window.entryCalls.length),1,'reassignment disables old mouse binding');
+ await page.locator('[data-row-id="video-1"]').getByRole('checkbox').click();await blur();await page.keyboard.press('Alt+o');
+ assert.deepEqual(await page.evaluate(()=>window.entryCalls),['video-1','video-1'],'rebound keyboard action uses selected entry');
+ assert.deepEqual(await page.evaluate(()=>window.feedbacks),[200,200],'rebound keyboard and mouse actions share opening feedback');
+ await page.reload();await open();assert.match(await entryBinding.textContent(),/Alt \+ O/,'binding survives reload');
+ await entryBinding.click();await entryBinding.click({button:'middle',modifiers:['Shift']});
+ assert.match(await entryBinding.textContent(),/Shift \+ Middle click/);await close();
+ await name.click({button:'middle'});assert.equal(await page.evaluate(()=>window.entryCalls.length),0,'mouse modifiers match exactly');
+ await name.click({button:'middle',modifiers:['Shift']});assert.equal(await page.evaluate(()=>window.entryCalls.length),1);
+ await open();await page.getByRole('switch',{name:'Enable Open download file',exact:true}).click();await close();
+ await name.click({button:'middle',modifiers:['Shift']});assert.equal(await page.evaluate(()=>window.entryCalls.length),1,'action toggle disables mouse shortcut');
+ await name.dblclick();assert.equal(await page.evaluate(()=>window.entryCalls.length),1,'description double-click does not open');
+ await page.locator('[data-row-id="video-1"] .download-row').getByText('PAUSED',{exact:true}).dblclick();assert.equal(await page.evaluate(()=>window.entryCalls.length),2,'double-click remains available outside the description');
+ await open();await page.getByRole('button',{name:'Restore defaults'}).click();
+ await page.screenshot({path:path.join(output,'desktop-dark.png')});
+ await page.getByRole('button',{name:'Rebind Search downloads',exact:true}).click();await page.keyboard.press('n');
+ await page.getByRole('alert').filter({hasText:'already assigned'}).waitFor();
+ await page.keyboard.press('Control+Shift+k');
+ await page.getByText('Search downloads changed to Ctrl + Shift + K.',{exact:true}).waitFor();
+ await close();assert.equal(await page.getByRole('button',{name:'Open keyboard shortcuts',exact:true}).evaluate(e=>e===document.activeElement),true,'focus returns to opening button');
+ await blur();await page.keyboard.press('/');assert.equal(await page.getByRole('textbox',{name:'Search downloads',exact:true}).evaluate(e=>e===document.activeElement),false,'old binding must stop working');
+ await page.keyboard.press('Control+Shift+k');assert.equal(await page.getByRole('textbox',{name:'Search downloads',exact:true}).evaluate(e=>e===document.activeElement),true);
+ assert.match(await page.getByRole('textbox',{name:'Search downloads',exact:true}).getAttribute('placeholder'),/Ctrl \+ Shift \+ K/);
+ await page.getByRole('textbox',{name:'Search downloads',exact:true}).fill('');
+ await page.keyboard.press('n');assert.equal(await page.getByRole('textbox',{name:'Download URLs'}).evaluate(e=>e===document.activeElement),false,'typing does not invoke app shortcuts');
+ await page.getByRole('textbox',{name:'Search downloads',exact:true}).fill('');await blur();
+ await page.keyboard.press('Control+a');await page.getByText('2 selected',{exact:true}).waitFor();
+ await page.keyboard.press('Space');assert.equal(await page.evaluate(()=>window.calls.resume),2);
+ await open();await page.keyboard.press('Space');assert.equal(await page.evaluate(()=>window.calls.resume),2,'modal blocks background actions');
+ await page.getByRole('switch',{name:'Enable Search downloads',exact:true}).click();
+ await close();await blur();await page.keyboard.press('Escape');await page.keyboard.press('Control+Shift+k');assert.equal(await page.getByRole('textbox',{name:'Search downloads',exact:true}).evaluate(e=>e===document.activeElement),false,'individual toggle disables binding');
+ await page.reload();await open();assert.equal(await page.getByRole('switch',{name:'Enable Search downloads',exact:true}).getAttribute('aria-checked'),'false');
+ assert.match(await page.getByRole('button',{name:'Rebind Search downloads',exact:true}).textContent(),/Ctrl \+ Shift \+ K/);
+ await page.getByRole('switch',{name:'Enable keyboard shortcuts',exact:true}).click();await close();await blur();await page.keyboard.press('n');assert.equal(await page.getByRole('textbox',{name:'Download URLs'}).evaluate(e=>e===document.activeElement),false);
+ await open();await page.getByRole('button',{name:'Restore defaults'}).click();assert.equal(await page.getByRole('switch',{name:'Enable keyboard shortcuts',exact:true}).getAttribute('aria-checked'),'true');
+ await page.getByRole('button',{name:'Rebind Search downloads',exact:true}).click();await page.keyboard.press('Escape');assert.equal(await page.getByRole('dialog').isVisible(),true,'Escape cancels recording before closing');
+ await page.keyboard.press('Escape');await page.getByRole('dialog').waitFor({state:'hidden'});
+ await blur();await page.keyboard.press('n');assert.equal(await page.getByRole('textbox',{name:'Download URLs'}).evaluate(e=>e===document.activeElement),true);
+ await blur();await page.evaluate(()=>window.setDownloadActive(false));await page.waitForTimeout(50);await page.keyboard.press('/');assert.equal(await page.getByRole('textbox',{name:'Search downloads',exact:true}).evaluate(e=>e===document.activeElement),false,'hidden download view cannot consume shortcuts');
+ await open();await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(output,'mobile-dark.png')});
+ const bounds=await page.getByRole('dialog').boundingBox();assert.ok(bounds.x>=0&&bounds.x+bounds.width<=390&&bounds.y>=0&&bounds.y+bounds.height<=844);
+ assert.equal(await page.getByRole('dialog').evaluate(e=>e.scrollWidth<=e.clientWidth),true);
+ await page.getByRole('searchbox',{name:'Search keyboard shortcuts'}).fill('unmatched');await page.getByText('No shortcuts match “unmatched”.').waitFor();
+ await page.getByRole('searchbox',{name:'Search keyboard shortcuts'}).fill('');
+ await page.setViewportSize({width:1366,height:900});await page.evaluate(()=>document.documentElement.dataset.theme='light');await page.screenshot({path:path.join(output,'desktop-light.png')});
+ for(let n=0;n<22;n++){await page.keyboard.press('Tab');assert.equal(await page.getByRole('dialog').evaluate(e=>e.contains(document.activeElement)),true,'native dialog traps focus');}
+ await close();await page.evaluate(()=>window.setDownloadActive(true));await page.waitForTimeout(50);await blur();await page.keyboard.press('Control+a');
+ const remove=page.getByRole('button',{name:'Remove',exact:true});
+ assert.match(await remove.getAttribute('data-tooltip'),/delete their local files/);await remove.click();
+ assert.deepEqual(await page.evaluate(()=>window.calls.removalOptions.at(-1)),{ids:['video-1','video-2'],deleteFile:true});
+ await page.evaluate(()=>window.setDeleteFiles(false));await page.waitForTimeout(50);await blur();await page.keyboard.press('Control+a');
+ assert.match(await remove.getAttribute('data-tooltip'),/keep local files/);await remove.click();
+ assert.equal(await page.evaluate(()=>window.calls.removalOptions.at(-1).deleteFile),false);
+ await blur();await page.keyboard.press('Control+a');await page.keyboard.press('Delete');assert.equal(await page.evaluate(()=>window.calls.removalOptions.at(-1).deleteFile),false,'keyboard removal shares the same setting');
+ assert.deepEqual(errors,[]);console.log('Shortcuts checks passed: conflict handling, modifiers, actual search and queue actions, live hints, global and per-action toggles, reload persistence, reset, native focus trap, Escape, typing/modal/hidden-view isolation, and responsive themes.');
+}finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

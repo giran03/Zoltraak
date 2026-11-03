@@ -1,0 +1,1665 @@
+{
+  "schemaVersion": 1,
+  "releases": {
+    "0.2.4": {
+      "status": "historical",
+      "sourceCommit": "47eb3ebd368bc409b68dacdb5d0f32248288cc34",
+      "summary": "Repository snapshot of the previous app version. Publication as a release has not been verified.",
+      "changes": [
+        {
+          "brief": "Open downloads with configurable mouse and keyboard shortcuts.",
+          "details": [
+            "Middle-click opens completed files and can be rebound in Keyboard shortcuts.",
+            "Appearance settings control double-click timing and the optional file-open highlight.",
+            "Double-clicking the description column no longer opens files."
+          ],
+          "id": "open-file",
+          "category": "Added"
+        },
+        {
+          "brief": "Send files to Discord from the row or expanded entry.",
+          "details": [
+            "Download entries provide an action to send completed files to Discord.",
+            "Expanded entries expose the available context-menu actions.",
+            "The sharing dialog switches between webhook and bot delivery, shows configuration status, and previews the message and available sender profile."
+          ],
+          "id": "discord-sharing",
+          "category": "Added"
+        },
+        {
+          "brief": "Fine-tune grain size and enjoy cleaner input and tooltip behavior.",
+          "details": [
+            "Appearance settings include a grain-size slider independent of grain density.",
+            "The music input grows with its placeholder and entered text without internal scrollbars.",
+            "The Discord icon outline and appearance descriptions have been cleaned up."
+          ],
+          "id": "appearance",
+          "category": "Added"
+        },
+        {
+          "brief": "Find developer information and support in About.",
+          "details": [
+            "About identifies CafeTako Team and links to support-zoltraak@cafetako.com."
+          ],
+          "id": "developer-info",
+          "category": "Added"
+        },
+        {
+          "brief": "Manage extension versions with a dedicated release script.",
+          "details": [
+            "The extension version batch file validates and updates the manifest version.",
+            "Extension signing uses the configured version without automatically increasing it."
+          ],
+          "id": "extension-version",
+          "category": "Tooling"
+        }
+      ],
+      "sourceRepository": "https://github.com/giran03/Zoltraak-old"
+    },
+    "0.2.5": {
+      "status": "superseded",
+      "previousVersion": "0.2.4",
+      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
+      "changes": [],
+      "updatedAt": "2026-10-04",
+      "supersededBy": "1.0.0"
+    },
+    "0.2.6": {
+      "status": "superseded",
+      "previousVersion": "0.2.5",
+      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
+      "changes": [],
+      "transferredFrom": "0.2.5",
+      "updatedAt": "2026-10-06",
+      "supersededBy": "1.0.0"
+    },
+    "0.2.7": {
+      "status": "superseded",
+      "previousVersion": "0.2.6",
+      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
+      "changes": [],
+      "transferredFrom": "0.2.6",
+      "updatedAt": "2026-10-08",
+      "supersededBy": "1.0.0"
+    },
+    "0.2.8": {
+      "status": "superseded",
+      "previousVersion": "0.2.7",
+      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
+      "changes": [],
+      "transferredFrom": "0.2.7",
+      "supersededBy": "1.0.0"
+    },
+    "0.2.9": {
+      "status": "superseded",
+      "previousVersion": "0.2.8",
+      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
+      "changes": [],
+      "updatedAt": "2026-11-03",
+      "supersededBy": "1.0.0"
+    },
+    "1.0.0": {
+      "status": "published",
+      "summary": "The first standalone Zoltraak release brings together browser-integrated downloads, local media conversion, Discord sharing and a customizable desktop interface.",
+      "changes": [
+        {
+          "id": "standalone-1.0.0",
+          "category": "Added",
+          "brief": "Introduce Zoltraak 1.0.0 as a standalone desktop application.",
+          "details": [
+            "Download files and media, convert local content, organize transfers and share completed files from one desktop application.",
+            "Consolidate the latest feature and fix descriptions into the first standalone development release."
+          ],
+          "files": [
+            "CHANGELOG.json",
+            "app/package.json",
+            "app/package-lock.json",
+            "app/src-tauri/tauri.conf.json",
+            "app/src-tauri/Cargo.toml",
+            "app/src-tauri/Cargo.lock",
+            "engine/Cargo.toml",
+            "engine/Cargo.lock",
+            "app/showcase/mock.ts",
+            "README.md"
+          ]
+        },
+        {
+          "id": "download-controls",
+          "category": "Added",
+          "brief": "Organize downloads, open files quickly, and find missing files.",
+          "details": [
+            "Middle-click opens completed files and can be rebound in Keyboard shortcuts.",
+            "Appearance settings control double-click timing and the optional file-open highlight.",
+            "Double-clicking the description column no longer opens files.",
+            "Completed downloads whose local files were deleted or moved outside the app display a stamped MISSING fault status in the Aspect column and an engraved missing tag beside the filename.",
+            "The file availability checks refresh across the table on window focus and update instantly when files are located or re-downloaded.",
+            "Drag-out copy gestures are safely disabled for missing files, and folder reveal actions indicate the missing disk state.",
+            "Group by file type, status, source website, or destination folder from the sorting toolbar.",
+            "Groups show matching entry counts and support individual collapse plus Expand all and Collapse all controls.",
+            "The grouping preference is remembered, and the selected sort continues to order entries inside each group.",
+            "Keyboard navigation, range selection, and bulk actions follow visible rows; collapsed entries are excluded.",
+            "The action has moved to the right side of the row; column headings stay aligned."
+          ],
+          "files": [
+            "app/src/components/DownloadRow.tsx",
+            "app/src/components/DownloadsView.tsx",
+            "app/src/components/FileAvailability.tsx",
+            "app/src/lib/engine.ts",
+            "app/src/lib/useFileStatuses.ts",
+            "app/src-tauri/src/lib.rs",
+            "app/tests/download-row-browser-smoke.mjs",
+            "app/src/lib/downloadUx.ts",
+            "app/tests/downloadUx.test.ts",
+            "app/tests/download-entry-actions-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "discord-sharing",
+          "category": "Added",
+          "brief": "Send completed files to Discord through a webhook or bot.",
+          "details": [
+            "Download entries provide an action to send completed files to Discord.",
+            "Expanded entries expose the available context-menu actions.",
+            "The sharing dialog switches between webhook and bot delivery, shows configuration status, and previews the message and available sender profile.",
+            "The Discord brand color was repeated as an arbitrary value in three views; it is now a single theme token with the same appearance."
+          ],
+          "files": [
+            "app/src/styles.css",
+            "app/src/components/ImagesView.tsx",
+            "app/src/components/MusicView.tsx",
+            "app/src/components/VideoView.tsx"
+          ]
+        },
+        {
+          "id": "appearance-accessibility",
+          "category": "Changed",
+          "brief": "Customize appearance with clearer text, keyboard navigation and reduced motion.",
+          "details": [
+            "Appearance settings include a grain-size slider independent of grain density.",
+            "The music input grows with its placeholder and entered text without internal scrollbars.",
+            "The Discord icon outline and appearance descriptions have been cleaned up.",
+            "Left and Right move between tabs and wrap around, Home and End jump to the first and last tab, and selection follows focus.",
+            "Only the selected tab is a tab stop, so Tab moves past the group instead of through every tab.",
+            "The behavior lives in one shared helper used by all three tab sets.",
+            "Animations still collapse, but colour and opacity changes now fade over 100 ms instead of being cut entirely, so status changes remain noticeable.",
+            "Layout, transform and shadow changes stay instant, and occupancy blocks never fade.",
+            "Corrected the explanatory comment, which claimed lamp switching was kept while a blanket override removed it.",
+            "Replaced the three overshooting spring curves with an ease-out curve so toggles, badges and the unused bounce token settle without wobbling.",
+            "The floating pill navbar no longer animates its margin, which forced layout; its radius, shadow and background still transition.",
+            "Text previously sized between 8 and 10.5 px in settings, About, guide, visualizer and other panels now uses 11 px.",
+            "The download table was already mostly 11 px or larger and is largely unchanged.",
+            "Give folder, trash, retry, pause, expand and Discord controls a shared squircle highlight with subtle, quick icon movement and press feedback.",
+            "Keep compact download hit targets stable, retain expansion and disabled-button behavior, and use Discord blurple for the Discord icon and highlight.",
+            "Use theme-aware route and danger colors, keyboard focus feedback without movement, fine-pointer hover gating, and both system and in-app reduced-motion preferences.",
+            "Check hover geometry, Discord color, reduced motion, disabled controls and existing download/conversion actions in real browsers.",
+            "Render dropdown menus as raised panel plates with engraved section legends, primary option titles, parenthetical file extension badges, and bulleted codec or mode descriptions.",
+            "Show structured category, format, and detail labels inside closed dropdown triggers with a route-blue active indicator and checkmark on the selected item.",
+            "Adopt the shared dropdown control across Downloads sorting, grouping, density, and column order controls as well as Video subtitle and Music format selectors while preserving keyboard navigation and native form semantics."
+          ],
+          "files": [
+            "app/src/lib/tabKeys.ts",
+            "app/src/components/SettingsShell.tsx",
+            "app/src/components/MusicView.tsx",
+            "app/src/components/VideoView.tsx",
+            "app/src/styles.css",
+            "app/src/components/AboutView.tsx",
+            "app/src/components/AppVersion.tsx",
+            "app/src/components/AppearanceView.tsx",
+            "app/src/components/CompletionSoundControl.tsx",
+            "app/src/components/ContextMenu.tsx",
+            "app/src/components/DiscordSendDialog.tsx",
+            "app/src/components/DiscordSettings.tsx",
+            "app/src/components/DownloadRow.tsx",
+            "app/src/components/DownloadsView.tsx",
+            "app/src/components/ExtensionGuideModal.tsx",
+            "app/src/components/ExtensionSettings.tsx",
+            "app/src/components/GpuVisualizer.tsx",
+            "app/src/components/ImagesView.tsx",
+            "app/src/components/PanelHeader.tsx",
+            "app/src/components/ReleaseNotesDialog.tsx",
+            "app/src/components/SettingsView.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/tests/convert-browser-smoke.mjs",
+            "app/tests/download-entry-actions-browser-smoke.mjs",
+            "app/src/components/Controls.tsx",
+            "app/src/lib/conversion.ts",
+            "app/tests/conversion.test.ts"
+          ]
+        },
+        {
+          "id": "feedback-menus",
+          "category": "Fixed",
+          "brief": "Keep tooltips, feedback and app menus predictable.",
+          "details": [
+            "Moving onto the tooltip no longer keeps it open.",
+            "Native browser navigation, printing and save commands no longer appear on right-click; entry and column menus remain available.",
+            "Shared tooltips use the browser top layer and remain associated with their native dialog, including release notes.",
+            "Tooltip positioning escapes modal overflow clipping; the tooltip layer is removed when the dialog closes.",
+            "Tooltips continue to ignore pointer hover and retain keyboard descriptions and viewport edge handling.",
+            "Dismissible error banners and image queue feedback close after five uninterrupted seconds in the focused, visible app window. Leaving the window preserves feedback and restarts the reading interval on return; manual dismissal remains available.",
+            "Deleting or replacing a Video or Images source input with whitespace clears extracted results and captured source headers. Pending extraction replies are ignored after clearing, so old results cannot reappear; existing downloads continue.",
+            "Disable WebView2 general form autofill on the desktop window and disable browser autocomplete across search, URL, number, and text inputs.",
+            "Keep recessed input surface colors intact if a browser environment applies autofill pseudo-class styling."
+          ],
+          "files": [
+            "app/src/components/Tooltip.tsx",
+            "app/tests/tooltips-browser-smoke.mjs",
+            "app/src/main.tsx",
+            "app/src/styles.css",
+            "app/src/lib/useFocusedDismiss.ts",
+            "app/src/components/Controls.tsx",
+            "app/src/components/DownloadsView.tsx",
+            "app/src/components/VideoView.tsx",
+            "app/src/components/ImagesView.tsx",
+            "app/src/lib/useImages.ts",
+            "app/tests/intake-feedback-browser-smoke.mjs",
+            "app/public/guide.html",
+            "app/src-tauri/src/window_diagnostics.rs",
+            "app/src-tauri/tauri.conf.json",
+            "app/src/components/AddDownload.tsx",
+            "app/src/components/AppearanceView.tsx",
+            "app/src/components/CategoriesView.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/src/components/DiscordBotSettings.tsx",
+            "app/src/components/DiscordSendDialog.tsx",
+            "app/src/components/DiscordSettings.tsx",
+            "app/src/components/KeyboardShortcutsModal.tsx",
+            "app/src/components/MusicView.tsx",
+            "app/src/components/SettingsShell.tsx",
+            "docs/guide.html",
+            "extension/guide.html",
+            "scripts/changelog.mjs"
+          ]
+        },
+        {
+          "id": "download-reliability",
+          "category": "Fixed",
+          "brief": "Resume interrupted downloads safely and show steady transfer speeds.",
+          "details": [
+            "HTTP 200 responses to segmented requests now restart safely with one connection instead of failing. Invalid ranges, range refusal, and changed remote validators also restart without mixing file versions.",
+            "Check returned byte offsets and total lengths, request uncompressed bytes, and retry incomplete bodies and transient probe or single-stream failures within a bounded retry budget.",
+            "Server header and body waits are bounded; pausing interrupts network waits and retry delays. Failed segmented attempts preserve a resume checkpoint.",
+            "All added connections are supervised and awaited, so their errors cannot be hidden and no writer remains active when fallback starts. Resuming many saved chunks respects the current connection limit.",
+            "Resume rejects damaged chunk layouts, weak validators, and missing or truncated partial files. Empty downloads remain supported when a range probe is refused.",
+            "The speed meter now averages bytes over a sliding multi-second window instead of weighting each network chunk by the gap since the previous one. Chunks from several connections arriving moments apart no longer read as huge instantaneous rates.",
+            "Progress updates are limited to roughly six per second per download instead of one per network chunk, so the interface redraws at a calm rate. Final and paused states are still sent immediately.",
+            "Video and music downloads use the same meter and benefit as well.",
+            "Added tests covering clumped arrivals, convergence, and recovery after a slowdown.",
+            "YouTube's player script is now decoded on a dedicated thread with a large stack; the previous small stack overflowed and terminated the whole app (Windows exception 0xC00000FD).",
+            "Builds could embed the same schema migration with LF or CRLF line endings, and the database refused any build whose bytes differed, closing the app immediately with \"migration was previously applied but has been modified\".",
+            "At startup a recorded migration that differs only in line endings is now accepted and its record updated. A migration whose content really changed is still rejected."
+          ],
+          "files": [
+            "engine/core/src/downloader.rs",
+            "engine/core/src/error.rs",
+            "engine/core/src/headers.rs",
+            "engine/core/src/probe.rs",
+            "engine/core/src/resume.rs",
+            "engine/core/tests/download.rs",
+            "engine/core/tests/support/mod.rs",
+            "engine/core/src/speed.rs",
+            "engine/core/src/video/youtube/player.rs",
+            "engine/core/src/lib.rs",
+            "engine/core/src/migrations.rs",
+            "engine/core/src/queue.rs"
+          ]
+        },
+        {
+          "id": "facebook-capture",
+          "category": "Fixed",
+          "brief": "Capture Facebook posts, paired video tracks and complete photo galleries.",
+          "details": [
+            "Right-clicking a post, its container, text, profile link or photo recovers the surrounding post permalink, including share links and pfbid posts, without scanning neighboring feed entries.",
+            "The post action keeps a valid post URL instead of replacing it with a profile or CDN link, and explains how to retry when no post link is available.",
+            "Facebook video overlays resolve the selected video or post through its extractor and paired audio/video manifests, rather than presenting raw CDN tracks as separate videos.",
+            "Video analysis reuses the scoped post attachment extractor, follows share redirects using the final video identity, and adds an anonymous crawler fallback for video pages.",
+            "Multiple clips and incomplete post results require a clip choice; video and audio remain paired for MP4 merging. Meta byte-range captures resolve to complete track URLs while preserving signed query text.",
+            "Regression checks cover both supplied permalink shapes, right-click container boundaries, neighboring posts, paired formats and byte ranges.",
+            "Try other known attachments when one viewer route stalls, read matching viewer connections, and merge complementary public and signed-in results by media ID.",
+            "Preserve gallery order and refreshed image links, retain partial results, and report conflicting counts without claiming a complete set.",
+            "Missing navigation no longer automatically reports an expired sign-in; incomplete Facebook results offer an Open Facebook post recovery action.",
+            "Regression checks cover seven-photo posts with five previews, missing navigation, full viewer connections, unrelated posts, mixed media, and session failures.",
+            "Observe bounded Fetch and XHR gallery metadata in the browser and send only the explicitly selected post to the paired local app.",
+            "Try ordinary photo viewer pages using the browser session, without hardcoding internal query IDs or replaying account tokens.",
+            "Keep resolved attachment metadata in memory for five minutes; clear it on session removal or browser source changes and reject inactive profiles, unrelated posts, and non-Facebook CDN URLs.",
+            "The engine verifies captured images before offering downloads; existing post actions on other sites retain their behavior.",
+            "Real-browser regressions cover gallery response capture, page-response preservation, redaction, missing-navigation recovery, and the original frame.",
+            "Discard browser lists whose CDN links fail verification so a later extraction can fetch fresh links without waiting for cache expiry.",
+            "Bind numeric Story IDs to the exact open pfbid permalink and retain that relationship while navigating its photo gallery; right-clicking a gallery photo recovers the parent post."
+          ],
+          "files": [
+            "engine/core/src/image/facebook.rs",
+            "engine/core/src/image/mod.rs",
+            "engine/core/src/video/site.rs",
+            "extension/background.js",
+            "extension/content.js",
+            "extension/video-identity.js",
+            "extension/tests/video-identity.test.mjs",
+            "extension/tests/capture-all.test.mjs",
+            "extension/tests/facebook-post-browser-smoke.mjs",
+            "extension/tests/release1-browser-smoke.mjs",
+            "extension/tests/post-fallback-browser-smoke.mjs",
+            "app/src/components/ImagesView.tsx",
+            "docs/guide.html",
+            "app/tests/intake-feedback-browser-smoke.mjs",
+            "extension/facebook-post.js",
+            "extension/media-probe.js",
+            "extension/manifest.json",
+            "extension/api.js",
+            "extension/tests/facebook-attachments.test.mjs",
+            "extension/tests/facebook-gallery-browser-smoke.mjs",
+            "engine/core/src/video/manager.rs",
+            "engine/api/src/lib.rs",
+            "engine/api/tests/api.rs",
+            "CHROMEWEBSTORE.md"
+          ]
+        },
+        {
+          "id": "tiktok-capture",
+          "category": "Fixed",
+          "brief": "Resolve TikTok share links and target the selected browser video.",
+          "details": [
+            "Video and Images share a parser for the selected TikTok item, including current rehydration, persisted state, embed, URL-list, mobile and bitrate address structures. Recommendations, music and poster images are excluded from the video quality list.",
+            "Keep rendition dimensions, bitrate and file size, plus the post title, creator, duration and poster when available. Images reuses its fetched video post instead of requesting the page again.",
+            "Preserve supplied browser headers instead of inventing client hints or replacing the referring page. Short share links resolve before an authenticated canonical-post request, avoiding cookies lost on cross-host redirects.",
+            "TikTok requests have bounded waits and a total analysis deadline. Failed site extraction no longer scans the entire page for unrelated video URLs.",
+            "Local regressions cover shared Video/Images output and authenticated share redirects; an opt-in live check supports verification against current TikTok pages.",
+            "The post context action searches TikTok player controls, card links, copied share fields and item IDs without borrowing a neighboring feed post. Short TikTok share links are accepted as post targets.",
+            "The overlay analyzes the selected post and sources associated with that player. Whole-tab traffic and feed URLs are excluded from TikTok candidates.",
+            "Observe XHR blobs before page download handlers run and preserve a single observed HTTP source when TikTok wraps a fetched blob. The desktop receives a fetchable source, not a page-local blob URL.",
+            "TikTok requests carry the originating browser user agent and cookie container. Pending submissions avoid duplicate refreshed headers, and unsuccessful analysis no longer repeats the same server fallback chain.",
+            "When a post link is unavailable, the context action explains how to open the post or use Share > Copy link. Real browser checks cover adjacent controls, feed isolation, blob playback and overlay results at narrow and desktop widths."
+          ],
+          "files": [
+            "engine/core/src/video/tiktok.rs",
+            "engine/core/src/video/site.rs",
+            "engine/core/src/video/mod.rs",
+            "engine/core/src/video/extractor.rs",
+            "engine/core/src/image/sites.rs",
+            "engine/core/tests/tiktok_extraction.rs",
+            "extension/content.js",
+            "extension/background.js",
+            "extension/video-identity.js",
+            "extension/media-probe.js",
+            "extension/tests/video-identity.test.mjs",
+            "extension/tests/capture-all.test.mjs",
+            "extension/tests/tiktok-browser-smoke.mjs",
+            "CHROMEWEBSTORE.md"
+          ]
+        },
+        {
+          "id": "browser-session-security",
+          "category": "Security",
+          "brief": "Scope browser credentials to their source and pair only on request.",
+          "details": [
+            "Pending download dialogs refresh cookies when submitted, avoiding expired captured sessions and removing cookies after logout or cookie-access revocation.",
+            "Keep the referring Firefox tab's cookie container with the draft and use that container for both capture and submission.",
+            "Cookie lookup now respects the browser's URL, path, secure-cookie, and container matching rules without widening an empty result to a guessed parent domain.",
+            "An empty matching cookie store no longer risks forwarding unrelated cookies on shared domains.",
+            "The existing third-party public resolver receives an anonymous request without TikTok cookies, authorization or captured private headers. First-party TikTok extraction and authenticated canonical requests remain available.",
+            "The pairing endpoint no longer hands the token to the official extension's public ID at any time, because any program on the computer can send that identifier. It now answers only while a pairing window is open.",
+            "The window no longer opens at launch. It opens when you choose Reload, Install or Repair extension and closes after one successful pairing.",
+            "Chromium browsers keep their click-free path through native messaging, which the browser itself restricts to the extension."
+          ],
+          "files": [
+            "extension/background.js",
+            "extension/tests/capture-all.test.mjs",
+            "CHROMEWEBSTORE.md",
+            "extension/api.js",
+            "extension/tests/source.test.mjs",
+            "engine/core/src/video/site.rs",
+            "engine/api/src/lib.rs",
+            "engine/api/tests/api.rs",
+            "app/src-tauri/src/lib.rs",
+            "engine/cli/src/main.rs"
+          ]
+        },
+        {
+          "id": "browser-integration",
+          "category": "Added",
+          "brief": "Install, repair and manage browser extensions from the app.",
+          "details": [
+            "Installed or connected browser tabs show management controls instead of installation steps.",
+            "The dialog reports connected profiles, reported and available versions, update confirmation status, and browser running state.",
+            "Controls include update when available, reload, opening the extension manager, status refresh, and repair/reinstall with confirmation. Supported Chromium browsers can restart with confirmation; Gecko browsers receive restart guidance.",
+            "Chromium extension paths are protected against stale responses when switching browser tabs.",
+            "The browser context menu no longer registers the video-only download command or runs its dedicated click handler.",
+            "Menus are rebuilt on extension installation, update and browser startup to clear persisted entries from older versions.",
+            "Post, link, image, audio and music context-menu actions remain available, along with the floating video button and popup video controls.",
+            "Documentation now reflects the remaining commands, and regression checks cover menu rebuilding and ignored clicks from the removed action.",
+            "When a link's URL ends in a route name (e.g. \"download\"), the extension asks the server for its file name so the dialog pre-fills it.",
+            "The engine only replaces the URL-derived placeholder name with the server's name; a name chosen in the dialog is kept, with a missing extension filled in.",
+            "Extension version bumped to 0.2.7.",
+            "Re-signed the bundled extension package so it matches extension version 0.2.7.",
+            "Package every newly required Facebook helper plus the existing media probe and generic media helper referenced by the manifest.",
+            "Validate the temporary packaging directory before recursive cleanup.",
+            "The extension version batch file validates and updates the manifest version.",
+            "Extension signing uses the configured version without automatically increasing it.",
+            "Extension packages include the helpers referenced by their manifests and the Download post documentation."
+          ],
+          "files": [
+            "app/src/components/ExtensionGuideModal.tsx",
+            "app/src/components/ExtensionSettings.tsx",
+            "app/src/App.tsx",
+            "app/tests/extension-guide-browser-smoke.mjs",
+            "extension/background.js",
+            "extension/content.js",
+            "extension/tests/capture-all.test.mjs",
+            "README.md",
+            "PRODUCT.md",
+            "PLAN.md",
+            "engine/core/src/downloader.rs",
+            "extension/manifest.json",
+            "app/src-tauri/resources/zoltraak-signed.xpi",
+            "scripts/package_chrome_extension.ps1",
+            "extension/tests/post-fallback-browser-smoke.mjs",
+            "extension/tests/release1-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "convert-local-media",
+          "category": "Added",
+          "brief": "Convert local video, audio, images and animations with reusable settings.",
+          "details": [
+            "Convert MP4/GIF, images and audio, or extract selected tracks using backend-validated per-file plans and supported output formats.",
+            "Configure dimensions, frame rate, quality, fades, metadata, transparency and audio options; save reusable local presets.",
+            "Keep recipes and history across restarts, retry with original settings, validate batches before scheduling, and verify unique output files before optional source removal.",
+            "Keep legacy remux commands compatible alongside conversion IPC and authenticated REST endpoints.",
+            "Generate GIF palettes in a separate pass and cache file inspection while editing settings.",
+            "Explain unavailable animated WebP decoding before conversion and retain originals if animated output cannot be verified.",
+            "Right-click supported completed video, audio, image and animation files and choose Convert… to stage them for editable conversion settings.",
+            "Switch to Convert and highlight, scroll to and focus the requested input without starting conversion; existing inputs and settings are preserved and repeat selections do not create duplicates.",
+            "Multi-selection includes only supported completed files, while unfinished downloads and unsupported formats omit the action. The existing Quick convert to MP4 action remains available.",
+            "Verify supported formats, navigation, focus, duplicate handling, filtered bulk actions and expanded-entry menu parity in real-browser checks.",
+            "Resolve the default from the working folder shown in Downloads, including a folder selected through its footer picker and resetting that picker to the configured default.",
+            "Apply the same destination to all Convert formats and Quick convert to MP4, create the subfolder when needed, and show the resolved default in the destination field.",
+            "Preserve explicit conversion destination overrides and keep retries in their originally recorded output folder. Native and REST callers without an explicit destination use the current configured working folder.",
+            "Verify actual output placement, working-folder changes, custom overrides and footer-to-Convert handoff."
+          ],
+          "files": [
+            "README.md",
+            "app/showcase/mock.ts",
+            "app/src-tauri/src/lib.rs",
+            "app/src/App.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/src/components/DownloadsView.tsx",
+            "app/src/components/PanelHeader.tsx",
+            "app/src/lib/conversion.ts",
+            "app/src/lib/engine.ts",
+            "app/src/lib/media.ts",
+            "app/src/lib/useConvert.ts",
+            "app/tests/conversion.test.ts",
+            "app/tests/convert-browser-smoke.mjs",
+            "app/tests/download-entry-actions-browser-smoke.mjs",
+            "docs/CONVERSION_PLAN.md",
+            "docs/USER_GUIDE.md",
+            "docs/guide.html",
+            "engine/api/src/lib.rs",
+            "engine/cli/src/main.rs",
+            "engine/core/Cargo.toml",
+            "engine/core/migrations/0012_conversion_jobs.sql",
+            "engine/core/src/conversion.rs",
+            "engine/core/src/lib.rs",
+            "engine/core/src/remux/manager.rs",
+            "engine/core/src/remux/mod.rs",
+            "engine/core/tests/conversion_jobs.rs",
+            "app/tests/downloads-convert-browser-smoke.mjs",
+            "app/src/components/AddDownload.tsx"
+          ]
+        },
+        {
+          "id": "convert-presets",
+          "category": "Added",
+          "brief": "Choose share presets, size targets and safe filename patterns.",
+          "details": [
+            "Add a preset library for Discord, WhatsApp/Telegram and email size limits, a social GIF, web MP4 and WebM, podcast and music MP3, lossless FLAC, and web JPEG/PNG. Presets keep your filename pattern.",
+            "Add an optional target file size for video and lossy audio. The engine picks the bitrate from the output length with a safety margin, so results land near the target rather than exactly on it; lossless, image and animation outputs reject it.",
+            "Add a filename pattern with {name}, {format}, {date} and {time}, checked in the app and the engine, made safe for Windows file names, and previewed before converting. Existing files are still never replaced.",
+            "Cover patterns, size budgets and real FFmpeg output with unit and integration tests.",
+            "Changing formats preserves compatible recipe values, resets values the new format rejects, and applies a preset only when explicitly selected.",
+            "The Preset dropdown retains the selected built-in, library or saved preset name. Editing the recipe shows Custom; restoring the preset values restores its name.",
+            "Track shared and individual file preset selections separately, and select a newly saved preset immediately. Changing formats still preserves settings and shows Custom when the recipe changes.",
+            "Verify selected labels, custom edits, value restoration, saved presets and switching between shared and individual recipes in desktop/mobile browser checks."
+          ],
+          "files": [
+            "app/src/components/ConvertView.tsx",
+            "app/src/lib/conversion.ts",
+            "app/src/lib/engine.ts",
+            "app/tests/conversion.test.ts",
+            "docs/CONVERSION_PLAN.md",
+            "engine/core/src/conversion.rs",
+            "engine/core/src/remux/manager.rs",
+            "engine/core/tests/conversion_jobs.rs",
+            "app/tests/convert-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "convert-queue",
+          "category": "Added",
+          "brief": "Manage conversion queues, compare results and automate watch folders.",
+          "details": [
+            "Show size before and after, percent saved, and codec and resolution changes on finished conversions.",
+            "Pause and resume the queue, choose one to four conversions at once, and move a waiting conversion to the front.",
+            "After a batch finishes, optionally show a notification, show the last result in its folder, or copy the result paths.",
+            "Add watch-folder rules that convert files appearing after the app starts, once they stop growing, into a separate results folder. Files already in the folder are never converted, and rules run only while the app is open.",
+            "Add accessible Move up and Move down actions alongside Run next, disabling movement beyond the first or last waiting job.",
+            "Exercise both directions and queue-boundary states in the conversion browser smoke checks at desktop and mobile widths."
+          ],
+          "files": [
+            "app/src/App.tsx",
+            "app/src-tauri/src/lib.rs",
+            "app/src/components/ConvertJobs.tsx",
+            "app/src/components/ConvertWatchRules.tsx",
+            "app/src/lib/useConvert.ts",
+            "engine/core/src/conversion_watch.rs",
+            "engine/core/src/lib.rs",
+            "engine/core/src/remux/manager.rs",
+            "app/tests/convert-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "convert-preview",
+          "category": "Added",
+          "brief": "Trim, crop, rotate and preview media with settings for each file.",
+          "details": [
+            "Add a trim and crop editor with a source frame or audio waveform, draggable time handles with keyboard nudging, a draggable crop box, aspect-ratio presets, rotation and flips. The engine applies crop first, then rotation and flips, then the maximum size.",
+            "Add a preview that renders up to six seconds with the exact conversion recipe and estimates the whole file's size. It runs only while nothing is converting or waiting.",
+            "Let a staged file use its own settings while the others share one; files are planned and queued in groups that share a recipe.",
+            "Cover the geometry, grouping, comparison, real FFmpeg crop, queue, preview and watch behavior with unit and integration tests, and teach the browser smoke fixtures the new commands.",
+            "Cache up to eight rendered samples in memory with a 48 MB total cap, invalidating on source path, size, modification time, resolved settings, sample range or FFmpeg changes.",
+            "Keep previews within 960 × 540 (540 × 960 for portrait media), six seconds, 12 MB and 45 seconds; honor the selected trim end and bound still-image clips. Keep static WebP previews static.",
+            "Cancel preview work when real conversions arrive, including with one conversion slot, and clean scratch files when rendering is cancelled. Reset the preview when selecting a different source and explain the limits of size estimates.",
+            "Verify source and settings invalidation, entry/byte eviction, trimmed previews and queue preemption using unit and bundled-tool tests.",
+            "Disable dropdown options and conversion fields when the selected output format or processing mode does not support them, including stream copy on images and animations, non-Opus sample rates on Opus, format-specific presets, quality, target size, dimensions, frame rate, audio controls, background color, loop count, GIF dithering and lossless WebP.",
+            "Preserve compatible settings when switching output formats while resetting values that the new format rejects.",
+            "Show rotation, horizontal flip, vertical flip, background color and rotated stage dimensions directly in the trim/crop editor and rendered preview, and map crop boxes between rotated or flipped stage coordinates and source coordinates.",
+            "Size portrait conversion previews within 540 × 960 when source dimensions or quarter-turn rotations produce a vertical frame."
+          ],
+          "files": [
+            "app/src/components/ConvertPreview.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/src/components/TrimCropEditor.tsx",
+            "app/src/lib/conversion.ts",
+            "app/src/lib/cropMath.ts",
+            "app/src/lib/engine.ts",
+            "app/tests/conversion.test.ts",
+            "app/tests/convert-browser-smoke.mjs",
+            "app/tests/downloads-convert-browser-smoke.mjs",
+            "docs/CONVERSION_PLAN.md",
+            "engine/core/src/conversion.rs",
+            "engine/core/src/conversion_preview.rs",
+            "engine/core/tests/conversion_jobs.rs",
+            "engine/core/src/remux/manager.rs",
+            "app/src/components/Controls.tsx"
+          ]
+        },
+        {
+          "id": "convert-loudness",
+          "category": "Added",
+          "brief": "Measure audio loudness and choose normalization targets.",
+          "details": [
+            "Offer an optional analysis pass over the selected audio track and time range, then normalize using measured integrated loudness, range, threshold, peaks and offset.",
+            "Expose loudness and true-peak targets while retaining the existing single-pass defaults for older recipes, presets, retries and history. Silence uses an explained single-pass fallback; unattainable linear targets can change dynamics.",
+            "Show separate measurement and normalization stages with progress, support cancellation during either pass and use the same measured normalization path in bounded previews.",
+            "Verify legacy settings defaults, target validation, measurement parsing, preserved fades, actual output loudness/peak limits and desktop/mobile controls."
+          ],
+          "files": [
+            "engine/core/src/conversion.rs",
+            "engine/core/src/remux/manager.rs",
+            "engine/core/src/conversion_preview.rs",
+            "engine/core/tests/conversion_jobs.rs",
+            "app/src/components/ConversionHelp.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/src/lib/conversion.ts",
+            "app/src/lib/engine.ts",
+            "app/tests/convert-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "convert-interface",
+          "category": "Changed",
+          "brief": "Inspect conversion sources and get clear guidance beside settings.",
+          "details": [
+            "Replace the large file-intake section with a compact Source header after inputs are staged, showing the selected filename, format, dimensions, duration, size and path.",
+            "Keep Add files and Change files actions available; reveal a compact input manager on demand and restore the full intake only when no inputs remain.",
+            "Use a batch selector to inspect staged files and their audio tracks without resetting shared conversion settings. Downloads handoff now focuses the source header at the top.",
+            "Check empty and populated states, source switching, input management, duplicate handling and responsive layout in real browsers.",
+            "Show visible labels and descriptions for metadata removal, lossless WebP, audio removal, normalization and optional original-file deletion. Associate switch descriptions with assistive technology.",
+            "Add info buttons beside technical conversion settings, including a comparison of Sierra, Bayer and no GIF dithering; explain formats, codecs, quality, dimensions, frame rate and audio terminology.",
+            "Keep help dialogs within desktop and mobile screens, support Escape and close buttons, and return keyboard focus to the originating setting. Verify descriptions, dialog behavior and unchanged conversion settings in browser checks.",
+            "Dismiss the info tooltip when its help dialog opens and suppress it when keyboard focus returns on close.",
+            "Show tooltips again on a fresh hover or keyboard focus, while preserving dialog focus restoration. Verify both Escape and button dismissal at desktop and mobile widths.",
+            "Reserve equal label-row space for settings with and without info buttons, and give conversion text, numeric and dropdown controls a consistent height.",
+            "Keep hints below the controls and preserve responsive columns. Check actual control positions and heights at desktop, tablet and mobile widths.",
+            "Automatically grow and shrink the paths entry as lines or wrapped paths change, with a compact minimum and a 192-pixel maximum height.",
+            "Disable the manual resize handle and scroll longer path lists inside the entry. Verify growth, the height cap, scrolling and shrinking at desktop, tablet and mobile widths."
+          ],
+          "files": [
+            "app/src/components/ConvertView.tsx",
+            "app/src/lib/useConvert.ts",
+            "app/tests/convert-browser-smoke.mjs",
+            "app/tests/downloads-convert-browser-smoke.mjs",
+            "docs/USER_GUIDE.md",
+            "docs/guide.html",
+            "app/src/components/ConversionHelp.tsx",
+            "app/src/components/Controls.tsx",
+            "app/src/components/Icons.tsx",
+            "app/src/styles.css",
+            "app/public/guide.html",
+            "extension/guide.html",
+            "app/src/components/Tooltip.tsx"
+          ]
+        },
+        {
+          "id": "animated-image-downloads",
+          "category": "Fixed",
+          "brief": "Download GIF, APNG and WebP links directly.",
+          "details": [
+            "A link that names a GIF, APNG or WebP directly (by extension, format query or response type) is now routed as a direct download rather than failing with \"returned an image, not a video\".",
+            "The streamer lets those animated image types through while still rejecting other pictures and HTML error pages; posters scraped from pages stay filtered out.",
+            "Finished animated files are verified by their file signature, since video probing is unreliable for animated WebP/APNG."
+          ],
+          "files": [
+            "engine/core/src/video/direct.rs",
+            "engine/core/src/video/stream.rs",
+            "engine/core/src/video/validation.rs"
+          ]
+        },
+        {
+          "id": "release-notes",
+          "category": "Added",
+          "brief": "Read release notes in the app and browse searchable changelog pages.",
+          "details": [
+            "A theme-synced changelog dialog opens once per new version and can be reopened from About.",
+            "Use the details icon to switch between brief notes and the full change list.",
+            "The build validates this changelog and includes both forms of the notes in latest.json.",
+            "The guide navbar includes a dedicated Changelog view with version and category filters, expandable details and per-version links.",
+            "Guide and changelog colors follow the app theme, including live updates while the app is running.",
+            "Guide copies are generated from one canonical page and one changelog source."
+          ],
+          "files": [
+            "app/src/App.tsx",
+            "app/src/components/AboutView.tsx",
+            "app/src/components/ReleaseNotesDialog.tsx",
+            "app/src/lib/releaseNotes.ts",
+            "app/src/styles.css",
+            "app/tests/release-notes-browser-smoke.mjs",
+            "scripts/generate_latest_json.ps1",
+            "scripts/read_release_notes.ps1",
+            "scripts/tests/release_notes.test.ps1",
+            "docs/guide.html",
+            "scripts/changelog-view.js",
+            "engine/api/src/lib.rs",
+            "app/tests/changelog-guide-browser-smoke.mjs",
+            "engine/api/tests/api.rs",
+            "scripts/changelog.mjs",
+            "scripts/tests/changelog.test.mjs",
+            "app/tests/changelog-guide-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "release-tooling",
+          "category": "Tooling",
+          "brief": "Validate release notes and keep builds, versions and documentation consistent.",
+          "details": [
+            "Version metadata targets 1.0.0 across the app and engine, including package lockfiles.",
+            "Builds reject missing notes and files changed after their documentation checkpoint.",
+            "The version manager asks Y/N before transferring unpublished development notes; cancellation leaves version files unchanged. Published notes are never transferred.",
+            "The desktop build explains a failed changelog audit and asks whether the release notes have been reviewed and updated before refreshing their checkpoint.",
+            "Only explicit Y runs checkpoint and then repeats the audit. Declining, empty input, a failed checkpoint, or a failed recheck stops the build; CI fails without an interactive prompt.",
+            "Windows batch regression checks cover an already valid audit, confirmation, decline, empty input, checkpoint and recheck failures, and CI behavior."
+          ],
+          "files": [
+            "app/package.json",
+            "app/src-tauri/Cargo.lock",
+            "app/src-tauri/Cargo.toml",
+            "app/src-tauri/tauri.conf.json",
+            "engine/Cargo.toml",
+            "scripts/set_version.ps1",
+            "scripts/bat/build_app.bat",
+            "scripts/changelog.mjs",
+            "AGENTS.md",
+            "docs/release-notes.md",
+            "engine/Cargo.lock",
+            "scripts/tests/changelog.test.mjs",
+            "scripts/changelog-view.js",
+            "scripts/tests/release_notes.test.ps1",
+            "app/tests/changelog-guide-browser-smoke.mjs",
+            "scripts/tests/build_changelog.test.mjs",
+            "scripts/set_version.ps1"
+          ]
+        },
+        {
+          "id": "conversion-roadmap",
+          "category": "Tooling",
+          "brief": "Document delivered conversion tools and planned optimization work.",
+          "details": [
+            "Update the user guide for library and local presets, size budgets, naming patterns, individual settings, trim/crop, previews, queue controls, watch folders and measured loudness.",
+            "Record passed browser, real bundled-tool and embedded-debug desktop checks in the conversion plan, marking delivered follow-ups and measured loudness while retaining pending encoding, media-type and power-user work.",
+            "Keep signed-installer/release-mode verification explicitly outstanding; the native desktop smoke used isolated data and a separate identifier while the normal app was running.",
+            "Document the GIF optimization architecture covering perceptual lossy LZW smoothing, fuzzy inter-frame transparency tolerance, Bayer ordered dithering scales, palette color reduction, duplicate-frame delay consolidation, N-th frame decimation, and target file size fitting.",
+            "Specify a three-tier local background-removal pipeline (auto corner/border color key with stage eyedropper, FFmpeg 8.1 static-scene backgroundkey, and optional on-demand local ONNX subject segmentation) with 1-bit GIF edge halo decontamination, target matte colors, and union bounding-box auto-cropping.",
+            "Update the conversion implementation plan to reflect all delivered groups, UI/preview refinements, and ordered remaining phases."
+          ],
+          "files": [
+            "docs/USER_GUIDE.md",
+            "docs/CONVERSION_PLAN.md",
+            "docs/GIF_OPTIMIZATION_AND_BG_REMOVAL_PLAN.md"
+          ]
+        },
+        {
+          "id": "product-showcase",
+          "category": "Tooling",
+          "brief": "Build an offline product tour using the real interface.",
+          "details": [
+            "docs/showcase.html is a single offline-capable page that autoplays a scripted tour: the transfer register, adding a link, video analysis, a music playlist, the browser extension's in-page button, the timetable and the day/night themes.",
+            "It mounts the shipping React app unchanged on a mock engine, and runs the extension's real content script against a stubbed browser API, so every screen is the product rather than a redraw. Only the data is staged.",
+            "Rebuild it with npm run showcase:build from the app folder. The build uses a separate Vite config and never touches the normal app bundle.",
+            "Opening the page with ?record fits the stage to the window, hides the controls and stops after one pass, which is how docs/showcase.mp4 (1600x900, about 105 s) was captured."
+          ],
+          "files": [
+            "app/package.json",
+            "app/vite.showcase.config.ts",
+            "app/showcase/build.mjs",
+            "app/showcase/entry.tsx",
+            "app/showcase/index.html",
+            "app/showcase/mock.ts",
+            "app/showcase/serve.mjs",
+            "app/showcase/shell.html",
+            "app/showcase/web.template.html",
+            "docs/showcase.html",
+            ".claude/launch.json",
+            ".impeccable/config.json",
+            "docs/showcase.mp4"
+          ]
+        },
+        {
+          "id": "remove-webserver-heartbeat",
+          "category": "Changed",
+          "brief": "Stop sending background usage heartbeats to the retired Zoltraak webserver.",
+          "details": [
+            "Remove the running-instance ping and its startup task, so the desktop app no longer sends launch identifiers to the Zoltraak webserver.",
+            "Update the README, privacy notice and guide to describe the standalone behavior. Downloads, Discord delivery and signed update checks continue to use their own services."
+          ],
+          "files": [
+            "app/src-tauri/src/heartbeat.rs",
+            "app/src-tauri/src/lib.rs",
+            "README.md",
+            "scripts/templates/legal.html",
+            "scripts/templates/guide.html"
+          ]
+        },
+        {
+          "id": "developer-info",
+          "category": "Added",
+          "brief": "Find developer information and support in About.",
+          "details": [
+            "About identifies CafeTako Team and links to support-zoltraak@cafetako.com."
+          ],
+          "files": [
+            "app/src/components/AboutView.tsx"
+          ]
+        },
+        {
+          "id": "standalone-update-channel",
+          "category": "Tooling",
+          "brief": "Use the Zoltraak repository for signed desktop updates.",
+          "details": [
+            "The updater checks giran03/Zoltraak for latest.json and downloads signed installers from the same repository.",
+            "Manifest generation derives asset URLs from the configured endpoint and rejects missing or unsupported endpoints.",
+            "Source metadata and the update settings identify the standalone project."
+          ],
+          "files": [
+            "app/src-tauri/tauri.conf.json",
+            "app/src/components/SettingsView.tsx",
+            "scripts/generate_latest_json.ps1",
+            "scripts/tests/release_notes.test.ps1",
+            "engine/Cargo.toml",
+            "engine/core/src/music/lyrics.rs",
+            "docs/release-notes.md"
+          ]
+        },
+        {
+          "id": "standalone-source-cleanup",
+          "category": "Tooling",
+          "brief": "Keep optional workspace material out of the standalone source repository.",
+          "details": [
+            "Stop tracking docs, the retired server, the design workspace and optional root planning documents while preserving their local copies. Keep the project README and contributor instructions.",
+            "Retain the guide and legal pages as build templates so fresh checkouts can generate the bundled guides and compile the local API without the optional docs folder.",
+            "Treat ignored local copies as repository deletions in changelog fingerprints, keeping audits consistent across the working folder and fresh checkouts.",
+            "Create the optional showcase output directory on demand when rebuilding the product tour."
+          ],
+          "files": [
+            ".impeccable/config.json",
+            ".impeccable/design.json",
+            ".impeccable/surfaces/app-src-app-tsx.md",
+            ".impeccable/surfaces/extension-popup-html.md",
+            "CHROMEWEBSTORE.md",
+            "DESIGN.md",
+            "OPTIMIZATION_PLAN.md",
+            "PLAN.md",
+            "PRODUCT.md",
+            "docs/.gitkeep",
+            "docs/CONVERSION_PLAN.md",
+            "docs/DEVICE_ACCESS_RECOVERY.md",
+            "docs/EXTENSION_SIGNING.md",
+            "docs/GIF_OPTIMIZATION_AND_BG_REMOVAL_PLAN.md",
+            "docs/LICENSE_INVITATION_FLOW.md",
+            "docs/LICENSING_LIFECYCLE_REVIEW.md",
+            "docs/PERFORMANCE.md",
+            "docs/PERFORMANCE_PLAN.md",
+            "docs/PERFORMANCE_RESULTS.md",
+            "docs/USER_GUIDE.md",
+            "docs/WINDOW_DRAG_FOLLOWUP.md",
+            "docs/generic-media-detection.md",
+            "docs/guide.html",
+            "docs/interception-modal.md",
+            "docs/legal.html",
+            "docs/licensing.md",
+            "docs/release-notes.md",
+            "docs/showcase.html",
+            "docs/showcase.mp4",
+            "docs/ux-release1.md",
+            "docs/ux-release2.md",
+            "docs/video-extraction-release1.md",
+            "docs/video-extraction-release2.md",
+            "docs/video-extraction-release3.md",
+            "docs/video-extraction-release4.md",
+            "server/.dockerignore",
+            "server/.env.example",
+            "server/AVATAR_HOSTING.md",
+            "server/Dockerfile",
+            "server/LICENSING_SECURITY.md",
+            "server/README.md",
+            "server/SECURITY.md",
+            "server/docker-compose.yml",
+            "server/entrypoint.sh",
+            "server/package-lock.json",
+            "server/package.json",
+            "server/scripts/browser-check.mjs",
+            "server/scripts/browser-fixture.mjs",
+            "server/scripts/build-console.mjs",
+            "server/scripts/console-browser-smoke.mjs",
+            "server/scripts/email-browser-check.mjs",
+            "server/scripts/email-browser-fixture.mjs",
+            "server/scripts/license-invitation-browser-check.mjs",
+            "server/scripts/license-root.mjs",
+            "server/scripts/licensing-lifecycle-browser-check.mjs",
+            "server/src/access.js",
+            "server/src/auth-challenges.js",
+            "server/src/config.js",
+            "server/src/crypto.js",
+            "server/src/db.js",
+            "server/src/email-config.js",
+            "server/src/email-schema.js",
+            "server/src/email-service.js",
+            "server/src/email-templates.js",
+            "server/src/heartbeat.js",
+            "server/src/index.js",
+            "server/src/license-invitations.js",
+            "server/src/licensing.js",
+            "server/src/notification-delivery.js",
+            "server/src/notification-details.js",
+            "server/src/notification-settings.js",
+            "server/src/operations.js",
+            "server/src/replacements.js",
+            "server/src/request-security.js",
+            "server/src/routes/adminApi.js",
+            "server/src/routes/authApi.js",
+            "server/src/routes/avatarApi.js",
+            "server/src/routes/emailApi.js",
+            "server/src/routes/managementApi.js",
+            "server/src/routes/portalApi.js",
+            "server/src/routes/publicEmailApi.js",
+            "server/src/security-bans.js",
+            "server/src/security.js",
+            "server/src/signer-cert.js",
+            "server/src/unblock-ip.js",
+            "server/src/web/auth-utilities.css",
+            "server/src/web/auth.js",
+            "server/src/web/console.css",
+            "server/src/web/email.js",
+            "server/src/web/fonts/archivo-subset.woff2",
+            "server/src/web/fonts/martian-mono-subset.woff2",
+            "server/src/web/index.html",
+            "server/src/web/management.js",
+            "server/src/web/notifications.js",
+            "server/src/web/owner.html",
+            "server/src/web/owner.js",
+            "server/src/webhook-security.js",
+            "server/start.bat",
+            "server/start.sh",
+            "server/test/admin.test.js",
+            "server/test/api.test.js",
+            "server/test/attestation.test.js",
+            "server/test/auth.test.js",
+            "server/test/avatars.test.js",
+            "server/test/email.test.js",
+            "server/test/fixtures/revocation-v1.json",
+            "server/test/heartbeat.test.js",
+            "server/test/migration.test.js",
+            "server/test/notifications.test.js",
+            "server/test/recovery-ui.test.js",
+            "server/test/replacements.test.js",
+            "server/test/revocation-interop.test.js",
+            "server/test/security.test.js",
+            "server/update.bat",
+            "server/update.ps1",
+            "server/update.sh",
+            "server/zoltraak-auth.service",
+            ".gitignore",
+            "README.md",
+            "AGENTS.md",
+            "scripts/changelog.mjs",
+            "scripts/templates/guide.html",
+            "scripts/templates/legal.html",
+            "scripts/tests/changelog.test.mjs",
+            "app/tests/changelog-guide-browser-smoke.mjs",
+            "engine/api/src/lib.rs",
+            "app/showcase/build.mjs"
+          ]
+        },
+        {
+          "id": "ignore-root-batch-launchers",
+          "category": "Tooling",
+          "brief": "Keep root batch launchers as optional local files.",
+          "details": [
+            "Ignore and stop tracking the root build.bat, build_app.bat and update_version.bat wrappers while preserving local copies.",
+            "Use the maintained build and version commands under scripts/bat from repository checkouts."
+          ],
+          "files": [
+            ".gitignore",
+            "build.bat",
+            "build_app.bat",
+            "update_version.bat",
+            "README.md"
+          ]
+        },
+        {
+          "id": "showcase-github-pages",
+          "category": "Tooling",
+          "brief": "Publish the motion showcase as the repository GitHub Pages site.",
+          "details": [
+            "Build the showcase from tracked app and extension sources on pushes to main or a manual workflow run.",
+            "Publish the generated showcase as the site homepage without tracking the local docs folder or exposing other workspace files.",
+            "Provide a local Pages packaging command that produces the same standalone HTML site.",
+            "Skip deployment while the repository is private; enable GitHub Pages with GitHub Actions after the planned visibility change."
+          ],
+          "files": [
+            ".github/workflows/showcase-pages.yml",
+            "app/showcase/pages.mjs",
+            "app/package.json",
+            "README.md"
+          ]
+        },
+        {
+          "id": "settings-scroll-to-top",
+          "category": "Fixed",
+          "brief": "Scroll To Top in the Settings outline now returns to the very top of the page.",
+          "details": [
+            "The Settings outline Scroll To Top button scrolls the page to its top, showing the header, tabs and setting search, instead of stopping at the first section.",
+            "The first outline section stays highlighted while the scroll settles."
+          ],
+          "files": [
+            "app/src/components/SettingsShell.tsx"
+          ]
+        },
+        {
+          "id": "readme-showcase",
+          "category": "Changed",
+          "brief": "Refresh the project README with a showreel and a concise feature overview.",
+          "details": [
+            "The README opens with the Zoltraak emblem, project badges and an animated showreel linking to the motion showcase.",
+            "Feature cards, short Video, Music, Convert and Discord sections, and one Privacy & security section replace the long implementation write-ups.",
+            "Maintainer release and showcase deployment steps moved to RELEASING.md, and AGENTS.md points there.",
+            "The showreel is a compressed copy of the local docs GIF, tracked at .github/assets so GitHub can render it."
+          ],
+          "files": [
+            "README.md",
+            ".github/assets/zoltraak-showreel.gif",
+            "CHANGELOG.json",
+            "RELEASING.md",
+            "AGENTS.md",
+            ".gitignore"
+          ]
+        },
+        {
+          "id": "developer-support-and-posts-tab",
+          "category": "Changed",
+          "brief": "Support CafeTako from Settings and find post extraction under Posts.",
+          "details": [
+            "Add a theme-aware Buy Me a Coffee support button beside the developer contact details, opening the CafeTako support page in the default browser.",
+            "Rename Images to Posts in desktop and compact navigation, including accessible labels, and update the guide to match.",
+            "Find the developer support section by searching for coffee, donations or Buy Me a Coffee."
+          ],
+          "files": [
+            "app/src/components/AboutView.tsx",
+            "app/src/components/Icons.tsx",
+            "app/src/components/PanelHeader.tsx",
+            "app/src/lib/settingsSearch.ts",
+            "scripts/templates/guide.html"
+          ]
+        },
+        {
+          "id": "discord-upload-limit-compact-input",
+          "category": "Changed",
+          "brief": "Use a compact upload-limit field in Discord settings.",
+          "details": [
+            "The upload-limit number field now stays 96 pixels wide, keeping the MB label and Save limit button beside the value."
+          ],
+          "files": [
+            "app/src/components/DiscordSettings.tsx"
+          ]
+        },
+        {
+          "id": "webhook-avatar-modes-guide",
+          "category": "Added",
+          "brief": "Choose the webhook avatar source and open a compact image-link guide.",
+          "details": [
+            "Choose Use webhook default to remove the local avatar override, or Use public image URL to supply an image for messages sent by Zoltraak.",
+            "Open the info icon for instructions on uploading an image to Discord and copying its image link; the guide supports keyboard dismissal and restores focus.",
+            "Prepare Discord CDN attachment links for webhook sending without expiring signature parameters while preserving the original link for previews and other hosts’ query strings."
+          ],
+          "files": [
+            "app/src/components/DiscordSenderSettings.tsx",
+            "app/src/components/WebhookAvatarHelp.tsx",
+            "engine/core/src/discord/rest.rs",
+            "engine/core/src/discord/send_tests.rs",
+            "scripts/templates/guide.html",
+            "app/tests/discord-avatar-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "legal-readability-sender-alignment",
+          "category": "Fixed",
+          "brief": "Improve legal-page readability and align Discord sender fields.",
+          "details": [
+            "Increase small legal-page labels, badges, table headings and copy controls to at least 11 px, and give navigation, badges and controls more padding.",
+            "Let the legal-page header and footer wrap on narrow screens, and reserve space for the text copy button so it does not cover the text.",
+            "Align Discord sender labels and controls across each row, including the avatar field with its info button and optional image URL."
+          ],
+          "files": [
+            "scripts/templates/legal.html",
+            "app/src/components/DiscordSenderSettings.tsx",
+            "app/src/styles.css",
+            "app/tests/discord-avatar-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "themed-upload-limit-stepper",
+          "category": "Changed",
+          "brief": "Match upload-limit step buttons to the active app theme.",
+          "details": [
+            "Replace the native number-field arrows with themed chevrons, borders, hover feedback and keyboard focus styling.",
+            "Keep the compact upload-limit field, direct decimal entry, Arrow Up/Down stepping, minimum/maximum bounds and disabled states."
+          ],
+          "files": [
+            "app/src/components/Controls.tsx",
+            "app/src/components/DiscordSettings.tsx",
+            "app/src/styles.css"
+          ]
+        },
+        {
+          "id": "themed-number-inputs-appwide",
+          "category": "Changed",
+          "brief": "Use themed number arrows throughout the desktop app.",
+          "details": [
+            "Apply the shared themed number control to conversion settings, live recording duration and the notification history limit as well as Discord upload limits.",
+            "Preserve optional empty conversion values, decimal and negative entries, field-specific step sizes, bounds, compact layouts, disabled states and accessible descriptions."
+          ],
+          "files": [
+            "app/src/components/Controls.tsx",
+            "app/src/components/AppearanceView.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/src/components/VideoView.tsx",
+            "app/src/components/DiscordSettings.tsx"
+          ]
+        },
+        {
+          "id": "windows-only-public-documentation",
+          "category": "Changed",
+          "brief": "Present the standalone app as Windows-only across public documentation.",
+          "details": [
+            "Update the README badge, product description, build prerequisites, CLI examples and release documentation for Windows.",
+            "Remove other desktop platform paths from the legal notice, use a Windows example in the appearance preview, and remove redundant non-Windows shortcut overrides from the extension manifest.",
+            "Generate the bundled legal pages from the shared template so their platform guidance and privacy text remain consistent."
+          ],
+          "files": [
+            "README.md",
+            "RELEASING.md",
+            "scripts/templates/guide.html",
+            "scripts/templates/legal.html",
+            "app/public/legal.html",
+            "extension/legal.html",
+            "extension/legal.js",
+            "app/src/components/AppearanceView.tsx",
+            "extension/manifest.json",
+            "scripts/changelog.mjs",
+            "scripts/tests/changelog.test.mjs"
+          ]
+        },
+        {
+          "id": "guide-github-pages",
+          "category": "Added",
+          "brief": "Include the user guide and legal notice in the GitHub Pages site.",
+          "details": [
+            "Package guide.html and legal.html alongside the showcase homepage, and link the README User Guide entries to the published guide URL.",
+            "Use the existing Pages workflow for all three pages; publishing remains gated on the repository becoming public and enabling GitHub Pages."
+          ],
+          "files": [
+            "app/showcase/pages.mjs",
+            ".github/workflows/showcase-pages.yml",
+            "README.md",
+            "RELEASING.md"
+          ]
+        },
+        {
+          "id": "drop-links-auto-download",
+          "category": "Changed",
+          "brief": "Dropped links now start downloading right away, with a confirmation for links that would save an HTML page.",
+          "details": [
+            "Dropping a link, web image, or text file of links onto Downloads queues the downloads directly instead of only filling the entry.",
+            "Each dropped link is checked first; if the server answers with a web page (or the saved name would be .html/.htm), the app asks before downloading it. Declined pages are skipped while the other links still download.",
+            "Links that the engine rejects stay in the entry for correction, and links that cannot be checked are queued normally.",
+            "The downloader and the new link check share one filename resolver, so the confirmation names the same file the download would save."
+          ],
+          "files": [
+            "app/src/components/DownloadsView.tsx",
+            "app/src/lib/dropIntake.ts",
+            "app/src/lib/engine.ts",
+            "app/src-tauri/src/lib.rs",
+            "app/tests/dropIntake.test.ts",
+            "engine/core/src/probe.rs",
+            "engine/core/src/downloader.rs",
+            "scripts/templates/guide.html"
+          ]
+        },
+        {
+          "id": "route-pasted-links-to-tabs",
+          "category": "Added",
+          "brief": "A single link pasted or dropped on Downloads that is a video, post or music link now offers to open in the matching tab.",
+          "details": [
+            "Music-service links (Spotify, Apple Music, Deezer, YouTube Music, SoundCloud, Bandcamp) offer the Music tab, social post permalinks (X, Instagram, Facebook, Reddit, TikTok) offer the Posts tab, and single YouTube or Vimeo video pages offer the Video tab.",
+            "Confirming opens the link in that tab ready to analyze; declining downloads it as a regular file as before.",
+            "Only a single link is offered this way; batches of several links, direct files and unknown sites download as usual. The route table mirrors the extension and engine link recognition."
+          ],
+          "files": [
+            "app/src/lib/linkKind.ts",
+            "app/tests/linkKind.test.ts",
+            "app/src/App.tsx",
+            "app/src/components/DownloadsView.tsx",
+            "scripts/templates/guide.html"
+          ]
+        },
+        {
+          "id": "readme-linux-compatibility-note",
+          "category": "Changed",
+          "brief": "Clarify Linux compatibility and its testing status in the README.",
+          "details": [
+            "Note that Zoltraak can run on Linux but has not yet been fully tested there; Windows remains the primary supported platform.",
+            "Update the platform badge to Windows so it does not contradict the Linux compatibility note."
+          ],
+          "files": [
+            "README.md"
+          ]
+        },
+        {
+          "id": "readme-product-overview-cleanup",
+          "category": "Changed",
+          "brief": "Focus the README on the app overview and remove setup and publishing instructions.",
+          "details": [
+            "Remove development commands, repository layout, extension setup, API request examples and internal Pages deployment information from the README.",
+            "Keep feature descriptions, privacy information, Linux testing status and links to the user guide and showcase."
+          ],
+          "files": [
+            "README.md"
+          ]
+        },
+        {
+          "id": "guide-current-standalone-alignment",
+          "category": "Fixed",
+          "brief": "Align the user guide with the current standalone app and Linux testing status.",
+          "details": [
+            "Correct remaining Images labels to Posts, distinguish installed-app launch from source commands, and remove an inaccurate application-data path.",
+            "Document optional developer support, theme-matched number controls, public avatar URL behavior, the 20 MB upload preparation budget and the engine’s current tier ceilings.",
+            "Clarify Linux testing status, signed updates from the Zoltraak repository and which features still need an internet connection.",
+            "Replace obsolete unsigned Firefox/Zen setup with the current signed XPI import, browser approval and connected-version checks.",
+            "Remove a leftover access-system keyword from the current development notes while retaining the explanation of the legal-page layout fix."
+          ],
+          "files": [
+            "scripts/templates/guide.html",
+            "app/public/guide.html",
+            "extension/guide.html"
+          ]
+        },
+        {
+          "id": "integrated-window-titlebar",
+          "category": "Changed",
+          "brief": "Integrate desktop window controls into the themed navigation bar.",
+          "details": [
+            "Replace the separate system title bar with a single app-themed row containing navigation and minimize, maximize/restore, and close controls.",
+            "Drag the brand or unused header space to move the window; double-click these areas to maximize or restore.",
+            "Window controls preserve close-to-tray and minimize-to-tray preferences. Browser previews hide desktop-only controls.",
+            "Navigation labels collapse to icons below 1536 pixels to leave room for the window controls; glass navigation styling remains available."
+          ],
+          "files": [
+            "app/src/components/PanelHeader.tsx",
+            "app/src/components/WindowControls.tsx",
+            "app/src/styles.css",
+            "app/src-tauri/tauri.conf.json",
+            "app/src-tauri/capabilities/default.json",
+            "app/tests/titlebar-browser-smoke.mjs"
+          ]
+        },
+        {
+          "id": "extension-default-icon",
+          "category": "Changed",
+          "brief": "The browser extension now uses the Zoltraak default icon in Firefox and Chromium browsers.",
+          "details": [
+            "The toolbar button, extension manager and store listing show the default Zoltraak emblem at 16, 32, 48 and 128 px, replacing the old green glyph.",
+            "The manifest now declares the icons itself, so Firefox shows them too; the Chromium packaging script ships the same files instead of re-deriving them from the app icons.",
+            "Browser notifications from the extension use the same icon."
+          ],
+          "files": [
+            "extension/icons/16.png",
+            "extension/icons/32.png",
+            "extension/icons/48.png",
+            "extension/icons/128.png",
+            "extension/manifest.json",
+            "extension/background.js",
+            "scripts/package_chrome_extension.ps1"
+          ]
+        },
+        {
+          "id": "music-stream-rendition-fallback",
+          "category": "Fixed",
+          "brief": "Recover music downloads when a preferred stream endpoint is unavailable or its link expires.",
+          "details": [
+            "Try alternate full-length SoundCloud renditions after failed endpoints, prefer explicit audio formats over ambiguous playlist MIME types, preserve query parameters and safely encode stream authorization. Refresh failed stream metadata once and stop on rate limiting.",
+            "Refresh queued generic music pages and renew SoundCloud, Bandcamp and generic-page links after stale-link responses, with at most two further fetch attempts. Restart temporary data when switching renditions and retain the new container for conversion.",
+            "Parse music hosts reliably, reject failed share-link redirects, preserve existing YouTube session-aware renewal and allow cancellation during source resolution. Raw audio links are not retried without a renewable source page.",
+            "Cover withdrawn endpoints, malformed resolver responses, authorization queries, alternate containers, bounded retries, cancellation and short links with local HTTP tests; provide an optional live SoundCloud regression check."
+          ],
+          "files": [
+            "engine/core/src/music/soundcloud.rs",
+            "engine/core/src/music/direct.rs",
+            "engine/core/src/music/manager.rs",
+            "engine/core/src/music/mod.rs",
+            "scripts/templates/guide.html",
+            "app/public/guide.html",
+            "extension/guide.html"
+          ]
+        },
+        {
+          "id": "dispatch-pill-anchors-customization",
+          "category": "Added",
+          "brief": "The browser extension's downloads pill now has eight anchors and a full set of placement and behaviour options (extension 0.2.8).",
+          "details": [
+            "Anchors: all four corners plus top centre, bottom centre, middle left and middle right. Dragging snaps to the nearest anchor or keeps the distance along the edge; existing corner positions carry over automatically.",
+            "Settings: edge margin, pill scale (75-150%), idle opacity, Compact/Standard/Detailed size, frosted background, hide when idle (edge tab), stay off player controls, and an optional separate spot per site.",
+            "Where to set them: a Dispatch pill tab on the Overlay Placement page with a live draggable preview, plus a one-click anchor picker and an off-state hint in the popup, which now labels the switch Downloads pill on pages.",
+            "Handling: Alt+Shift+P opens or folds the pill, rows are keyboard-navigable (arrows, Enter, Delete) and keep focus across updates, with Pause all, Resume all, Copy link, and a Retry action when the app is not running.",
+            "Efficiency and accessibility: no polling while a tab is hidden or the pill is off, slower checks while the app is down, reduced-motion support, and toasts no longer vanish when the list redraws.",
+            "Backup: export, import and reset extension settings from the placement page; the pairing token is never exported or reset.",
+            "The extension version is now 0.2.8; nothing was signed or published."
+          ],
+          "files": [
+            "extension/pill-placement.js",
+            "extension/pill-controller.js",
+            "extension/tests/pill-placement.test.mjs",
+            "extension/content.js",
+            "extension/background.js",
+            "extension/manifest.json",
+            "extension/placement.html",
+            "extension/placement.js",
+            "extension/placement.css",
+            "extension/popup.html",
+            "extension/popup.js",
+            "extension/popup.css",
+            "extension/tests/facebook-post-browser-smoke.mjs",
+            "extension/tests/post-fallback-browser-smoke.mjs",
+            "extension/tests/release1-browser-smoke.mjs",
+            "extension/tests/tiktok-browser-smoke.mjs",
+            "scripts/package_chrome_extension.ps1",
+            "scripts/templates/guide.html"
+          ]
+        },
+        {
+          "id": "chromium-install-writes-icons-and-scripts",
+          "category": "Fixed",
+          "brief": "The app's Chromium extension install now writes every file the manifest declares.",
+          "details": [
+            "The install and repair paths now write the toolbar icons and facebook-post.js, which the manifest references but were not being copied, along with the new pill scripts.",
+            "Without these, Chromium could refuse to load the extension because a declared icon or content script was missing."
+          ],
+          "files": [
+            "app/src-tauri/src/browser.rs"
+          ]
+        },
+        {
+          "id": "corner-bevel-and-density-everywhere",
+          "category": "Changed",
+          "brief": "Hardware Corner Bevel and Row & Table Density now apply across the whole app, the guide, the browser extension and the window.",
+          "details": [
+            "Corner Radius now drives every container and control through shared corner tokens instead of a short list of selectors, so Sharp, Bevel, Soft and Round reach panels, dialogs, menus, inputs, chips, tooltips and scrollbars. The default Bevel look is unchanged.",
+            "Row & Table Density now scales spacing app-wide (Compact 0.8x, Comfortable 1.2x) on every screen, including settings and dialogs, rather than only the download rows. The title bar and window controls keep their size.",
+            "The frameless window's own corners follow the setting on Windows 11 (square for Sharp, small for Bevel, standard otherwise); other systems keep theirs.",
+            "The in-app guide and the browser extension (popup, placement page, video button and downloads pill) receive both settings through the existing theme sync and follow the same switch, applying live.",
+            "The File-open feedback duration now defaults to 500 ms; saved values are kept.",
+            "With Soft or Round corners, the thin divider lines between the options of every segmented control are removed; the selected fill separates the choices. Sharp and Bevel keep them."
+          ],
+          "files": [
+            "app/src/styles.css",
+            "app/src/lib/useAppearance.ts",
+            "app/src/lib/ExtensionThemeSync.tsx",
+            "app/src/components/AppearanceView.tsx",
+            "app/tests/appearance.test.ts",
+            "app/src-tauri/src/window_corners.rs",
+            "app/src-tauri/src/lib.rs",
+            "app/src-tauri/Cargo.toml",
+            "engine/api/src/lib.rs",
+            "engine/api/tests/api.rs",
+            "scripts/templates/guide.html",
+            "scripts/changelog-view.js",
+            "extension/theme.js",
+            "extension/popup.css",
+            "extension/placement.css",
+            "extension/content.js",
+            "app/src/components/AppIconSettings.tsx",
+            "app/src/components/FailureActions.tsx",
+            "app/src/components/Panel.tsx",
+            "app/src/components/SessionsSettings.tsx",
+            "app/src/components/TheLine.tsx",
+            "app/src/components/Toast.tsx",
+            "app/src/components/DownloadsView.tsx",
+            "app/src/components/Controls.tsx",
+            "app/src/components/PanelHeader.tsx",
+            "app/src/App.tsx"
+          ]
+        },
+        {
+          "id": "typeface-character-presets-and-upload",
+          "category": "Changed",
+          "brief": "Typeface Character now really changes the typeface, previews each option, and accepts your own font.",
+          "details": [
+            "Fixed: the four options did nothing because the text font was baked into the styles; Full Mono, System UI and Modern Sans now apply. Modern Sans is now the bundled Inter instead of an uninstalled font name.",
+            "The picker shows each option as a card with a line of text and a line of figures in the faces it uses, and a test keeps those previews identical to what the stylesheet applies.",
+            "Upload your own .woff2, .woff, .ttf or .otf font (up to 8 MB). It is checked and parsed before it is kept, stored on this computer only, can also be used for figures and code, and can be replaced or removed. Theme exports never include it.",
+            "With Soft or Round corners, the main tab buttons also lose their divider lines; the line after the app title stays."
+          ],
+          "files": [
+            "app/src/styles.css",
+            "app/src/lib/useAppearance.ts",
+            "app/src/lib/customFont.ts",
+            "app/src/lib/typefaces.ts",
+            "app/src/components/TypefacePicker.tsx",
+            "app/src/components/AppearanceView.tsx",
+            "app/src/components/PanelHeader.tsx",
+            "app/tests/typefaces.test.ts",
+            "app/package.json",
+            "app/package-lock.json",
+            "scripts/templates/guide.html"
+          ]
+        },
+        {
+          "id": "convert-file-drop-and-unsupported-modal",
+          "category": "Fixed",
+          "brief": "Dropping files onto the Convert tab works again, and unsupported files now get a clear pop-up.",
+          "details": [
+            "The Files area (and the manage-files view) accepts dropped files and folders, with a Drop to add highlight while dragging. Non-file drags such as links are ignored.",
+            "Files that cannot be converted open a pop-up listing their names and the supported video, audio and image formats; supported files dropped with them are still added, and a drop of only unsupported files adds nothing.",
+            "Why it had stopped: the window leaves native drag and drop off so browser links and pictures can be dropped on Downloads, which also silenced the old file-drop listener. The window now asks WebView2 for the real paths of dropped files through a small bridge, so conversions still work on the originals in place.",
+            "Where the paths cannot be read, a notice points to Choose files or pasting paths instead of failing silently."
+          ],
+          "files": [
+            "app/src/lib/fileDrop.ts",
+            "app/src/components/UnsupportedFilesModal.tsx",
+            "app/src/components/ConvertView.tsx",
+            "app/tests/fileDrop.test.ts",
+            "app/src-tauri/src/file_drop.rs",
+            "app/src-tauri/src/lib.rs",
+            "app/src-tauri/Cargo.toml"
+          ]
+        },
+        {
+          "id": "sliding-tab-selection",
+          "category": "Changed",
+          "brief": "Selected tabs now slide smoothly to the new choice, controlled by Interface Motion.",
+          "details": [
+            "The highlight in the download state filter, the Settings tabs and section outline, the main tabs, the Music and Video job-state tabs, and the segmented option rows in Appearance now moves to the chosen item instead of switching on in place. It follows wrapping rows, scrolling tab strips and items of different widths.",
+            "It uses the same animation timing as the rest of the app: Full slides in 250 ms, Subtle in 140 ms, and Reduced Motion (or the system preference) makes it an instant cut. The first highlight on screen simply appears.",
+            "Chosen items now also expose their state to assistive technology where they did not before (for example the Settings outline marks the current section)."
+          ],
+          "files": [
+            "app/src/components/SlideGroup.tsx",
+            "app/src/styles.css",
+            "app/src/components/DownloadsView.tsx",
+            "app/src/components/SettingsShell.tsx",
+            "app/src/components/PanelHeader.tsx",
+            "app/src/components/MusicView.tsx",
+            "app/src/components/VideoView.tsx",
+            "app/src/components/AppearanceView.tsx",
+            "app/tests/slideGroup.test.ts"
+          ]
+        },
+        {
+          "id": "idle-engine-wakeups",
+          "category": "Changed",
+          "brief": "An idle Zoltraak no longer wakes up several times a second.",
+          "details": [
+            "The download scheduler used to re-check the queue every 250 ms even with nothing to do, which meant a small database write four times a second for as long as the app ran. It now sleeps until something is added, resumed, reordered or removed, until the next minute boundary when a download schedule is set, or at most 10 seconds.",
+            "Changing settings now always wakes the scheduler, so a schedule change applies at once.",
+            "Detecting which browser started the native messaging host now reads only process names instead of sampling CPU, memory, disks and networks for every process."
+          ],
+          "files": [
+            "engine/core/src/supervisor.rs",
+            "engine/core/src/runner.rs",
+            "app/src-tauri/src/browser.rs"
+          ]
+        },
+        {
+          "id": "queue-delta-push",
+          "category": "Changed",
+          "brief": "The downloads list updates by sending only the rows that changed, and stops entirely while the window is hidden.",
+          "details": [
+            "Previously the whole download history was re-read and sent to the window every 400 ms during downloads and every 2 seconds otherwise, even when hidden in the tray. Now progress ticks read only the downloads in flight, the full list is re-read only after a change or every 10 seconds, and only added, changed, removed or reordered rows are sent.",
+            "While the window is hidden or minimized nothing is read or sent; showing it again catches up with one full read. If the window's copy ever disagrees with the engine's row count it fetches a full snapshot automatically."
+          ],
+          "files": [
+            "app/src-tauri/src/queue_push.rs",
+            "app/src-tauri/src/lib.rs",
+            "app/src/lib/polling.ts",
+            "app/src/lib/engine.ts",
+            "app/src/lib/useQueue.ts",
+            "app/tests/polling.test.ts"
+          ]
+        },
+        {
+          "id": "tray-webview-suspend",
+          "category": "Changed",
+          "brief": "Hiding Zoltraak to the tray now releases memory and pauses the interface.",
+          "details": [
+            "When the window closes or minimizes to the tray, the embedded browser is asked to lower its memory use and suspend the page. Downloads, conversions, notifications and the tray keep running. The interface resumes the moment the window is shown and focused."
+          ],
+          "files": [
+            "app/src-tauri/src/webview_power.rs",
+            "app/src-tauri/src/lib.rs"
+          ]
+        },
+        {
+          "id": "media-tools-priority-and-local-inputs",
+          "category": "Security",
+          "brief": "Conversions no longer make the window stutter, and media tools can only read local files.",
+          "details": [
+            "FFmpeg and FFprobe now run at below-normal priority: a conversion still uses every idle core, but the window and downloads always get the CPU first.",
+            "Conversion, remux, music and Discord-fit jobs restrict FFmpeg inputs to local files and pipes, so a crafted playlist or list file inside a converted file cannot make FFmpeg open network addresses."
+          ],
+          "files": [
+            "engine/core/src/media_tools.rs",
+            "engine/core/src/conversion.rs",
+            "engine/core/src/discord/fit.rs",
+            "engine/core/src/music/convert.rs",
+            "engine/core/src/remux/mod.rs"
+          ]
+        },
+        {
+          "id": "media-capability-manifest",
+          "category": "Tooling",
+          "brief": "One list now defines every FFmpeg component Zoltraak needs, checked both by tests and when bundling.",
+          "details": [
+            "engine/core/media_capabilities.json lists the encoders, filters, muxers and demuxers the engine uses. Engine tests fail if code starts using one that is not listed, and stage_media_tools.ps1 now checks the bundled build for the whole list instead of a sample.",
+            "The version check follows the lock file, so a smaller FFmpeg build can replace the current one by changing only media_tools.lock.json; any missing component fails the build."
+          ],
+          "files": [
+            "engine/core/media_capabilities.json",
+            "scripts/stage_media_tools.ps1",
+            "engine/core/src/media_tools.rs",
+            "engine/core/src/conversion.rs",
+            "engine/core/src/remux/mod.rs"
+          ]
+        },
+        {
+          "id": "sqlite-per-connection-pragmas",
+          "category": "Fixed",
+          "brief": "Database tuning now applies to every connection, with a smaller memory footprint.",
+          "details": [
+            "The write-ahead-log companion settings (synchronous mode, in-memory temp storage, page cache, memory map) were applied once against the connection pool and so reached only one of its connections. They are now part of the connection options.",
+            "The page cache is 8 MB per connection instead of 32 MB, and the memory map 32 MB instead of 256 MB; the queue database is far smaller than either."
+          ],
+          "files": [
+            "engine/core/src/queue.rs"
+          ]
+        },
+        {
+          "id": "lighter-startup-and-timers",
+          "category": "Changed",
+          "brief": "Faster startup and fewer background timers in the window.",
+          "details": [
+            "The extension guide, keyboard shortcuts and Discord send dialogs and the completion confetti now load when first used, which trims the startup bundle by about 28 KB.",
+            "The extension update check polls every 30 seconds at rest (5 seconds while an update is waiting for its browser) instead of every 5 seconds; focusing the window still checks at once. The extension theme sync stops retrying after its first successful delivery.",
+            "The GPU visualizer in Appearance pauses while it is scrolled out of view.",
+            "The app-icon emblem mask is stored at 256 px as alpha only (167 KB to 36 KB) with no visible change."
+          ],
+          "files": [
+            "app/src/App.tsx",
+            "app/src/lib/ExtensionThemeSync.tsx",
+            "app/src/lib/useExtensionUpdates.ts",
+            "app/src/components/GpuVisualizer.tsx",
+            "app/src/lib/useQueue.ts",
+            "app/src/assets/zoltraak-emblem.png"
+          ]
+        },
+        {
+          "id": "app-csp-and-supply-chain",
+          "category": "Security",
+          "brief": "Tighter content security policy and automated dependency checks.",
+          "details": [
+            "The window's content security policy now forbids plugins, base-URL changes, form submissions to any address and being framed.",
+            "deny.toml, a Security workflow and Dependabot configuration check Rust advisories, crate sources and duplicates, npm production advisories, and keep Cargo, npm and GitHub Actions dependencies current."
+          ],
+          "files": [
+            "app/src-tauri/tauri.conf.json",
+            "deny.toml",
+            ".github/dependabot.yml",
+            ".github/workflows/security.yml"
+          ]
+        },
+        {
+          "id": "extension-facebook-scope",
+          "category": "Changed",
+          "brief": "The extension's Facebook helper now loads only on Facebook.",
+          "details": [
+            "facebook-post.js was injected into every frame of every website, twice. It now loads only in facebook.com frames (including embedded Facebook posts), so other sites parse less extension code. Requests for Facebook attachments from other frames get an empty answer instead of waiting."
+          ],
+          "files": [
+            "extension/manifest.json",
+            "extension/content.js"
+          ]
+        },
+        {
+          "id": "optimization-plan-v2",
+          "category": "Tooling",
+          "brief": "Rewrote the optimization plan from a fresh audit and recorded what this pass did and deferred.",
+          "details": [
+            "OPTIMIZATION_PLAN.md now covers install size, idle cost, responsiveness, memory, the extension and security from the current code, with the implementation status, corrections and the reasons for each deferred item.",
+            "SQLite write-ahead-log and shared-memory side files (*.db-wal, *.db-shm) are now ignored by Git, like the databases they belong to."
+          ],
+          "files": [
+            "OPTIMIZATION_PLAN.md",
+            ".gitignore"
+          ]
+        },
+        {
+          "id": "release-firefox-signing-credential-input",
+          "category": "Security",
+          "brief": "Read Firefox signing credentials from the environment instead of embedded script defaults.",
+          "details": [
+            "Use WEB_EXT_API_KEY and WEB_EXT_API_SECRET for Mozilla signing without placing credentials in source defaults or command-line arguments.",
+            "Prepare Firefox extension 0.2.8 and its signed resource for the standalone 1.0.0 installer."
+          ],
+          "files": [
+            "scripts/sign_extension.ps1",
+            "app/src-tauri/resources/zoltraak-signed.xpi"
+          ]
+        }
+      ],
+      "updatedAt": "2026-11-03",
+      "releasedAt": "2026-11-03T15:12:24Z",
+      "sourceCommit": "29bec5249581a53a34928ed84e36bddad2f0441c"
+    },
+    "1.0.1": {
+      "status": "development",
+      "previousVersion": "1.0.0",
+      "summary": "Development updates for Zoltraak 1.0.1.",
+      "changes": [
+        {
+          "id": "version-1.0.1",
+          "category": "Tooling",
+          "brief": "Update the application version to 1.0.1.",
+          "details": [
+            "App and engine version metadata now target 1.0.1.",
+            "Previous notes stay on 1.0.0; this version starts with its own metadata change."
+          ],
+          "files": [
+            "app/package.json",
+            "app/package-lock.json",
+            "app/src-tauri/tauri.conf.json",
+            "app/src-tauri/Cargo.toml",
+            "app/src-tauri/Cargo.lock",
+            "engine/Cargo.toml",
+            "engine/Cargo.lock"
+          ]
+        },
+        {
+          "id": "untrack-local-tooling-and-graph",
+          "category": "Tooling",
+          "brief": "Keep build scripts and the generated code graph out of the repository.",
+          "details": [
+            "The root scripts folder (build, release, version and changelog tooling) is ignored and no longer tracked; it stays available locally.",
+            "The generated graphify-out knowledge graph and its cache are ignored and no longer tracked, since they can be regenerated from source."
+          ],
+          "files": [
+            ".gitignore"
+          ]
+        }
+      ],
+      "updatedAt": "2026-11-03"
+    }
+  },
+  "development": {
+    "version": "1.0.1",
+    "previousVersion": "1.0.0",
+    "baselineCommit": "311b83a64bea5e87c78cd2d2b599a621b469ee5c",
+    "baselineFileHashes": {},
+    "fileHashes": {
+      "app/package-lock.json": "468f25a7df3cb48c9378dade7707f77d3b627ff7094873f5c2ebce22aa494446",
+      "app/package.json": "5d7b15a340c966e78f5b5d4ff4d65f138989065bf3b80732c180d2fa582e02a9",
+      "app/src-tauri/Cargo.lock": "a2df4a99d6bb330db714c65168cf5ce7924e43b15575671c16fab8d5f1db0525",
+      "app/src-tauri/Cargo.toml": "0454665bc98432a42b69e6391f6c8f7549c24ab55ab91e021dfecdb9cb773007",
+      "app/src-tauri/tauri.conf.json": "3ad0b25890d2f65b9d7f9beb434a88be47cec9616aacb90617d0e01253ded5de",
+      "engine/Cargo.lock": "68e22fba15903f0bcd078dcd0f15086bcd10287c1d20e05bf06c4a9357e6c279",
+      "engine/Cargo.toml": "72e14c42a0f1fbd86daa6d3bece648125a53ec71b2a21b2fa2a058e77dcfc76f"
+    }
+  },
+  "historyStartVersion": "1.0.0"
+}

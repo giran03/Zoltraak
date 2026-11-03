@@ -1,0 +1,68 @@
+[package]
+name = "zoltraak-app"
+description = "Zoltraak desktop shell"
+version = "1.0.1"
+edition = "2024"
+license = "MIT"
+rust-version = "1.88"
+
+# Standalone crate on purpose: it is NOT a member of the engine workspace, so
+# `cargo build` in engine/ never pulls in Tauri and its system dependencies.
+[lib]
+name = "zoltraak_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+zoltraak-core = { path = "../../engine/core" }
+zoltraak-api = { path = "../../engine/api" }
+tauri = { version = "2", features = ["tray-icon"] }
+# Only ever driven from Rust (see `choose_directory`), so the window needs no
+# dialog ACL permission and the frontend needs no matching npm package.
+tauri-plugin-dialog = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", default-features = false, features = [
+    "rustls-tls",
+    "stream",
+    "http2",
+    "gzip",
+    "brotli",
+    # Discord delivery: a JSON payload part plus a streamed file part.
+    "json",
+    "multipart",
+] }
+sysinfo = "0.33"
+zip = { version = "2.2", default-features = false, features = ["deflate"] }
+tracing = "0.1"
+uuid = { version = "1", features = ["v4"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+base64 = "0.22"
+minisign-verify = "0.2"
+semver = "1"
+image = { version = "=0.25.6", default-features = false, features = ["png", "ico"] }
+tauri-plugin-drag = "2.1.1"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = [
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Shell",
+    "Win32_Foundation",
+    "Win32_Graphics_Dwm",
+] }
+# The same WebView2 bindings Tauri itself uses, to read dropped file paths.
+webview2-com = "0.38"
+windows = "0.61"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+panic = "abort"

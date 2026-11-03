@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zoltraak</title>
+    <link rel="stylesheet" href="popup.css" />
+    <script src="theme.js"></script>
+    <script src="pill-placement.js"></script>
+  </head>
+  <body>
+    <!--
+      The orders a dispatcher can issue from the lineside, ranked by how often
+      they are actually issued.
+
+      The previous popup was inverted: the token field and Save owned the top
+      of the window and are a once-ever task, while the only recurring reason
+      to open this thing sat last, under two toggles.
+    -->
+
+    <header class="status">
+      <span class="name">Zoltraak</span>
+      <span class="popup-caption">Browser extension</span>
+      <span class="spacer"></span>
+      <button id="openGuide" class="icon-btn" title="Open Zoltraak User Guide" aria-label="Open Zoltraak User Guide">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+      </button>
+      <button id="reloadExt" class="icon-btn" title="Reload extension" aria-label="Reload extension">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+          <path d="M21 3v5h-5" />
+        </svg>
+      </button>
+    </header>
+
+    <main class="popup-columns">
+    <section class="actions-column" aria-label="Page actions">
+    <section class="detected-media" aria-labelledby="mediaHeading">
+      <div class="media-heading">
+        <h2 id="mediaHeading" class="legend">Media on this page</h2>
+        <button id="refreshMedia" type="button" class="media-action">Refresh</button>
+      </div>
+      <p id="mediaStatus" class="order-note" role="status" aria-live="polite">Looking for media…</p>
+      <div id="mediaList" class="media-list"></div>
+    </section>
+    <div class="orders">
+      <button id="orderBest" class="order primary" type="button">
+        <span class="order-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="1.5" />
+            <path d="M8 5v14M16 5v14M3 12h18M3 8.5h5M3 15.5h5M16 8.5h5M16 15.5h5" />
+          </svg>
+          <span class="order-label">Download video on this page</span>
+        </span>
+        <p class="order-note">Best quality with audio, straight to the queue.</p>
+        <p id="bestResult" class="order-result describer"></p>
+      </button>
+
+      <button id="orderPick" class="order" type="button">
+        <span class="order-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 3 9 5-9 5-9-5 9-5ZM3 13l9 5 9-5M3 17l9 5 9-5" />
+          </svg>
+          <span class="order-label">Pick a quality in the app</span>
+        </span>
+        <p class="order-note">Opens the Video view with this page loaded.</p>
+        <p id="pickResult" class="order-result describer"></p>
+      </button>
+
+      <button id="orderSession" class="order" type="button">
+        <span class="order-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="10" width="16" height="10" rx="1.5" />
+            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span class="order-label">Share this site's sign-in with the app</span>
+        </span>
+        <p class="order-note">Only the cookies the login needs, kept encrypted on this machine. Happens automatically as you browse; use this after signing in.</p>
+        <p id="sessionResult" class="order-result describer"></p>
+      </button>
+
+      <button id="orderRefresh" class="order" type="button">
+        <span class="order-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 11a8 8 0 0 0-13.7-5.4L3 9" />
+            <path d="M3 4v5h5" />
+            <path d="M4 13a8 8 0 0 0 13.7 5.4L21 15" />
+            <path d="M21 20v-5h-5" />
+          </svg>
+          <span class="order-label">Refresh every shared sign-in</span>
+        </span>
+        <p class="order-note">Re-reads this browser's cookies for every supported site and replaces what the app holds. Use it when a download says the sign-in expired.</p>
+        <p id="refreshResult" class="order-result describer"></p>
+      </button>
+
+      <button id="orderSend" class="order" type="button">
+        <span class="order-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 19h16" />
+          </svg>
+          <span class="order-label">Send this page as a download</span>
+        </span>
+        <p class="order-note">Fills the app's entry with this URL.</p>
+        <p id="sendResult" class="order-result describer"></p>
+      </button>
+
+      <button id="orderGuide" class="order" type="button">
+        <span class="order-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </svg>
+          <span class="order-label">Zoltraak User Guide</span>
+        </span>
+        <p class="order-note">Comprehensive handbook, shortcuts, and operation manual.</p>
+      </button>
+    </div>
+
+    <p id="interceptionResult" class="order-result describer" role="status"></p>
+    <button id="pendingDownloads" class="order" type="button" hidden>Open pending downloads</button>
+    </section>
+
+    <section class="settings-column" aria-label="Extension settings">
+    <div class="region">
+      <span class="legend">standing orders</span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="lever">
+      <span class="lever-text">Capture all browser downloads</span>
+      <button id="captureAll" class="switch" type="button" role="switch" aria-label="Capture all browser downloads" aria-checked="false">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="switch-word">off</span>
+      </button>
+    </div>
+
+    <div class="lever">
+      <span class="lever-text">Sound notifications</span>
+      <button id="enableSfx" class="switch" type="button" role="switch" aria-label="Sound notifications" aria-checked="false">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="switch-word">off</span>
+      </button>
+    </div>
+
+    <div class="region">
+      <span class="legend">on-page overlays</span>
+      <span class="rule"></span>
+    </div>
+
+    <!--
+      Two switches, not one. They sit on top of somebody else's page and each
+      gets in the way differently: the button covers a player's own controls,
+      the board holds a corner permanently. Turning one off is not a wish to
+      lose the other.
+    -->
+    <div class="lever">
+      <span class="lever-text">Download button on videos</span>
+      <button id="showMediaButton" class="switch" type="button" role="switch" aria-label="Download button on videos" aria-checked="false">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="switch-word">off</span>
+      </button>
+    </div>
+
+    <div class="lever">
+      <span class="lever-text">Downloads pill on pages</span>
+      <button id="showSessionPill" class="switch" type="button" role="switch" aria-label="Downloads pill on pages" aria-checked="false">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="switch-word">off</span>
+      </button>
+    </div>
+
+    <p id="pillOffHint" class="lever-hint describer" hidden>The pill is hidden. Turn it on to see your downloads on any page.</p>
+    <div id="pillQuick" class="pill-quick" hidden>
+      <span class="lever-text">Pill position</span>
+      <div id="pillQuickGrid" class="pill-quick-grid" role="radiogroup" aria-label="Pill position"></div>
+      <button id="openPillPlacement" class="pill-quick-link describer" type="button">More options</button>
+    </div>
+
+    <button id="openPlacementModal" class="order placement-order" type="button">
+      <span class="order-head">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 2v4m0 12v4M2 12h4m12 0h4" />
+        </svg>
+        <span class="order-label">Overlay Placement & Scale</span>
+      </span>
+      <p class="order-note">Preset anchors, manual nudging & live playback preview</p>
+    </button>
+
+    <div class="region">
+      <span class="legend">pairing</span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="pairing">
+      <p class="order-note pairing-note">
+        Pairs automatically. If it stays unpaired, copy the token from the app's
+        Extension card.
+      </p>
+      <div class="field">
+        <input
+          id="token"
+          type="text"
+          placeholder="paste token"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="API token"
+        />
+        <button id="save" class="btn" type="button">Save</button>
+      </div>
+      <p id="pairStatus" class="pair-status legend"></p>
+    </div>
+    </section>
+    </main>
+
+    <footer class="popup-footer">
+      <div class="footer-meta">
+        <span class="legend">Zoltraak</span>
+        <span id="extVersion" class="describer">—</span>
+      </div>
+      <button id="openLegal" class="footer-link legend" type="button">Legal & Privacy</button>
+      <div class="footer-connection" role="status" aria-live="polite">
+        <span id="lamp" class="lamp" aria-hidden="true"></span>
+        <span id="statusWord" class="legend status-word">checking</span>
+      </div>
+    </footer>
+
+    <!-- Synced Themed Pop-up Modal for Overlay Placement & Live Preview -->
+    <div id="placementModal" class="placement-modal" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <span class="lamp route" aria-hidden="true"></span>
+            <span class="legend modal-title">Overlay Placement</span>
+          </div>
+          <div class="modal-actions">
+            <button id="popoutPlacement" class="popout-btn legend" title="Open the full placement editor in a dedicated tab" type="button">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              <span>Open full view</span>
+            </button>
+            <button id="closePlacementModal" class="icon-btn" title="Close modal" aria-label="Close modal" type="button">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <!-- 1. Live Interactive Video Preview Stage -->
+          <div class="region" style="padding-top: 0;">
+            <span class="legend">Live Playback Simulation</span>
+            <span class="rule"></span>
+            <button type="button" class="preview-toggle-dropdown describer" title="Toggle format picker test" aria-expanded="false">
+              Picker Test
+            </button>
+          </div>
+
+          <div class="preview-stage" id="popupPreviewStage">
+            <!-- Video Player Mock -->
+            <div class="preview-player">
+              <div class="player-screen">
+                <div class="screen-art">
+                  <svg viewBox="0 0 320 180" class="screen-svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0b1218" />
+                        <stop offset="60%" stop-color="#162820" />
+                        <stop offset="100%" stop-color="#1e3a29" />
+                      </linearGradient>
+                      <linearGradient id="railGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#35c46f" stop-opacity="0.1" />
+                        <stop offset="50%" stop-color="#35c46f" stop-opacity="0.7" />
+                        <stop offset="100%" stop-color="#56a2f0" stop-opacity="0.2" />
+                      </linearGradient>
+                    </defs>
+                    <rect width="320" height="180" fill="url(#skyGrad)" />
+                    <line x1="0" y1="180" x2="160" y2="90" stroke="url(#railGrad)" stroke-width="1.5" />
+                    <line x1="320" y1="180" x2="160" y2="90" stroke="url(#railGrad)" stroke-width="1.5" />
+                    <line x1="80" y1="180" x2="160" y2="90" stroke="#333b35" stroke-width="0.75" />
+                    <line x1="240" y1="180" x2="160" y2="90" stroke="#333b35" stroke-width="0.75" />
+                    <circle cx="160" cy="90" r="14" fill="#161a17" stroke="#35c46f" stroke-width="1" stroke-dasharray="2 2" opacity="0.8" />
+                    <polygon points="156,84 167,90 156,96" fill="#35c46f" />
+                  </svg>
+                </div>
+                <div class="safe-zone-guide" title="Video Frame Boundary"></div>
+              </div>
+
+              <!-- Video HUD Bar -->
+              <div class="player-hud">
+                <div class="hud-progress-bar">
+                  <div class="hud-progress-fill"></div>
+                </div>
+                <div class="hud-controls">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span class="describer hud-time">01:24 / 04:15</span>
+                  <span class="spacer"></span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                </div>
+              </div>
+
+            <!-- Simulated Zoltraak Download Button Overlay -->
+            <div class="preview-overlay" title="Drag to adjust offset">
+              <div class="sim-bar">
+                <span class="sim-drag-handle" title="Drag overlay">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                </span>
+                <div class="sim-btn">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="1.5" />
+                    <path d="M8 5v14M16 5v14M3 12h18M3 8.5h5M3 15.5h5M16 8.5h5M16 15.5h5" />
+                  </svg>
+                  <span class="sim-label">DOWNLOAD</span>
+                </div>
+                <span class="sim-tune-icon">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+                </span>
+                <span class="sim-close-icon">&times;</span>
+              </div>
+
+              <!-- Simulated Format Picker Panel (for testing flow direction) -->
+              <div class="preview-dropdown">
+                <div class="sim-dropdown-header">
+                  <span class="legend">Sample Ladder</span>
+                  <span class="describer">1080p · 720p · 480p</span>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- HUD Readout Bar -->
+          <div class="preview-hud-bar">
+            <span class="legend hud-preset">Top Right</span>
+            <span class="describer hud-coords">X: +0px · Y: +0px</span>
+          </div>
+
+          <!-- 2. Presets Selection Section -->
+          <div class="region">
+            <span class="legend">Inside Playback Presets</span>
+            <span class="rule"></span>
+          </div>
+          <div class="preset-grid presets-inside"></div>
+
+          <div class="region">
+            <span class="legend">Outside Playback</span>
+            <span class="rule"></span>
+          </div>
+          <div class="preset-grid presets-outside"></div>
+
+          <!-- 3. Manual Precision Offset Controls -->
+          <div class="region">
+            <span class="legend">Scale & Manual Offsets</span>
+            <span class="rule"></span>
+            <button type="button" class="btn-reset-offsets describer" title="Restore top-right placement, zero offsets, and 100% scale">Reset defaults</button>
+          </div>
+
+            <!-- Horizontal Offset (X) -->
+            <div class="offset-row">
+              <div class="offset-label-col">
+                <span class="legend">Horizontal (X)</span>
+                <span class="offset-sub describer">-Left / +Right</span>
+              </div>
+              <div class="offset-control-col">
+                <input type="range" class="slider-x" min="-150" max="150" step="1" value="0" aria-label="X offset" />
+                <div class="number-box">
+                  <input type="number" class="input-x describer" min="-150" max="150" value="0" aria-label="X offset in pixels" />
+                  <span class="unit describer">px</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vertical Offset (Y) -->
+            <div class="offset-row">
+              <div class="offset-label-col">
+                <span class="legend">Vertical (Y)</span>
+                <span class="offset-sub describer">-Up / +Down</span>
+              </div>
+              <div class="offset-control-col">
+                <input type="range" class="slider-y" min="-150" max="150" step="1" value="0" aria-label="Y offset" />
+                <div class="number-box">
+                  <input type="number" class="input-y describer" min="-150" max="150" value="0" aria-label="Y offset in pixels" />
+                  <span class="unit describer">px</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="offset-row">
+              <div class="offset-label-col">
+                <span class="legend">Button Scale</span>
+                <span class="offset-sub describer">50% / 200%</span>
+              </div>
+              <div class="offset-control-col">
+                <input type="range" class="slider-scale" min="50" max="200" step="5" value="100" aria-label="Download button overlay scale" />
+                <div class="number-box">
+                  <input type="number" class="input-scale describer" min="50" max="200" step="5" value="100" aria-label="Download button overlay scale percent" />
+                  <span class="unit describer">%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Directional Micro-Nudger D-Pad -->
+            <div class="dpad-container">
+              <div class="dpad-header">
+                <span class="legend">Micro-Nudge D-Pad</span>
+                <button type="button" class="btn-step-toggle describer" title="Toggle step size" aria-label="Toggle step size">±1px</button>
+              </div>
+              <div class="dpad-cluster">
+                <button type="button" class="dpad-btn dpad-up" title="Nudge Up" aria-label="Nudge Up">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                </button>
+                <div class="dpad-middle-row">
+                  <button type="button" class="dpad-btn dpad-left" title="Nudge Left" aria-label="Nudge Left">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <button type="button" class="dpad-btn dpad-center" title="Center 0,0" aria-label="Center 0,0">
+                    <span class="dpad-dot"></span>
+                  </button>
+                  <button type="button" class="dpad-btn dpad-right" title="Nudge Right" aria-label="Nudge Right">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+                <button type="button" class="dpad-btn dpad-down" title="Nudge Down" aria-label="Nudge Down">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

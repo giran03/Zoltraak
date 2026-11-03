@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zoltraak — Overlay Placement & Scale</title>
+    <link rel="stylesheet" href="placement.css" />
+    <script src="theme.js"></script>
+    <script src="pill-placement.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-left">
+        <span class="lamp clear" aria-hidden="true"></span>
+        <span class="brand-title">ZOLTRAAK</span>
+        <span class="header-divider">/</span>
+        <span class="legend page-title">OVERLAY PLACEMENT & SCALE</span>
+      </div>
+      <div class="header-right">
+        <span class="sync-status describer">SYNCED WITH BROWSER</span>
+        <a href="guide.html" class="header-link describer" target="_blank">User Guide &rarr;</a>
+      </div>
+    </header>
+
+    <nav class="placement-tabs" role="tablist" aria-label="Overlay to place">
+      <button type="button" role="tab" id="tabVideo" class="placement-tab" aria-selected="true" aria-controls="placementRoot">Video button</button>
+      <button type="button" role="tab" id="tabPill" class="placement-tab" aria-selected="false" aria-controls="pillRoot">Dispatch pill</button>
+    </nav>
+
+    <main class="placement-workspace" id="placementRoot" role="tabpanel" aria-labelledby="tabVideo">
+      <!-- Left Column: Live Interactive Simulation Stage -->
+      <section class="stage-column">
+        <div class="region" style="padding-top: 0;">
+          <span class="legend">Live Playback Simulation</span>
+          <span class="rule"></span>
+          <button type="button" class="preview-toggle-dropdown describer" title="Toggle format picker test" aria-expanded="false">
+            Toggle Format Ladder
+          </button>
+        </div>
+
+        <div class="preview-stage-wrap">
+          <div class="preview-stage" id="mainPreviewStage">
+              <!-- Simulated Video Player Mock -->
+              <div class="preview-player">
+                <div class="player-screen">
+                  <div class="screen-art">
+                    <svg viewBox="0 0 560 315" class="screen-svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="skyGradLg" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#080e12" />
+                          <stop offset="60%" stop-color="#14261d" />
+                          <stop offset="100%" stop-color="#1a3625" />
+                        </linearGradient>
+                        <linearGradient id="railGradLg" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stop-color="#35c46f" stop-opacity="0.1" />
+                          <stop offset="50%" stop-color="#35c46f" stop-opacity="0.8" />
+                          <stop offset="100%" stop-color="#56a2f0" stop-opacity="0.25" />
+                        </linearGradient>
+                        <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                          <line x1="0" y1="0" x2="40" y2="0" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+                          <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+                        </pattern>
+                      </defs>
+                      <rect width="560" height="315" fill="url(#skyGradLg)" />
+                      <rect width="560" height="315" fill="url(#gridPattern)" />
+                      <!-- Perspective Railway Lines / Cinematic Grid -->
+                      <line x1="0" y1="315" x2="280" y2="140" stroke="url(#railGradLg)" stroke-width="2" />
+                      <line x1="560" y1="315" x2="280" y2="140" stroke="url(#railGradLg)" stroke-width="2" />
+                      <line x1="140" y1="315" x2="280" y2="140" stroke="#333b35" stroke-width="1" />
+                      <line x1="420" y1="315" x2="280" y2="140" stroke="#333b35" stroke-width="1" />
+                      <circle cx="280" cy="140" r="22" fill="#161a17" stroke="#35c46f" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.85" />
+                      <polygon points="274,130 292,140 274,150" fill="#35c46f" />
+                    </svg>
+                  </div>
+                  <div class="safe-zone-guide" title="Video Frame Boundary (Inside Playback Safe Zone)"></div>
+                </div>
+
+                <!-- Video HUD Bar -->
+                <div class="player-hud">
+                  <div class="hud-progress-bar">
+                    <div class="hud-progress-fill"></div>
+                  </div>
+                  <div class="hud-controls">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span class="describer hud-time">01:24 / 04:15</span>
+                    <span class="spacer"></span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                  </div>
+                </div>
+
+              <!-- Simulated Zoltraak Download Button Overlay -->
+              <div class="preview-overlay" title="Drag to adjust offset">
+                <div class="sim-bar">
+                  <span class="sim-drag-handle" title="Drag overlay">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+                  </span>
+                  <div class="sim-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="14" rx="1.5" />
+                      <path d="M8 5v14M16 5v14M3 12h18M3 8.5h5M3 15.5h5M16 8.5h5M16 15.5h5" />
+                    </svg>
+                    <span class="sim-label">DOWNLOAD THIS VIDEO</span>
+                  </div>
+                  <span class="sim-tune-icon">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+                  </span>
+                  <span class="sim-close-icon">&times;</span>
+                </div>
+
+                <!-- Simulated Format Picker Panel (for testing flow direction) -->
+                <div class="preview-dropdown">
+                  <div class="sim-dropdown-header">
+                    <span class="legend">Sample Resolution Ladder</span>
+                    <span class="describer">1080p 60fps · 720p · 480p · Audio</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HUD Readout Bar -->
+          <div class="preview-hud-bar">
+            <div class="hud-left">
+              <span class="legend-sub">ACTIVE PRESET:</span>
+              <span class="legend hud-preset">TOP RIGHT</span>
+            </div>
+            <div class="hud-right">
+              <span class="describer hud-coords">X: +0px · Y: +0px</span>
+            </div>
+          </div>
+
+          <p class="order-note" style="margin-top: 8px;">
+            Drag the overlay directly inside or around the player to fine-tune offsets visually. Changes update immediately across all open video tabs.
+          </p>
+      </section>
+
+      <!-- Right Column: Presets & Precision Controls -->
+      <section class="controls-column">
+          <div class="region" style="padding-top: 0;">
+            <span class="legend">Inside Playback Presets</span>
+            <span class="rule"></span>
+          </div>
+          <div class="preset-grid presets-inside"></div>
+
+          <div class="region">
+            <span class="legend">Outside Playback</span>
+            <span class="rule"></span>
+          </div>
+          <div class="preset-grid presets-outside"></div>
+
+          <div class="region">
+            <span class="legend">Scale & Manual Offsets</span>
+            <span class="rule"></span>
+            <button type="button" class="btn-reset-offsets describer" title="Restore top-right placement, zero offsets, and 100% scale">Reset defaults</button>
+          </div>
+
+          <!-- Horizontal Offset (X) -->
+          <div class="offset-row">
+            <div class="offset-label-col">
+              <span class="legend">Horizontal (X)</span>
+              <span class="offset-sub describer">-Left / +Right</span>
+            </div>
+            <div class="offset-control-col">
+              <input type="range" class="slider-x" min="-150" max="150" step="1" value="0" aria-label="Horizontal X offset" />
+              <div class="number-box">
+                <input type="number" class="input-x describer" min="-150" max="150" value="0" aria-label="Horizontal X offset in pixels" />
+                <span class="unit describer">px</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vertical Offset (Y) -->
+          <div class="offset-row">
+            <div class="offset-label-col">
+              <span class="legend">Vertical (Y)</span>
+              <span class="offset-sub describer">-Up / +Down</span>
+            </div>
+            <div class="offset-control-col">
+              <input type="range" class="slider-y" min="-150" max="150" step="1" value="0" aria-label="Vertical Y offset" />
+              <div class="number-box">
+                <input type="number" class="input-y describer" min="-150" max="150" value="0" aria-label="Vertical Y offset in pixels" />
+                <span class="unit describer">px</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="offset-row">
+            <div class="offset-label-col">
+              <span class="legend">Button Scale</span>
+              <span class="offset-sub describer">50% / 200%</span>
+            </div>
+            <div class="offset-control-col">
+              <input type="range" class="slider-scale" min="50" max="200" step="5" value="100" aria-label="Download button overlay scale" />
+              <div class="number-box">
+                <input type="number" class="input-scale describer" min="50" max="200" step="5" value="100" aria-label="Download button overlay scale percent" />
+                <span class="unit describer">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Directional Micro-Nudger D-Pad -->
+          <div class="dpad-container">
+            <div class="dpad-header">
+              <span class="legend">Tactile Micro-Nudge D-Pad</span>
+              <button type="button" class="btn-step-toggle describer" title="Toggle step size" aria-label="Toggle step size">±1px</button>
+            </div>
+            <div class="dpad-cluster">
+              <button type="button" class="dpad-btn dpad-up" title="Nudge Up" aria-label="Nudge Up">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+              </button>
+              <div class="dpad-middle-row">
+                <button type="button" class="dpad-btn dpad-left" title="Nudge Left" aria-label="Nudge Left">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button type="button" class="dpad-btn dpad-center" title="Center 0,0" aria-label="Center 0,0">
+                  <span class="dpad-dot"></span>
+                </button>
+                <button type="button" class="dpad-btn dpad-right" title="Nudge Right" aria-label="Nudge Right">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <button type="button" class="dpad-btn dpad-down" title="Nudge Down" aria-label="Nudge Down">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </div>
+          </div>
+      </section>
+    </main>
+
+    <main class="placement-workspace" id="pillRoot" role="tabpanel" aria-labelledby="tabPill" hidden></main>
+
+    <footer class="app-footer">
+      <span class="describer" style="color: var(--ink-faint);">Zoltraak Extension · Presets & Placement Manager</span>
+      <span class="describer" style="color: var(--ink-faint); font-size: 11px;">Dispatch Board Engine</span>
+    </footer>
+
+    <script type="module" src="placement.js"></script>
+  </body>
+</html>

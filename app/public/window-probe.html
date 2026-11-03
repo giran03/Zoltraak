@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Window Probe</title>
+<style>body{margin:48px;background:#101416;color:#e0e8ea;font:16px system-ui}output{display:block;margin-top:24px;font-family:monospace}</style>
+<h1>Window movement probe</h1>
+<p>This window runs the same desktop runtime without the download engine or application panels.</p>
+<p>Drag its title bar and compare with the main app. Frame timing below measures web content, not native window motion.</p>
+<output id="timing">Collecting frame timings…</output>
+<script>
+let previous=performance.now(), start=previous, frames=0, stalls=0, maximum=0;
+function tick(now){
+  const interval=now-previous; previous=now;
+  if(!document.hidden){frames++; if(interval>50)stalls++; maximum=Math.max(maximum,interval);}
+  if(now-start>=1000){document.getElementById('timing').textContent=`Frames: ${frames} | >50 ms: ${stalls} | Maximum: ${maximum.toFixed(1)} ms`;start=now;frames=stalls=maximum=0;}
+  requestAnimationFrame(tick);
+}
+document.addEventListener('visibilitychange',()=>{previous=start=performance.now();frames=stalls=maximum=0;});
+requestAnimationFrame(tick);
+</script></html>

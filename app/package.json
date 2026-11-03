@@ -1,0 +1,41 @@
+{
+  "name": "zoltraak-app",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node ../scripts/changelog.mjs sync",
+    "test": "node --test tests/*.test.ts",
+    "bench:rows": "node tests/benchmark_rows.ts",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "bundle:prepare": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/stage_media_tools.ps1",
+    "preview": "vite preview",
+    "showcase:build": "node showcase/build.mjs",
+    "showcase:pages": "node ../scripts/changelog.mjs sync && node showcase/build.mjs && node showcase/pages.mjs",
+    "tauri": "tauri",
+    "version:set": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/set_version.ps1",
+    "app:dev": "tauri dev",
+    "app:build": "tauri build"
+  },
+  "dependencies": {
+    "@crabnebula/tauri-plugin-drag": "^2.1.0",
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/martian-mono": "^5.3.0",
+    "@tauri-apps/api": "^2.9.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "@tauri-apps/cli": "^2.9.2",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@vitejs/plugin-react": "^5.1.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  }
+}

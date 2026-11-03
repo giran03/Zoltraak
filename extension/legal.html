@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoltraak — Legal Notices, Privacy Policy & Terms of Service</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..800;1,62..125,300..800&family=Martian+Mono:wght,wdth@300..700,75..112.5&display=swap" rel="stylesheet" />
+  <style>
+    /* ---------------------------------------------------------------------------
+       Zoltraak Dispatch Board Design System
+       --------------------------------------------------------------------------- */
+    :root {
+      color-scheme: light;
+      --c-panel: #d7dcd2;
+      --c-panel-face: #e6eae0;
+      --c-panel-recess: #cdd3c7;
+      --c-panel-sunk: #bcc3b6;
+      --c-edge: #a7afa0;
+      --c-edge-strong: #7b8476;
+      --c-ink: #161a14;
+      --c-ink-dim: #3c4239;
+      --c-ink-faint: #5a6353;
+      --c-clear: #086633;
+      --c-caution: #7a4c00;
+      --c-danger: #b01b18;
+      --c-route: #1560c4;
+      --c-brass: #7d6d3f;
+      --c-on-signal: #f4f6f2;
+      --c-lamp-off: #9aa294;
+      --font-mono: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: 'Archivo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --c-panel: #161a17;
+      --c-panel-face: #1e2320;
+      --c-panel-recess: #101312;
+      --c-panel-sunk: #0b0e0d;
+      --c-edge: #333b35;
+      --c-edge-strong: #4c564e;
+      --c-ink: #e9ede7;
+      --c-ink-dim: #a6aea4;
+      --c-ink-faint: #868e84;
+      --c-clear: #35c46f;
+      --c-caution: #e8a317;
+      --c-danger: #f1595e;
+      --c-route: #56a2f0;
+      --c-brass: #b09a63;
+      --c-on-signal: #0b0e0d;
+      --c-lamp-off: #2b332d;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]):not([data-theme="dark"]) {
+        color-scheme: dark;
+        --c-panel: #161a17;
+        --c-panel-face: #1e2320;
+        --c-panel-recess: #101312;
+        --c-panel-sunk: #0b0e0d;
+        --c-edge: #333b35;
+        --c-edge-strong: #4c564e;
+        --c-ink: #e9ede7;
+        --c-ink-dim: #a6aea4;
+        --c-ink-faint: #868e84;
+        --c-clear: #35c46f;
+        --c-caution: #e8a317;
+        --c-danger: #f1595e;
+        --c-route: #56a2f0;
+        --c-brass: #b09a63;
+        --c-on-signal: #0b0e0d;
+        --c-lamp-off: #2b332d;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--c-panel);
+      color: var(--c-ink);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Masthead / Dispatch Bar */
+    header.masthead {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 24px;
+      background-color: var(--c-panel-face);
+      border-bottom: 1px solid var(--c-edge-strong);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--c-ink);
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 10px;
+      border: 1px solid var(--c-edge);
+      background-color: var(--c-panel-recess);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-ink-dim);
+      border-radius: 2px;
+    }
+
+    .lamp-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--c-route);
+      box-shadow: 0 0 8px var(--c-route);
+    }
+
+    .masthead-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input {
+      width: 220px;
+      height: 36px;
+      padding: 8px 12px 8px 32px;
+      background-color: var(--c-panel-recess);
+      border: 1px solid var(--c-edge);
+      color: var(--c-ink);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-radius: 2px;
+      outline: none;
+      transition: width 0.2s ease, border-color 0.15s ease;
+    }
+
+    .search-box input:focus {
+      width: 280px;
+      border-color: var(--c-route);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 12px;
+      width: 14px;
+      height: 14px;
+      color: var(--c-ink-dim);
+      pointer-events: none;
+    }
+
+    .btn-toggle-theme {
+      min-height: 36px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--c-panel-recess);
+      border: 1px solid var(--c-edge);
+      color: var(--c-ink-dim);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-toggle-theme:hover {
+      background-color: var(--c-panel-sunk);
+      color: var(--c-ink);
+    }
+
+    /* Layout Frame */
+    .layout-frame {
+      display: flex;
+      min-height: calc(100vh - 56px);
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Sticky Sidebar Navigation */
+    nav.sidebar {
+      width: 290px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      background-color: var(--c-panel);
+      border-right: 1px solid var(--c-edge);
+      padding: 24px 16px;
+    }
+
+    nav.sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+    nav.sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    nav.sidebar::-webkit-scrollbar-thumb {
+      background: var(--c-edge);
+      border-radius: 2px;
+    }
+
+    .nav-heading {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--c-ink-faint);
+      margin: 18px 0 8px 8px;
+    }
+    .nav-heading:first-child {
+      margin-top: 0;
+    }
+
+    .nav-list {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-ink-dim);
+      text-decoration: none;
+      border-radius: 2px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--c-panel-face);
+      color: var(--c-ink);
+    }
+
+    .nav-link.active {
+      background-color: var(--c-panel-face);
+      color: var(--c-route);
+      border-left-color: var(--c-route);
+      font-weight: 600;
+    }
+
+    /* Main Content Area */
+    main.content {
+      flex: 1;
+      padding: 40px 56px 80px;
+      min-width: 0;
+      max-width: 960px;
+    }
+
+    /* Typography & Hierarchy */
+    .hero {
+      margin-bottom: 48px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--c-edge-strong);
+    }
+
+    .hero-pretitle {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--c-route);
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      color: var(--c-ink);
+      margin-bottom: 12px;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--c-ink-dim);
+      max-width: 72ch;
+      line-height: 1.7;
+    }
+
+    section.legal-chapter {
+      margin-bottom: 56px;
+      scroll-margin-top: 64px;
+    }
+
+    .chapter-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--c-edge);
+      padding-bottom: 10px;
+    }
+
+    .chapter-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--c-brass);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--c-ink);
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--c-ink);
+      margin: 24px 0 10px;
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: var(--c-ink-dim);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    strong {
+      color: var(--c-ink);
+      font-weight: 600;
+    }
+
+    ul, ol {
+      margin: 0 0 18px 20px;
+      color: var(--c-ink-dim);
+      font-size: 13.5px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    /* Callout Boxes */
+    .callout {
+      margin: 20px 0;
+      padding: 16px 18px;
+      border: 1px solid var(--c-edge);
+      border-left-width: 4px;
+      background-color: var(--c-panel-face);
+      border-radius: 2px;
+    }
+
+    .callout-clear { border-left-color: var(--c-clear); }
+    .callout-caution { border-left-color: var(--c-caution); }
+    .callout-route { border-left-color: var(--c-route); }
+    .callout-danger { border-left-color: var(--c-danger); }
+
+    .callout-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .callout-clear .callout-title { color: var(--c-clear); }
+    .callout-caution .callout-title { color: var(--c-caution); }
+    .callout-route .callout-title { color: var(--c-route); }
+    .callout-danger .callout-title { color: var(--c-danger); }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Code & License Pre Block */
+    pre.license-block {
+      position: relative;
+      background-color: var(--c-panel-sunk);
+      border: 1px solid var(--c-edge);
+      border-radius: 2px;
+      padding: 56px 18px 16px;
+      margin: 16px 0 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--c-ink);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    code.inline-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 0 2px;
+      overflow-wrap: anywhere;
+      border-radius: 2px;
+      color: var(--c-ink);
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: var(--c-panel-face);
+      border: 1px solid var(--c-edge);
+      color: var(--c-ink-dim);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s ease, color 0.15s ease;
+    }
+
+    pre.license-block:hover .copy-btn,
+    .copy-btn:focus-visible {
+      opacity: 1;
+    }
+
+    .copy-btn:hover {
+      color: var(--c-ink);
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      margin: 20px 0;
+      padding: 8px;
+      border: 1px solid var(--c-edge);
+      background-color: var(--c-panel-face);
+      border-radius: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      text-align: left;
+    }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-ink-faint);
+      background-color: var(--c-panel-recess);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--c-edge);
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--c-edge);
+      color: var(--c-ink-dim);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: var(--c-panel-recess);
+    }
+
+    /* Footer */
+    footer.doc-footer {
+      margin-top: 60px;
+      padding: 24px 32px;
+      border-top: 1px solid var(--c-edge);
+      background-color: var(--c-panel-face);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-ink-faint);
+    }
+
+    @media (max-width: 900px) {
+      header.masthead { height: auto; min-height: 56px; flex-wrap: wrap; gap: 12px; padding: 12px 20px; }
+      .brand { flex-wrap: wrap; gap: 8px; }
+      .masthead-actions { width: 100%; min-width: 0; }
+      .search-box { min-width: 0; flex: 1; }
+      .search-box input, .search-box input:focus { width: 100%; }
+      nav.sidebar { display: none; }
+      main.content { padding: 24px 20px 60px; }
+      footer.doc-footer { flex-wrap: wrap; gap: 12px; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div class="brand">
+      <span class="brand-title">Zoltraak</span>
+      <span class="tag-badge">
+        <span class="lamp-dot"></span>
+        <span>Legal & Policy</span>
+      </span>
+      <span class="tag-badge">Official</span>
+    </div>
+
+    <div class="masthead-actions">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input id="docSearch" type="search" placeholder="Search legal docs (Ctrl+K)..." autocomplete="off" />
+      </div>
+
+      <button id="themeToggle" class="btn-toggle-theme" type="button" title="Toggle Day / Night shift lighting">
+        <span id="themeLabel">Night shift</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Body Layout -->
+  <div class="layout-frame">
+
+    <!-- Sticky Sidebar -->
+    <nav class="sidebar" id="legalNav">
+      <div class="nav-heading">Privacy & Data</div>
+      <ul class="nav-list">
+        <li><a href="#privacy" class="nav-link active">1. Privacy Policy</a></li>
+        <li><a href="#localdata" class="nav-link">2. Local-First Guarantees</a></li>
+        <li><a href="#cookies" class="nav-link">3. Cookie Vault & Sessions</a></li>
+      </ul>
+
+      <div class="nav-heading">Terms & Compliance</div>
+      <ul class="nav-list">
+        <li><a href="#terms" class="nav-link">4. Terms of Service</a></li>
+        <li><a href="#acceptable-use" class="nav-link">5. Acceptable Use & Fair Use</a></li>
+        <li><a href="#copyright" class="nav-link">6. Copyright & DMCA Notice</a></li>
+      </ul>
+
+      <div class="nav-heading">Intellectual Property</div>
+      <ul class="nav-list">
+        <li><a href="#trademarks" class="nav-link">7. Third-Party Trademarks</a></li>
+        <li><a href="#licenses" class="nav-link">8. Software Licenses</a></li>
+        <li><a href="#liability" class="nav-link">9. Disclaimer of Warranties</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content" id="mainContent">
+
+      <div class="hero">
+        <div class="hero-pretitle">Legal Framework & Regulatory Notices</div>
+        <h1>Legal, Privacy Policy & Terms of Service</h1>
+        <p class="hero-desc">
+          Effective Date: September 2026. Zoltraak is dedicated to user privacy, software sovereignty, and transparent computing. Please read these terms, policies, and notices governing your use of the Zoltraak desktop application, CLI, engine daemon, and browser companion extension.
+        </p>
+      </div>
+
+      <!-- Section 1: Privacy Policy -->
+      <section id="privacy" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">01</span>
+          <h2>Privacy Policy</h2>
+        </div>
+        <p>
+          Zoltraak is built upon a <strong>local-first</strong> architecture with no accounts and no analytics. We believe that what you download, when you download it, and which websites you visit belong exclusively to you.
+        </p>
+
+        <div class="callout callout-clear">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            No Data Collection Commitment
+          </div>
+          <p>
+            Zoltraak does not collect, record, transmit, sell, or monetize any personal information, device identifiers, analytics, IP addresses, browsing histories, or download manifests. The software has no remote analytics SDKs or tracking pixels.
+          </p>
+        </div>
+
+        <h3>Information Handled Strictly on Your Device</h3>
+        <p>
+          The only information processed by Zoltraak is the data necessary to execute the downloads you request:
+        </p>
+        <ul>
+          <li><strong>Download URLs & Metadata</strong>: URLs, file names, file sizes, and destination paths you provide are stored exclusively in your local SQLite database.</li>
+          <li><strong>Local IPC Traffic</strong>: All communication between the desktop interface, the CLI, and the background engine daemon is routed over your machine's local loopback network interface (<code class="inline-code">127.0.0.1</code>) and is never accessible across a local area network (LAN) or the internet.</li>
+          <li><strong>Hardware Resource Profiling</strong>: System memory and CPU queries performed by the engine are used solely to schedule thread pools and parallel connection chunks locally.</li>
+        </ul>
+
+        <h3>No Usage Heartbeat</h3>
+        <p>
+          The desktop app does not send usage heartbeats, running-instance counts, or launch identifiers to a Zoltraak webserver. Network requests needed for features you use, such as downloads, Discord delivery, and signed update checks, remain available.
+        </p>
+      </section>
+
+      <!-- Section 2: Local Data Guarantees -->
+      <section id="localdata" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">02</span>
+          <h2>Local-First Data Guarantees</h2>
+        </div>
+        <p>
+          Zoltraak is supported on Windows. All persistent state resides solely on your computer's storage media:
+        </p>
+        <ul>
+          <li><strong>Windows</strong>: <code class="inline-code">%AppData%\Zoltraak\</code> (e.g., <code class="inline-code">C:\Users\&lt;Username&gt;\AppData\Roaming\Zoltraak\</code>)</li>
+        </ul>
+        <p>
+          Deleting this directory completely clears all queue registers, download histories, scheduling configurations, and custom routing rules. Uninstalling or removing Zoltraak leaves no remote remnants.
+        </p>
+      </section>
+
+      <!-- Section 3: Cookie Vault & Sessions -->
+      <section id="cookies" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">03</span>
+          <h2>Cookie Vault & Session Privacy</h2>
+        </div>
+        <p>
+          Zoltraak includes a browser companion extension designed to synchronize authentication credentials for media sites requiring login (such as YouTube, Reddit, X, Instagram, and Facebook).
+        </p>
+        <ul>
+          <li><strong>One Active Source</strong>: When multiple browser profiles are connected, only the profile selected under <em>Settings &rarr; Extension &rarr; Cookie source</em> may read or replace shared browser sessions.</li>
+          <li><strong>Encryption at Rest</strong>: Session cookies received from the active browser extension are immediately encrypted using machine-bound hardware encryption before being written to the engine's internal session vault.</li>
+          <li><strong>Zero Remote Transmission</strong>: Extracted session cookies are sent <em>only</em> to the specific third-party domain they belong to (e.g. YouTube cookies are sent only to YouTube CDN endpoints) during chunk requests. They are never transmitted to any third-party logging or aggregation servers.</li>
+          <li><strong>Sanitized Logging</strong>: Cookie values, authentication tokens, and authorization headers are scrubbed from log files, terminal readouts, and UI snapshots. Only cookie names and expiration timestamps are displayed in settings.</li>
+          <li><strong>Instant Revocation</strong>: You may forget and erase all stored cookies at any time under <em>Settings &rarr; Extension &rarr; Browser sessions</em> or by invoking <code class="inline-code">zoltraak sessions forget</code> via the CLI.</li>
+        </ul>
+      </section>
+
+      <!-- Section 4: Terms of Service -->
+      <section id="terms" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">04</span>
+          <h2>Terms of Service & End User Agreement</h2>
+        </div>
+        <p>
+          By downloading, compiling, running, or interacting with Zoltraak, you agree to the following terms:
+        </p>
+
+        <h3>1. Nature of the Software</h3>
+        <p>
+          Zoltraak is a general-purpose, dual-stack networking utility, client protocol implementation, and download supervisor. Similar to command-line tools such as <code class="inline-code">curl</code> or <code class="inline-code">wget</code>, and web browsers such as Firefox or Chromium, Zoltraak executes network requests initiated solely by you. The developers of Zoltraak do not host, curate, control, index, or distribute any media or downloaded content.
+        </p>
+
+        <h3>2. Permitted Use</h3>
+        <p>
+          The software license supplied with Zoltraak governs its use, modification, and distribution. You agree to use Zoltraak only for lawful purposes in compliance with all applicable local, national, and international laws, treaties, and regulations.
+        </p>
+      </section>
+
+      <!-- Section 5: Acceptable Use & Fair Use -->
+      <section id="acceptable-use" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">05</span>
+          <h2>Acceptable Use & Fair Use Policy</h2>
+        </div>
+        <p>
+          Zoltraak is engineered for personal, research, archival, and fair-use educational workflows. When operating Zoltraak, you agree NOT to:
+        </p>
+        <ul>
+          <li>Use the software in any manner that causes denial of service, deliberate infrastructure disruption, or server overload on any network or host.</li>
+          <li>Circumvent technological measures designed to restrict access to copyrighted works where prohibited by law (e.g., bypassing proprietary Digital Rights Management (DRM) schemes like Widevine, FairPlay, or PlayReady). Zoltraak intentionally does NOT decrypt DRM-encrypted content.</li>
+          <li>Download, store, or distribute material that violates intellectual property rights, privacy rights, or contains illegal content.</li>
+          <li>Violate specific platform terms of service that you have personally agreed to, or infringe on third-party contractual rights.</li>
+        </ul>
+
+        <div class="callout callout-caution">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            User Responsibility Notice
+          </div>
+          <p>
+            You are exclusively responsible for evaluating the legality of any content you download with Zoltraak, including adhering to fair-use standards, personal archiving exemptions, and copyright authorizations in your jurisdiction.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 6: Copyright & DMCA -->
+      <section id="copyright" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">06</span>
+          <h2>Copyright & DMCA Compliance</h2>
+        </div>
+        <p>
+          Zoltraak respects the intellectual property rights of content creators, photographers, videographers, and publishers.
+        </p>
+        <ul>
+          <li><strong>No Content Hosted</strong>: Zoltraak does not operate any central servers, content repositories, caching proxies, or link directories. The authors and maintainers have no capability to monitor, inspect, filter, or delete items downloaded by individual users on their personal devices.</li>
+          <li><strong>Tool Neutrality</strong>: As a software tool, Zoltraak possesses substantial non-infringing uses (including downloading open-source software ISOs, public domain media, creative commons photography, personal cloud backups, and lawfully licensed materials).</li>
+          <li><strong>Copyright Inquiries</strong>: If you believe code within the Zoltraak repository infringes your copyright, please submit an official notice to the project repository's maintainers.</li>
+        </ul>
+      </section>
+
+      <!-- Section 7: Third-Party Trademarks -->
+      <section id="trademarks" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">07</span>
+          <h2>Third-Party Trademarks & Non-Affiliation</h2>
+        </div>
+        <p>
+          Any third-party product names, logos, brands, and other trademarks referenced in Zoltraak (including but not limited to <strong>YouTube, Google, Google Chrome, Meta, Facebook, Instagram, X Corp, Twitter, Reddit, TikTok, ByteDance, Mozilla, Firefox, Zen Browser</strong>) are the property of their respective trademark holders.
+        </p>
+        <p>
+          The use of these names does not imply any affiliation with, endorsement by, or sponsorship by any of these entities. They are referenced strictly for nominative identification and interoperability description purposes.
+        </p>
+      </section>
+
+      <!-- Section 8: Software Licenses -->
+      <section id="licenses" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">08</span>
+          <h2>Software Licenses & Third-Party Attributions</h2>
+        </div>
+        <p>
+          Consult the <a href="https://github.com/giran03/Zoltraak/blob/main/LICENSE" target="_blank" rel="noopener">project license file</a> for the software license terms. Third-party components retain their respective licenses and notices.
+        </p>
+
+        <h3>Key Third-Party Components & Attributions</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Component / Library</th>
+                <th>License</th>
+                <th>Usage Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tokio & Reqwest</strong></td>
+                <td>MIT / Apache-2.0</td>
+                <td>Asynchronous runtime and high-efficiency HTTP client networking engine.</td>
+              </tr>
+              <tr>
+                <td><strong>Tauri v2</strong></td>
+                <td>MIT / Apache-2.0</td>
+                <td>Desktop window management and native OS shell integration.</td>
+              </tr>
+              <tr>
+                <td><strong>SQLite (rusqlite)</strong></td>
+                <td>Public Domain / MIT</td>
+                <td>Embedded atomic storage database for download queues and metadata.</td>
+              </tr>
+              <tr>
+                <td><strong>FFmpeg (Optional External Tool)</strong></td>
+                <td>LGPL v2.1+ / GPL v2+</td>
+                <td>External media multiplexer invoked on the user's system to merge split audio/video streams. Zoltraak does not statically link or bundle FFmpeg.</td>
+              </tr>
+              <tr>
+                <td><strong>Archivo & Martian Mono Fonts</strong></td>
+                <td>SIL Open Font License 1.1</td>
+                <td>Typography and legend plate styling for the Dispatch Board user interface.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 9: Disclaimer of Warranties -->
+      <section id="liability" class="legal-chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">09</span>
+          <h2>Disclaimer of Warranties & Limitation of Liability</h2>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            As-Is Provision & No Liability
+          </div>
+          <p>
+            ZOLTRAAK IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, OR NON-INFRINGEMENT.
+          </p>
+        </div>
+
+        <p>
+          UNDER NO CIRCUMSTANCES SHALL THE AUTHORS, MAINTAINERS, OR COPYRIGHT HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF DATA, BANDWIDTH, PROFITS, OR BUSINESS INTERRUPTION; NETWORK OVERAGE CHARGES; ACCOUNT SUSPENSIONS BY THIRD-PARTY PLATFORMS; OR HARDWARE DAMAGE) ARISING IN ANY WAY OUT OF THE USE, INABILITY TO USE, OR OPERATION OF THIS SOFTWARE.
+        </p>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="doc-footer">
+    <div>Zoltraak &mdash; Legal Notices, Privacy Policy & Terms of Service</div>
+    <div>Software Sovereignty &bull; No Accounts &bull; No Analytics</div>
+  </footer>
+
+  <!-- Scripts: Theme, Search, Copy, ScrollSpy -->
+
+<script src="legal.js"></script>
+</body>
+</html>

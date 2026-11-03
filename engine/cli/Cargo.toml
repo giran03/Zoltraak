@@ -1,0 +1,24 @@
+[package]
+name = "zoltraak-cli"
+description = "Headless Zoltraak: drives the engine without a UI, for servers and NAS"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "zoltraak"
+path = "src/main.rs"
+
+[dependencies]
+zoltraak-core = { workspace = true }
+zoltraak-api = { workspace = true }
+serde_json = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+reqwest = { workspace = true }
+clap = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }

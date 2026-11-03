@@ -1,0 +1,65 @@
+[workspace]
+resolver = "3"
+members = ["core", "api", "cli"]
+
+[workspace.package]
+version = "1.0.1"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/giran03/Zoltraak"
+rust-version = "1.88"
+
+[workspace.dependencies]
+zoltraak-core = { path = "core" }
+zoltraak-api = { path = "api" }
+
+tokio = { version = "1", features = ["full"] }
+# `rt` brings in TaskTracker, which the supervisor uses to await its loop on
+# shutdown instead of detaching it.
+tokio-util = { version = "0.7", features = ["rt", "io"] }
+reqwest = { version = "0.12", default-features = false, features = [
+    "rustls-tls",
+    "stream",
+    "http2",
+    "gzip",
+    "brotli",
+    # Discord delivery: a JSON payload part plus a streamed file part.
+    "json",
+    "multipart",
+] }
+axum = "0.8"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.8", default-features = false, features = [
+    "runtime-tokio-rustls",
+    "sqlite",
+    "macros",
+    "migrate",
+    "chrono",
+] }
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+futures-util = "0.3"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+clap = { version = "4", features = ["derive"] }
+tempfile = "3"
+regex = "1"
+quick-xml = { version = "0.41", features = ["serialize"] }
+sha1 = "0.10"
+# YouTube's player script has to be *run* to undo its URL obfuscation; QuickJS
+# is the smallest complete engine that does so in well under a second.
+rquickjs = "0.12"
+# The session vault: browser cookies encrypted at rest.
+aes-gcm = "0.11"
+zeroize = "1"
+base64 = "0.22"
+getrandom = "0.3"
+sha2 = "0.10"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

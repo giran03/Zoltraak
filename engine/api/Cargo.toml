@@ -1,0 +1,24 @@
+[package]
+name = "zoltraak-api"
+description = "Token-authenticated localhost REST API for the Zoltraak engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+zoltraak-core = { workspace = true }
+axum = { workspace = true }
+tower-http = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+chrono = { workspace = true }
+tempfile = { workspace = true }
+reqwest = { workspace = true, features = ["json"] }
+tokio = { workspace = true }

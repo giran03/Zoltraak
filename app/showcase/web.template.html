@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Keynote 2026 — Full Session</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#0f1115;color:#e7e9ee;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.top{height:56px;display:flex;align-items:center;gap:22px;padding:0 24px;background:#14171d;border-bottom:1px solid #232834}
+.logo{font-weight:700;letter-spacing:.02em;color:#fff}.logo i{display:inline-block;width:18px;height:18px;background:#e5533a;border-radius:4px;margin-right:8px;vertical-align:-3px}
+.search{flex:1;max-width:520px;height:34px;border:1px solid #2b3140;border-radius:17px;background:#0f1115;padding:0 16px;display:flex;align-items:center;color:#7b8394;font-size:13px}
+.layout{display:grid;grid-template-columns:820px 1fr;gap:28px;padding:22px 24px}
+.player{position:relative;width:820px;height:461px;border-radius:8px;overflow:hidden;background:#000}
+video{width:100%;height:100%;display:block;object-fit:cover;background:#000}
+.ctrl{position:absolute;left:0;right:0;bottom:0;height:56px;padding:0 16px;display:flex;align-items:center;gap:14px;background:linear-gradient(transparent,rgba(0,0,0,.75));font-size:12px;color:#fff}
+.bar{position:absolute;left:16px;right:16px;bottom:50px;height:3px;background:rgba(255,255,255,.3)}.bar i{display:block;width:34%;height:100%;background:#e5533a}
+h1{font-size:20px;margin:16px 0 6px}.meta{color:#8a93a6;font-size:13px}
+.side .card{display:grid;grid-template-columns:168px 1fr;gap:12px;margin-bottom:14px}.side u{height:94px;border-radius:6px;background:#1c212b;display:block}.side b{display:block;height:11px;border-radius:2px;background:#232a37;margin:6px 0 8px}
+</style></head>
+<body>
+<div class="top"><div class="logo"><i></i>Example Video</div><div class="search">Search</div></div>
+<div class="layout">
+ <div><div class="player"><video id="v" poster="__POSTER__" muted playsinline preload="none"></video><div class="bar"><i></i></div><div class="ctrl"><span>5:12 / 58:12</span></div></div>
+  <h1>Keynote 2026 — Full Session</h1><div class="meta">Northfield Conference · 48K views · 3 weeks ago</div></div>
+ <div class="side"><div class="card"><u></u><div><b></b><b style="width:60%"></b></div></div><div class="card"><u></u><div><b></b><b style="width:50%"></b></div></div><div class="card"><u></u><div><b></b><b style="width:70%"></b></div></div><div class="card"><u></u><div><b></b><b style="width:40%"></b></div></div></div>
+</div>
+<script>
+(function(){
+  var FONTS=__FONTS__;
+  var send=function(m){return Promise.resolve(window.parent.__ext(m));};
+  var store=function(d,cb){var r=Object.assign({},d,{desktopAppLicensed:true,showMediaButton:true,showSessionPill:true,pillCorner:"bottom-left",enableSfx:false});if(cb)setTimeout(function(){cb(r);},0);return Promise.resolve(r);};
+  window.chrome={runtime:{id:"showcase",getURL:function(p){return FONTS[p]||p;},sendMessage:send,onMessage:{addListener:function(){}}},
+    storage:{local:{get:store,set:function(){}},onChanged:{addListener:function(){}}}};
+  var v=document.getElementById("v");
+  [["paused",false],["ended",false],["readyState",4],["currentTime",312],["duration",3492],["videoWidth",1920],["videoHeight",1080]].forEach(function(p){Object.defineProperty(v,p[0],{get:function(){return p[1];},configurable:true});});
+})();
+</script>
+<script>__GENERIC__</script>
+<script>__IDENTITY__</script>
+<script>__CONTENT__</script>
+</body></html>

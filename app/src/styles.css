@@ -1,0 +1,1710 @@
+@import "tailwindcss";
+
+/* Bundled locally — a desktop app must never depend on a font CDN at runtime.
+   The `wdth` builds carry both axes (Archivo 62–125%, Martian Mono 75–112.5%),
+   which is what lets legend plates run condensed and the describer stay narrow
+   enough to sit in a dense column without swapping face. */
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/martian-mono/wdth.css";
+@import "@fontsource-variable/inter/index.css";
+
+/* ---------------------------------------------------------------------------
+   Dispatch Board.
+
+   A centralized traffic control panel: painted enamel, etched schematic
+   hairlines, small signal lamps, engraved legend plates. Light is the panel by
+   day; dark is the same panel under night-shift lighting. Neither is a tint of
+   the other — the enamel changes, the lamps do not.
+
+   Every colour lives here as a raw `--c-*` value and is redefined per theme.
+   `@theme inline` hands Tailwind the var reference rather than the resolved
+   colour, so `bg-panel` and `text-ink` follow the theme instead of baking in
+   whichever one compiled first.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  /* Enamel */
+  --c-panel: #d7dcd2;
+  --c-panel-face: #e6eae0;
+  --c-panel-recess: #cdd3c7;
+  --c-panel-sunk: #bcc3b6;
+
+  /* Etched rules */
+  --c-edge: #a7afa0;
+  --c-edge-strong: #7b8476;
+
+  /* Lettering */
+  --c-ink: #161a14;
+  --c-ink-dim: #3c4239;
+  --c-ink-faint: #4f5749;
+
+  /* Signal aspects */
+  --c-clear: #086633;
+  --c-caution: #7a4c00;
+  --c-danger: #b01b18;
+  --c-paused: #b84e06;
+  --c-route: #1560c4;
+
+  /* Ink for text sitting ON a saturated signal fill. The day panel's signal
+     inks are dark, so their lettering is near-white; the night panel's are
+     lit, so it flips. White on a lit plate measured 2.68:1 and had to go. */
+  --c-on-signal: #f4f6f2;
+
+  /* Lamp housing when unlit — a dark cell, not an absence */
+  --c-lamp-off: #9aa294;
+
+  /* Engraved brass legend */
+  --c-brass: #7d6d3f;
+
+  /* Discord's own brand colour, used only to mark its send actions. */
+  --c-discord: #5865f2;
+
+  /* Occupancy blocks */
+  --c-block-clear: #b3bbac;
+
+  /* Cast shadow for a raised plate */
+  --c-shadow: 0deg 0% 8%;
+  --shadow-plate:
+    0 1px 1px hsl(var(--c-shadow) / 0.1),
+    0 2px 4px -1px hsl(var(--c-shadow) / 0.08);
+  --shadow-lift:
+    0 2px 4px hsl(var(--c-shadow) / 0.12),
+    0 12px 28px -8px hsl(var(--c-shadow) / 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --c-panel: #161a17;
+    --c-panel-face: #1e2320;
+    --c-panel-recess: #101312;
+    --c-panel-sunk: #0b0e0d;
+
+    --c-edge: #333b35;
+    --c-edge-strong: #4c564e;
+
+    --c-ink: #e9ede7;
+    --c-ink-dim: #a6aea4;
+    --c-ink-faint: #868e84;
+
+    --c-clear: #35c46f;
+    --c-caution: #e8a317;
+    --c-danger: #f1595e;
+    --c-paused: #ea6c24;
+    --c-route: #56a2f0;
+
+    --c-on-signal: #0b0e0d;
+
+    --c-lamp-off: #2b332d;
+
+    --c-brass: #b09a63;
+
+    --c-block-clear: #2b332d;
+
+    --c-shadow: 150deg 8% 2%;
+    --shadow-plate:
+      0 1px 1px hsl(var(--c-shadow) / 0.5),
+      0 2px 4px -1px hsl(var(--c-shadow) / 0.4);
+    --shadow-lift:
+      0 2px 4px hsl(var(--c-shadow) / 0.5),
+      0 16px 32px -8px hsl(var(--c-shadow) / 0.7);
+  }
+}
+
+/* Explicit choice wins over the OS in both directions. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --c-panel: #161a17;
+  --c-panel-face: #1e2320;
+  --c-panel-recess: #101312;
+  --c-panel-sunk: #0b0e0d;
+
+  --c-edge: #333b35;
+  --c-edge-strong: #4c564e;
+
+  --c-ink: #e9ede7;
+  --c-ink-dim: #a6aea4;
+  --c-ink-faint: #868e84;
+
+  --c-clear: #35c46f;
+  --c-caution: #e8a317;
+  --c-danger: #f1595e;
+  --c-paused: #ea6c24;
+  --c-route: #56a2f0;
+
+  --c-on-signal: #0b0e0d;
+
+  --c-lamp-off: #2b332d;
+  --c-brass: #b09a63;
+  --c-block-clear: #2b332d;
+
+  --c-shadow: 150deg 8% 2%;
+  --shadow-plate:
+    0 1px 1px hsl(var(--c-shadow) / 0.5),
+    0 2px 4px -1px hsl(var(--c-shadow) / 0.4);
+  --shadow-lift:
+    0 2px 4px hsl(var(--c-shadow) / 0.5),
+    0 16px 32px -8px hsl(var(--c-shadow) / 0.7);
+}
+
+@theme inline {
+  /* Text and figure families come from --ui-font-sans/-mono, which the
+     Typeface Character setting changes. They are plain variables, not literals
+     baked into the utilities, so font-sans and font-mono follow the setting. */
+  --font-sans: var(--ui-font-sans);
+  --font-mono: var(--ui-font-mono);
+
+  --color-panel: var(--c-panel);
+  --color-face: var(--c-panel-face);
+  --color-recess: var(--c-panel-recess);
+  --color-sunk: var(--c-panel-sunk);
+
+  --color-edge: var(--c-edge);
+  --color-edge-strong: var(--c-edge-strong);
+
+  --color-ink: var(--c-ink);
+  --color-ink-dim: var(--c-ink-dim);
+  --color-ink-faint: var(--c-ink-faint);
+
+  --color-clear: var(--c-clear);
+  --color-caution: var(--c-caution);
+  --color-danger: var(--c-danger);
+  --color-paused: var(--c-paused);
+  --color-route: var(--c-route);
+
+  --color-on-signal: var(--c-on-signal);
+  --color-lamp-off: var(--c-lamp-off);
+  --color-brass: var(--c-brass);
+  --color-discord: var(--c-discord);
+  --color-block-clear: var(--c-block-clear);
+
+  /* Corner geometry follows the Corner Radius setting; see :root[data-radius]. */
+  --radius-hw-sm: var(--hw-r-sm);
+  --radius-hw: var(--hw-r);
+  --radius-hw-lg: var(--hw-r-lg);
+  --radius-hw-xl: var(--hw-r-xl);
+  --radius-hw-panel: var(--hw-r-panel);
+  --radius-hw-modal: var(--hw-r-modal);
+
+  /* Relay mechanics. A lever throw settles; it does not glide. */
+  --ease-throw: cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background-color: var(--c-panel);
+  }
+
+  body {
+    @apply bg-panel text-ink font-sans antialiased;
+    /* The shell is a fixed window; the app owns its own scroll regions. */
+    overflow: hidden;
+    /* The webview lets you drag-select chrome like a web page, which instantly
+       breaks the illusion of a native app. Re-enable only where text is real. */
+    user-select: none;
+    cursor: default;
+    font-synthesis-weight: none;
+  }
+
+  input,
+  textarea,
+  [data-selectable] {
+    user-select: text;
+  }
+
+  /* Browser surfaces ship with defaults that belong to no design system.
+     Selection, caret and scrollbar are part of the panel. */
+  ::selection {
+    background-color: color-mix(in srgb, var(--c-route) 28%, transparent);
+    color: var(--c-ink);
+  }
+
+  input,
+  textarea {
+    caret-color: var(--c-route);
+  }
+  input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, textarea:-webkit-autofill {
+    -webkit-text-fill-color: var(--c-ink);
+    box-shadow: 0 0 0 1000px var(--c-panel-recess) inset;
+    transition: background-color 99999s ease-out 0s;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--c-panel-recess);
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--c-edge);
+    border: 3px solid var(--c-panel-recess);
+    border-radius: var(--hw-r);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--c-edge-strong);
+  }
+  ::-webkit-scrollbar-corner {
+    background: var(--c-panel-recess);
+  }
+
+  /* Measured values are read down a column, never across. */
+  [data-measure],
+  .describer {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+}
+
+@layer utilities {
+  /* --- Lettering ------------------------------------------------------- */
+
+  /* Engraved legend plate: condensed caps, letter-spaced, the way a panel
+     legend is cut. Archivo's width axis does the condensing; no second face. */
+  .legend {
+    font-stretch: 78%;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* Train describer: fixed-cell numerics, IDs, hashes. Never body text. */
+  .describer {
+    font-family: var(--font-mono);
+    font-stretch: 75%;
+    letter-spacing: -0.01em;
+  }
+
+
+  /* --- Panel surfaces --------------------------------------------------- */
+
+  /* A raised plate on the enamel: hairline edge, a light-catching top rule,
+     and a real cast shadow with offset and blur. */
+  .plate {
+    background-color: var(--c-panel-face);
+    border: 1px solid var(--c-edge);
+    box-shadow: var(--shadow-plate);
+  }
+
+  /* A well cut into the panel — inputs, the entry slot, lamp housings. */
+  .recess {
+    background-color: var(--c-panel-recess);
+    border: 1px solid var(--c-edge);
+    box-shadow: inset 0 1px 2px hsl(var(--c-shadow) / 0.18);
+  }
+
+  .lift {
+    box-shadow: var(--shadow-lift);
+  }
+
+  /* --- Focus ------------------------------------------------------------ */
+
+  /* Longhands, not the `outline` shorthand: a `var()` colour inside the
+     shorthand does not survive the build's CSS pipeline, and the declaration
+     silently degrades to `currentColor` — a ring the same colour as the label
+     it is meant to distinguish. */
+  .focus-ring {
+    outline: none;
+  }
+  .focus-ring:focus-visible {
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: var(--c-route);
+    outline-offset: 2px;
+    border-radius: var(--hw-r);
+  }
+
+  /* --- Occupancy -------------------------------------------------------- */
+
+  /* A block is a byte range. It is lit or it is clear; there is no in-between,
+     so it must never animate its colour. */
+  .block {
+    transition: none;
+    transform-origin: left center;
+  }
+}
+
+/* The one authored moment: block hand-over.
+   When a connection finishes a range, the block it hands over is thrown into
+   occupancy rather than appearing between two frames. Everything else on this
+   panel switches or steps. */
+@keyframes throw {
+  0% {
+    transform: scaleX(0.2);
+    filter: brightness(2.4);
+  }
+  55% {
+    transform: scaleX(1);
+    filter: brightness(1.8);
+  }
+  100% {
+    transform: scaleX(1);
+    filter: brightness(1);
+  }
+}
+
+/* Native progress semantics, machined into the same square occupancy track. */
+.update-progress {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 0.375rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--hw-r-sm);
+  background: var(--c-block-clear);
+}
+
+.update-progress::-webkit-progress-bar {
+  background: var(--c-block-clear);
+}
+
+.update-progress::-webkit-progress-value,
+.update-progress::-moz-progress-bar {
+  background: currentColor;
+}
+
+/* Reduced motion drops movement and keeps state. Animations collapse and only
+   colour and opacity may transition, briefly, so a lamp switching or a row
+   changing status still reads as a change. Layout, transform and shadow stay
+   instant, and an occupancy block never fades. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-property: color, background-color, border-color, outline-color, opacity !important;
+    transition-duration: 100ms !important;
+    transition-delay: 0s !important;
+  }
+  .block {
+    transition: none !important;
+  }
+}
+
+/* User motion preference override */
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Customization & Appearance Enhancements
+--------------------------------------------------------------------------- */
+
+/* Corner Geometry
+   One scale for every container. Components use the rounded-hw-* utilities
+   (see @theme inline), so the Corner Radius setting reaches each of them and
+   not only the elements this stylesheet names. The default bevel keeps the
+   hardware look: 1-4px corners, with larger panels and modals only where the
+   liquid-glass surfaces already used them. */
+:root {
+  --hw-r-sm: 1px;
+  --hw-r: 2px;
+  --hw-r-lg: 3px;
+  --hw-r-xl: 4px;
+  --hw-r-panel: 10px;
+  --hw-r-modal: 22px;
+  --radius-ui: var(--hw-r);
+}
+:root[data-radius="sharp"] {
+  --hw-r-sm: 0px;
+  --hw-r: 0px;
+  --hw-r-lg: 0px;
+  --hw-r-xl: 0px;
+  --hw-r-panel: 0px;
+  --hw-r-modal: 0px;
+}
+:root[data-radius="modern"] {
+  --hw-r-sm: 3px;
+  --hw-r: 6px;
+  --hw-r-lg: 8px;
+  --hw-r-xl: 10px;
+  --hw-r-panel: 14px;
+  --hw-r-modal: 22px;
+}
+:root[data-radius="rounded"] {
+  --hw-r-sm: 5px;
+  --hw-r: 10px;
+  --hw-r-lg: 12px;
+  --hw-r-xl: 14px;
+  --hw-r-panel: 18px;
+  --hw-r-modal: 28px;
+}
+
+:root[data-radius] .plate,
+:root[data-radius] .recess,
+:root[data-radius] input,
+:root[data-radius] select,
+:root[data-radius] textarea,
+:root[data-radius] [role="tablist"],
+:root[data-radius] [role="radiogroup"],
+:root[data-radius] button:not([class*="rounded-full"]):not([class*="rounded-"]) {
+  border-radius: var(--radius-ui);
+}
+
+/* Segmented controls (the rows of options) draw a thin divider between
+   choices. Past a 2px bevel the corners are soft and the selected option is a
+   filled shape, so the dividers go: the fill alone separates the options. The
+   mobile menu grid in the title bar reuses the classes but is not an options row. */
+:root[data-radius="modern"] [class*="last:border-r-0"]:not([class*="min-h-11"]),
+:root[data-radius="rounded"] [class*="last:border-r-0"]:not([class*="min-h-11"]) {
+  border-right-width: 0;
+}
+
+/* The main tabs lose their dividers the same way. The line after the app title
+   stays: it separates the name from the navigation rather than one tab from
+   the next. */
+:root[data-radius="modern"] .main-tab,
+:root[data-radius="rounded"] .main-tab {
+  border-right-width: 0;
+}
+
+/* Typography font modes
+   Each preset names the real families it uses. Industrial pairs Archivo with
+   Martian Mono for tabular figures; Full Mono sets everything in Martian Mono;
+   System UI uses the operating system's own faces; Modern Sans is the bundled
+   Inter. A custom upload sets these two variables from script. */
+:root {
+  --ui-font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --ui-font-mono: "Martian Mono Variable", ui-monospace, monospace;
+}
+:root[data-font="mono"] {
+  --ui-font-sans: "Martian Mono Variable", ui-monospace, monospace;
+}
+:root[data-font="system"] {
+  --ui-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --ui-font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, Menlo, monospace;
+}
+:root[data-font="sans"] {
+  --ui-font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Density
+   Tailwind derives every padding, gap, margin and size from --spacing, so one
+   multiplier makes rows, tables, settings, forms and dialogs tighter or looser
+   everywhere at once. The title bar keeps its own scale: window controls and the
+   drag strip are chrome, not content. */
+:root {
+  --density: 1;
+}
+:root[data-density="compact"] {
+  --density: 0.8;
+}
+:root[data-density="comfortable"] {
+  --density: 1.2;
+}
+:root[data-density] {
+  --spacing: calc(0.25rem * var(--density));
+}
+.app-header,
+.window-controls {
+  --spacing: 0.25rem;
+}
+
+/* The download table sets its row rhythm explicitly. */
+:root[data-density="compact"] .download-row {
+  padding-top: 0.35rem !important;
+  padding-bottom: 0.35rem !important;
+}
+:root[data-density="comfortable"] .download-row {
+  padding-top: 0.85rem !important;
+  padding-bottom: 0.85rem !important;
+}
+
+#root {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Atmospheric Effects */
+
+/* 1. CRT Scanline & Phosphor screen overlay */
+body[data-effect-scanlines="true"]::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, calc(0.36 * var(--effect-scanlines-opacity, 0.7))) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, calc(0.04 * var(--effect-scanlines-opacity, 0.7))), rgba(0, 255, 0, calc(0.02 * var(--effect-scanlines-opacity, 0.7))), rgba(0, 0, 255, calc(0.04 * var(--effect-scanlines-opacity, 0.7))));
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: var(--effect-scanlines-opacity, 0.7);
+}
+
+/* 2. Schematic blueprint / millimeter grid - Underlay background */
+#atmosphere-grid-underlay,
+#atmosphere-grid-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body[data-effect-grid="true"] #atmosphere-grid-underlay,
+body[data-effect-grid="true"] #atmosphere-grid-overlay {
+  display: block;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--c-edge-strong) calc(var(--effect-grid-opacity, 0.5) * 55%), transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--c-edge-strong) calc(var(--effect-grid-opacity, 0.5) * 55%), transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* 3. Liquid Glass & Backdrop Glassmorphism System */
+body[data-effect-glass="true"] .plate {
+  backdrop-filter: blur(var(--effect-glass-blur, 20px)) saturate(var(--effect-glass-saturation, 160%)) brightness(105%);
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 20px)) saturate(var(--effect-glass-saturation, 160%)) brightness(105%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--c-panel-face) 82%, rgba(255, 255, 255, 0.18)) 0%,
+    color-mix(in srgb, var(--c-panel-face) 70%, transparent) 100%
+  );
+  box-shadow:
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 10px 28px -4px rgba(0, 0, 0, 0.25);
+}
+
+/* Liquid Glass Core: Specular Meniscus, Caustics, and Chromatic Dispersion */
+.liquid-glass,
+body[data-effect-glass="true"] .modal-plate,
+body[data-effect-glass="true"] .glass-panel {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(var(--effect-glass-blur, 24px))
+                   saturate(var(--effect-glass-saturation, 190%))
+                   contrast(106%)
+                   brightness(108%) !important;
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 24px))
+                           saturate(var(--effect-glass-saturation, 190%))
+                           contrast(106%)
+                           brightness(108%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 255, 255, 0.14) 22%,
+    color-mix(in srgb, var(--c-panel-face) 48%, transparent) 55%,
+    rgba(255, 255, 255, 0.04) 80%,
+    rgba(255, 255, 255, 0.22) 100%
+  ) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.42) !important;
+  border-top-color: rgba(255, 255, 255, 0.88) !important;
+  border-left-color: rgba(255, 255, 255, 0.65) !important;
+  border-right-color: rgba(255, 255, 255, 0.35) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    /* Top specular meniscus reflection bead */
+    inset 0 2px 1.5px 0 rgba(255, 255, 255, 0.95),
+    /* Inner perimeter high-index bevel rim */
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    /* Deep liquid meniscus curvature caustic highlights */
+    inset 0 20px 36px -10px rgba(255, 255, 255, 0.45),
+    inset 0 -20px 36px -10px rgba(0, 0, 0, 0.32),
+    /* Bottom chromatic prism dispersion edge (coral / magenta / blue) */
+    inset 0 -3.5px 16px -1px rgba(244, 63, 94, 0.55),
+    inset -12px -2px 20px -2px rgba(168, 85, 247, 0.5),
+    inset 12px -2px 20px -2px rgba(59, 130, 246, 0.5),
+    /* Floating ambient depth elevation shadows */
+    0 32px 64px -16px rgba(0, 0, 0, 0.55),
+    0 12px 28px -6px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Chromatic caustic dispersion pseudo-element */
+.liquid-glass::after,
+body[data-effect-glass="true"] .modal-plate::after,
+body[data-effect-glass="true"] .glass-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 112%, rgba(244, 63, 94, 0.52) 0%, rgba(168, 85, 247, 0.45) 32%, rgba(59, 130, 246, 0.4) 62%, transparent 80%),
+    radial-gradient(ellipse at 50% -15%, rgba(255, 255, 255, 0.78) 0%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0.95;
+  z-index: 1;
+}
+
+/* Inner optical curvature refraction band */
+.liquid-glass::before,
+body[data-effect-glass="true"] .modal-plate::before,
+body[data-effect-glass="true"] .glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 2.5px;
+  border-radius: calc(inherit - 2.5px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+  opacity: 0.7;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 35%, transparent 65%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 35%, transparent 65%, black 100%);
+  z-index: 1;
+}
+
+/* Classic Frosted Mode overrides when user prefers neutral matte frost */
+body[data-effect-glass="true"][data-glass-style="frosted"] .modal-plate,
+body[data-effect-glass="true"][data-glass-style="frosted"] .glass-panel {
+  background: color-mix(in srgb, var(--c-panel-face) 75%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--c-edge-strong) 80%, transparent) !important;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+body[data-effect-glass="true"][data-glass-style="frosted"] .modal-plate::after,
+body[data-effect-glass="true"][data-glass-style="frosted"] .glass-panel::after,
+body[data-effect-glass="true"][data-glass-style="frosted"] .modal-plate::before,
+body[data-effect-glass="true"][data-glass-style="frosted"] .glass-panel::before {
+  display: none !important;
+}
+
+/* --- Floating Pill Navbar --- */
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header {
+  margin: 0.65rem clamp(0.75rem, 2vw, 1.5rem) 0.45rem clamp(0.75rem, 2vw, 1.5rem);
+  border-radius: 9999px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.38) !important;
+  border-top-color: rgba(255, 255, 255, 0.85) !important;
+  border-left-color: rgba(255, 255, 255, 0.6) !important;
+  border-right-color: rgba(255, 255, 255, 0.3) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.18) !important;
+  backdrop-filter: blur(var(--effect-glass-blur, 24px))
+                   saturate(var(--effect-glass-saturation, 190%))
+                   contrast(106%)
+                   brightness(108%) !important;
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 24px))
+                           saturate(var(--effect-glass-saturation, 190%))
+                           contrast(106%)
+                           brightness(108%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.12) 20%,
+    color-mix(in srgb, var(--c-panel-face) 48%, transparent) 55%,
+    rgba(255, 255, 255, 0.04) 80%,
+    rgba(255, 255, 255, 0.2) 100%
+  ) !important;
+  box-shadow:
+    inset 0 2px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 16px 28px -10px rgba(255, 255, 255, 0.35),
+    inset 0 -16px 28px -10px rgba(0, 0, 0, 0.25),
+    inset 0 -3px 14px -1px rgba(244, 63, 94, 0.45),
+    inset -10px -2px 16px -2px rgba(168, 85, 247, 0.4),
+    inset 10px -2px 16px -2px rgba(59, 130, 246, 0.4),
+    0 16px 36px -10px rgba(0, 0, 0, 0.45),
+    0 6px 16px -4px rgba(0, 0, 0, 0.25) !important;
+  position: relative;
+  overflow: visible;
+  transition: border-radius 250ms var(--ease-throw), box-shadow 250ms var(--ease-throw), background 250ms var(--ease-throw);
+  z-index: 40;
+}
+
+/* Pseudo chromatic caustics on floating pill */
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 115%, rgba(244, 63, 94, 0.45) 0%, rgba(168, 85, 247, 0.35) 30%, rgba(59, 130, 246, 0.3) 60%, transparent 80%),
+    radial-gradient(ellipse at 50% -20%, rgba(255, 255, 255, 0.7) 0%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  z-index: 0;
+}
+
+/* Floating pill interior elements */
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header > div:first-child {
+  padding-left: 1.25rem !important;
+  padding-right: 1.1rem !important;
+  border-right-color: rgba(255, 255, 255, 0.22) !important;
+  position: relative;
+  z-index: 1;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header nav {
+  align-items: center;
+  gap: 3px;
+  padding: 0 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header nav button {
+  border-radius: 9999px !important;
+  border-right: none !important;
+  padding: 0.35rem 0.85rem !important;
+  height: 2rem !important;
+  font-size: 11px !important;
+  transition: all 180ms ease;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header nav button[aria-current="page"] {
+  background-color: var(--c-route) !important;
+  color: var(--c-on-signal) !important;
+  box-shadow: 0 2px 10px -1px color-mix(in srgb, var(--c-route) 60%, transparent),
+              inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header nav button:not([aria-current="page"]):hover {
+  background-color: rgba(255, 255, 255, 0.16) !important;
+  color: var(--c-ink) !important;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header nav button span[aria-hidden="true"] {
+  display: none !important;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header > .header-tools {
+  padding-right: 1.25rem !important;
+  position: relative;
+  z-index: 1;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header > .header-tools button {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  padding: 0.25rem 0.75rem !important;
+  transition: all 180ms ease;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header > .header-tools button:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Compact mobile menu in floating pill mode */
+body[data-effect-glass="true"][data-glass-navbar="true"] .app-header button[aria-controls="compact-primary-navigation"] {
+  border-radius: 9999px !important;
+  border: none !important;
+  margin: 4px 6px;
+  padding: 0.35rem 0.85rem !important;
+  position: relative;
+  z-index: 1;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] #compact-primary-navigation {
+  top: calc(100% + 8px) !important;
+  border-radius: 18px !important;
+  backdrop-filter: blur(var(--effect-glass-blur, 24px)) saturate(var(--effect-glass-saturation, 190%)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 24px)) saturate(var(--effect-glass-saturation, 190%)) !important;
+  background: color-mix(in srgb, var(--c-panel-face) 70%, transparent) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.55), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"] #compact-primary-navigation nav button {
+  border-radius: 8px !important;
+  margin: 2px;
+}
+
+/* Matte Frosted Mode Overrides for floating pill */
+body[data-effect-glass="true"][data-glass-navbar="true"][data-glass-style="frosted"] .app-header {
+  background: color-mix(in srgb, var(--c-panel-face) 76%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--c-edge-strong) 80%, transparent) !important;
+  box-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.38), inset 0 1px 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"][data-glass-style="frosted"] .app-header::after {
+  display: none !important;
+}
+
+body[data-effect-glass="true"][data-glass-navbar="true"][data-glass-style="frosted"] #compact-primary-navigation {
+  background: color-mix(in srgb, var(--c-panel-face) 85%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--c-edge-strong) 80%, transparent) !important;
+}
+
+/* --- In-App Modal Glass System --- */
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-backdrop {
+  backdrop-filter: blur(calc(var(--effect-glass-blur, 20px) * 0.55)) brightness(85%) !important;
+  -webkit-backdrop-filter: blur(calc(var(--effect-glass-blur, 20px) * 0.55)) brightness(85%) !important;
+}
+
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate {
+  border-radius: 22px !important;
+}
+
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .border-b,
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .border-t,
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .border-r,
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .border-l,
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .border {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .bg-recess,
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .bg-recess\/40 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .bg-face,
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .bg-face\/70 {
+  background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+body[data-effect-glass="true"][data-glass-modals="true"] .modal-plate .bg-panel {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* --- Settings Shell Glass System --- */
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-tablist-glass {
+  border-radius: 9999px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+  background: color-mix(in srgb, var(--c-panel-face) 40%, transparent) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  padding: 3px !important;
+  gap: 2px;
+  box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), 0 4px 14px -3px rgba(0, 0, 0, 0.25) !important;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-tablist-glass button {
+  border-radius: 9999px !important;
+  border-right: none !important;
+  padding: 0.35rem 1rem !important;
+  transition: all 180ms ease;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-tablist-glass button[aria-selected="true"] {
+  background-color: var(--c-route) !important;
+  color: var(--c-on-signal) !important;
+  box-shadow: 0 2px 8px -1px color-mix(in srgb, var(--c-route) 60%, transparent),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.45) !important;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-tablist-glass button:not([aria-selected="true"]):hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: var(--c-ink) !important;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-outline-card {
+  border-radius: 16px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.28) !important;
+  background: color-mix(in srgb, var(--c-panel-face) 55%, transparent) !important;
+  backdrop-filter: blur(var(--effect-glass-blur, 20px)) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 20px)) saturate(160%) !important;
+  box-shadow:
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 12px 28px -6px rgba(0, 0, 0, 0.32) !important;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-outline-card nav button {
+  border-radius: 8px !important;
+  transition: all 150ms ease;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-outline-card nav button[class*="border-route"] {
+  background-color: color-mix(in srgb, var(--c-route) 22%, transparent) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+body[data-effect-glass="true"][data-glass-settings="true"] .settings-outline-strip button {
+  border-radius: 9999px !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* --- Floating Context Menu Glass --- */
+body[data-effect-glass="true"][data-glass-overlays="true"] .context-menu-glass {
+  border-radius: 14px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  background: color-mix(in srgb, var(--c-panel-face) 70%, transparent) !important;
+  backdrop-filter: blur(var(--effect-glass-blur, 24px)) saturate(var(--effect-glass-saturation, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 24px)) saturate(var(--effect-glass-saturation, 180%)) !important;
+  box-shadow:
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 20px 42px -8px rgba(0, 0, 0, 0.5) !important;
+  padding: 6px !important;
+}
+
+body[data-effect-glass="true"][data-glass-overlays="true"] .context-menu-glass button {
+  border-radius: 8px !important;
+}
+
+/* --- Floating Toasts Glass --- */
+body[data-effect-glass="true"][data-glass-overlays="true"] .toast-glass {
+  border-radius: 16px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.38) !important;
+  background: color-mix(in srgb, var(--c-panel-face) 72%, transparent) !important;
+  backdrop-filter: blur(var(--effect-glass-blur, 24px)) saturate(var(--effect-glass-saturation, 180%)) !important;
+  -webkit-backdrop-filter: blur(var(--effect-glass-blur, 24px)) saturate(var(--effect-glass-saturation, 180%)) !important;
+  box-shadow:
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.8),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 16px 36px -6px rgba(0, 0, 0, 0.45) !important;
+}
+
+body[data-effect-glass="true"][data-glass-overlays="true"] .toast-glass button {
+  border-radius: 8px !important;
+}
+
+/* 4. Cathode Screen Vignette */
+body[data-effect-vignette="true"]::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 45%,
+    rgba(0, 0, 0, calc(0.92 * var(--effect-vignette-opacity, 0.5))) 100%
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* 5. Phosphor Bloom & Halation */
+body[data-effect-bloom="true"] [role="switch"][aria-checked="true"] span {
+  box-shadow:
+    0 0 calc(var(--effect-bloom-intensity, 0.5) * 8px) var(--c-clear),
+    0 0 calc(var(--effect-bloom-intensity, 0.5) * 20px) var(--c-clear) !important;
+}
+
+body[data-effect-bloom="true"] [role="switch"][aria-checked="true"] {
+  border-color: var(--c-clear) !important;
+  box-shadow: 0 0 calc(var(--effect-bloom-intensity, 0.5) * 14px) color-mix(in srgb, var(--c-clear) 50%, transparent) !important;
+}
+
+body[data-effect-bloom="true"] .bg-route,
+body[data-effect-bloom="true"] button.bg-route,
+body[data-effect-bloom="true"] [role="tab"][aria-selected="true"],
+body[data-effect-bloom="true"] [role="radio"][aria-checked="true"] {
+  box-shadow:
+    0 0 calc(var(--effect-bloom-intensity, 0.5) * 16px) color-mix(in srgb, var(--c-route) 75%, transparent),
+    0 0 calc(var(--effect-bloom-intensity, 0.5) * 5px) var(--c-route) !important;
+}
+
+body[data-effect-bloom="true"] .bg-clear {
+  box-shadow:
+    0 0 calc(var(--effect-bloom-intensity, 0.5) * 16px) color-mix(in srgb, var(--c-clear) 75%, transparent),
+    0 0 calc(var(--effect-bloom-intensity, 0.5) * 5px) var(--c-clear) !important;
+}
+
+body[data-effect-bloom="true"] .text-route {
+  text-shadow: 0 0 calc(var(--effect-bloom-intensity, 0.5) * 12px) var(--c-route) !important;
+}
+
+body[data-effect-bloom="true"] .text-clear {
+  text-shadow: 0 0 calc(var(--effect-bloom-intensity, 0.5) * 12px) var(--c-clear) !important;
+}
+
+body[data-effect-bloom="true"] .text-caution {
+  text-shadow: 0 0 calc(var(--effect-bloom-intensity, 0.5) * 12px) var(--c-caution) !important;
+}
+
+body[data-effect-bloom="true"] .text-danger {
+  text-shadow: 0 0 calc(var(--effect-bloom-intensity, 0.5) * 12px) var(--c-danger) !important;
+}
+
+body[data-effect-bloom="true"] .font-mono {
+  text-shadow: 0 0 calc(var(--effect-bloom-intensity, 0.5) * 8px) color-mix(in srgb, currentColor 75%, transparent);
+}
+
+body[data-effect-bloom="true"] .signal-lamp,
+body[data-effect-bloom="true"] [data-signal="on"],
+body[data-effect-bloom="true"] .badge-active {
+  filter: drop-shadow(0 0 calc(var(--effect-bloom-intensity, 0.5) * 12px) var(--c-route)) !important;
+}
+
+/* 6. Analogue Console Noise & Grain (Underlay vs Overlay) */
+#atmosphere-noise-overlay {
+  display: none;
+}
+
+body[data-effect-noise="true"] #atmosphere-noise-overlay {
+  content: " ";
+  display: block;
+  position: fixed;
+  inset: 0;
+  background-image: var(--effect-noise-pattern, url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23000' opacity='0.05'/%3E%3C/svg%3E"));
+  background-repeat: repeat;
+  background-size: var(--effect-noise-size, 128px) var(--effect-noise-size, 128px);
+  image-rendering: pixelated;
+  pointer-events: none;
+  opacity: var(--effect-noise-opacity, 0.12);
+}
+
+/* Underlay Mode: Sits at z-index: 0 behind interface chrome, cards, and text */
+body[data-effect-noise="true"][data-noise-placement="underlay"] #atmosphere-noise-overlay {
+  z-index: 0 !important;
+  mix-blend-mode: soft-light !important;
+  opacity: calc(var(--effect-noise-opacity, 0.12) * 1.6) !important;
+}
+
+/* Overlay Mode: Sits at z-index: 9997 across all layers */
+body[data-effect-noise="true"]:not([data-noise-placement="underlay"]) #atmosphere-noise-overlay {
+  z-index: 9997 !important;
+  mix-blend-mode: overlay !important;
+}
+
+/* 7. Ambient Filament Warmth */
+body[data-effect-warmth="true"] #root::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 120% 70% at 50% 0%,
+    rgba(245, 158, 11, calc(var(--effect-warmth-opacity, 0.4) * 0.18)) 0%,
+    transparent 75%
+  );
+  pointer-events: none;
+  z-index: 9996;
+}
+
+/* Hardware Acceleration Overrides */
+:root[data-hardware-acceleration="false"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  text-shadow: none !important;
+}
+
+/* Mechanical Motion & Relay Physics */
+@keyframes mechanicalSettle {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-mechanical-settle {
+  animation: mechanicalSettle 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-toast-in {
+  animation: toastSlideIn 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   transitions.dev — Universal Motion Tokens & Component Transitions
+   Catalog: https://transitions.dev
+--------------------------------------------------------------------------- */
+:root {
+  /* Shared Motion Scale */
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: ease-in-out;
+  --ease-out: ease-out;
+  --ease-linear: linear;
+  --ease-settle: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* 01. Card resize (https://transitions.dev/detail.html?t=card-resize) */
+  --resize-dur: 300ms;
+  --resize-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 05. Menu dropdown */
+  --dropdown-open-dur: 250ms;
+  --dropdown-close-dur: 150ms;
+  --dropdown-pre-scale: 0.97;
+  --dropdown-closing-scale: 0.99;
+  --dropdown-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 06. Modal open / close */
+  --modal-open-dur: 250ms;
+  --modal-close-dur: 150ms;
+  --modal-scale: 0.96;
+  --modal-scale-close: 0.96;
+  --modal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 21. Accordion expand */
+  /* 27. Toggle — https://transitions.dev/detail.html?t=toggle */
+  --toggle-dur: 350ms;
+  --toggle-travel: 14.66px;
+  --toggle-ov1: 1px;
+  --toggle-ov2: 0px;
+  --toggle-track: 0ms;
+  --toggle-ease: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --acc-expand: 250ms;
+  --acc-collapse: 250ms;
+  --acc-chevron: 250ms;
+  --acc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 22. Toast open / close */
+  --toast-open: 350ms;
+  --toast-close: 250ms;
+  --toast-distance: 16px;
+  --toast-blur: 2px;
+  --toast-scale: 0.97;
+  --toast-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 03. Notification badge (https://transitions.dev/detail.html?t=notification-badge) */
+  --badge-slide-dur: 260ms;
+  --badge-pop-dur: 500ms;
+  --badge-pop-close-dur: 180ms;
+  --badge-fade-dur: 400ms;
+  --badge-fade-close-dur: 180ms;
+  --badge-blur: 2px;
+  --badge-offset-x: -8.2px;
+  --badge-offset-y: 12.4px;
+  --badge-slide-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --badge-pop-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --badge-close-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 17. Tooltip open / close (https://transitions.dev/detail.html?t=tooltip-open-close) */
+  --tt-in-dur: 150ms;
+  --tt-out-dur: 50ms;
+  --tt-scale: 0.98;
+  --tt-delay: 80ms;
+  --tt-in-ease: ease-out;
+  --tt-out-ease: ease-out;
+  --tt-move-dur: 160ms;
+  --tt-move-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --tt-bg: var(--c-panel-face, #1e2320);
+  --tt-fg: var(--c-ink, #e9ede7);
+}
+
+/* Subtle motion profile: tighter, low-latency durations and micro-displacements */
+:root[data-motion="subtle"] {
+  --duration-stagger: 20ms;
+  --duration-micro: 40ms;
+  --duration-quick: 100ms;
+  --duration-fast: 140ms;
+  --duration-medium: 180ms;
+  --duration-slow: 220ms;
+  --duration-very-slow: 260ms;
+
+  --resize-dur: 150ms;
+  --dropdown-open-dur: 140ms;
+  --dropdown-close-dur: 90ms;
+  --dropdown-pre-scale: 0.99;
+  --dropdown-closing-scale: 0.995;
+  --modal-open-dur: 140ms;
+  --modal-close-dur: 90ms;
+  --modal-scale: 0.98;
+  --modal-scale-close: 0.98;
+  --acc-expand: 140ms;
+  --acc-collapse: 140ms;
+  --acc-chevron: 140ms;
+  --toast-open: 180ms;
+  --toast-close: 120ms;
+  --toast-distance: 8px;
+  --toast-blur: 0px;
+
+  --badge-slide-dur: 160ms;
+  --badge-pop-dur: 240ms;
+  --badge-pop-close-dur: 100ms;
+  --badge-fade-dur: 200ms;
+  --badge-fade-close-dur: 100ms;
+  --badge-blur: 0px;
+
+  --tt-in-dur: 100ms;
+  --tt-out-dur: 40ms;
+  --tt-scale: 0.99;
+  --tt-delay: 40ms;
+  --tt-move-dur: 100ms;
+}
+
+/* 01. Card resize */
+.t-resize {
+  transition:
+    width  var(--resize-dur) var(--resize-ease),
+    height var(--resize-dur) var(--resize-ease);
+  will-change: width, height;
+}
+
+/* 05. Menu dropdown */
+.t-dropdown {
+  transform-origin: top left;
+  transform: scale(var(--dropdown-pre-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-open-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-open-dur) var(--dropdown-ease);
+  will-change: transform, opacity;
+}
+.t-dropdown[data-origin="top-right"]     { transform-origin: top right; }
+.t-dropdown[data-origin="top-center"]    { transform-origin: top center; }
+.t-dropdown[data-origin="bottom-left"]   { transform-origin: bottom left; }
+.t-dropdown[data-origin="bottom-center"] { transform-origin: bottom center; }
+.t-dropdown[data-origin="bottom-right"]  { transform-origin: bottom right; }
+
+.t-dropdown.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-dropdown.is-closing {
+  transform: scale(var(--dropdown-closing-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-close-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-close-dur) var(--dropdown-ease);
+}
+
+/* 27. Toggle geometry follows the reference; the hit area reaches 44px tall. */
+.t-toggle {
+  position: relative;
+  width: 44px;
+  height: 22px;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 122px;
+  background: var(--toggle-track-off, rgba(0, 0, 0, 0.12));
+  -webkit-tap-highlight-color: transparent;
+}
+:root[data-theme="dark"] .t-toggle { --toggle-track-off: rgba(255, 255, 255, 0.15); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .t-toggle { --toggle-track-off: rgba(255, 255, 255, 0.15); }
+}
+.t-toggle[data-on="true"] { background: rgba(0, 60, 255, 0.8); }
+.t-toggle::before { content: ""; position: absolute; inset: -11px 0; }
+.t-toggle-thumb {
+  position: absolute;
+  left: 3.67px;
+  top: 3.67px;
+  width: 22px;
+  height: 14.67px;
+  border-radius: min(var(--radius-ui, 2px), 4px);
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05), 0 4px 42px rgba(0, 0, 0, 0.06);
+}
+.t-toggle { transition: background var(--toggle-track) var(--toggle-ease); }
+.t-toggle-thumb { translate: 0 0; will-change: translate; }
+.t-toggle[data-on="true"] .t-toggle-thumb { translate: var(--toggle-travel) 0; }
+.t-toggle.is-init[data-on="true"] .t-toggle-thumb { animation: t-toggle-on var(--toggle-dur) var(--toggle-ease) both; }
+.t-toggle.is-init[data-on="false"] .t-toggle-thumb { animation: t-toggle-off var(--toggle-dur) var(--toggle-ease) both; }
+@keyframes t-toggle-on {
+  0% { translate: 0 0; }
+  55% { translate: calc(var(--toggle-travel) + var(--toggle-ov1)) 0; }
+  80% { translate: calc(var(--toggle-travel) - var(--toggle-ov2)) 0; }
+  100% { translate: var(--toggle-travel) 0; }
+}
+@keyframes t-toggle-off {
+  0% { translate: var(--toggle-travel) 0; }
+  55% { translate: calc(0px - var(--toggle-ov1)) 0; }
+  80% { translate: var(--toggle-ov2) 0; }
+  100% { translate: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-toggle-thumb { animation: none !important; }
+}
+:root[data-motion="reduced"] .t-toggle-thumb { animation: none !important; }
+:root[data-motion="subtle"] .t-toggle { --toggle-dur: 180ms; --toggle-ov1: 0px; }
+
+/* 06. Modal open / close */
+.t-modal {
+  transform-origin: center;
+  transform: scale(var(--modal-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-open-dur) var(--modal-ease),
+    opacity   var(--modal-open-dur) var(--modal-ease);
+  will-change: transform, opacity;
+}
+.t-modal.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-modal.is-closing {
+  transform: scale(var(--modal-scale-close));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-close-dur) var(--modal-ease),
+    opacity   var(--modal-close-dur) var(--modal-ease);
+}
+
+/* 21. Accordion expand */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] .t-acc-panel {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--acc-expand) var(--acc-ease);
+}
+.t-acc-panel-inner {
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+.t-acc[data-open="true"] .t-acc-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--acc-expand) var(--acc-ease),
+    filter var(--acc-expand) var(--acc-ease);
+}
+.t-acc-chevron {
+  display: inline-flex;
+  transform: scaleY(1);
+  transform-origin: center;
+  transition: transform var(--acc-chevron) var(--acc-ease);
+}
+.t-acc-chevron path { vector-effect: non-scaling-stroke; }
+.t-acc[data-open="true"] .t-acc-chevron {
+  transform: scaleY(-1);
+}
+
+/* 22. Toast open / close */
+.t-toast {
+  opacity: 0;
+  transform: translateY(var(--toast-distance)) scale(var(--toast-scale));
+  filter: blur(var(--toast-blur));
+  will-change: transform, opacity, filter;
+  transition:
+    opacity var(--toast-close) var(--toast-ease),
+    transform var(--toast-close) var(--toast-ease),
+    filter var(--toast-close) var(--toast-ease);
+}
+.t-toast.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition:
+    opacity var(--toast-open) var(--toast-ease),
+    transform var(--toast-open) var(--toast-ease),
+    filter var(--toast-open) var(--toast-ease);
+}
+
+/* 03. Notification badge (https://transitions.dev/detail.html?t=notification-badge) */
+@keyframes t-badge-slide-in {
+  from { transform: translate(var(--badge-offset-x), var(--badge-offset-y)); }
+  to   { transform: translate(0, 0); }
+}
+
+.t-badge {
+  position: absolute;
+  top: -4px;
+  right: -5px;
+  pointer-events: none;
+  will-change: transform;
+}
+.t-badge[data-open="true"] {
+  animation: t-badge-slide-in var(--badge-slide-dur) var(--badge-slide-ease);
+}
+
+.t-badge-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  transform: scale(1);
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    transform var(--badge-pop-dur)  var(--badge-pop-ease),
+    opacity   var(--badge-fade-dur) var(--badge-pop-ease),
+    filter    var(--badge-pop-dur)  var(--badge-pop-ease);
+  will-change: transform, opacity, filter;
+}
+.t-badge[data-open="false"] .t-badge-dot {
+  transform: scale(0);
+  opacity: 0;
+  filter: blur(var(--badge-blur));
+  transition:
+    transform var(--badge-pop-close-dur)  var(--badge-close-ease),
+    opacity   var(--badge-fade-close-dur) var(--badge-close-ease),
+    filter    var(--badge-pop-close-dur)  var(--badge-close-ease);
+}
+
+/* 17. Tooltip open / close (https://transitions.dev/detail.html?t=tooltip-open-close) */
+.t-tt-group {
+  position: relative;
+  display: inline-flex;
+}
+.t-tt-group.block {
+  display: block;
+}
+.t-tt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  margin: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: min(480px, calc(100vw - 16px));
+  max-height: calc(100dvh - 16px);
+  overflow: auto;
+  translate: var(--tt-x, 0px) var(--tt-y, 0px);
+  scale: var(--tt-scale);
+  transform-origin: 50% 100%;
+  padding: 4px 8px;
+  border-radius: var(--hw-r-xl);
+  background: var(--tt-bg);
+  color: var(--tt-fg);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: normal;
+  line-height: 1.45;
+  border: 1px solid var(--c-edge-strong, rgba(255, 255, 255, 0.18));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.2),
+    0 4px 14px 0 rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition:
+    opacity   var(--tt-out-dur) var(--tt-out-ease),
+    scale     var(--tt-out-dur) var(--tt-out-ease);
+}
+.t-tt::backdrop { background: transparent; pointer-events: none; }
+.t-tt[popover]:not(:popover-open) { display: none; }
+.t-tt[data-side="bottom"] {
+  transform-origin: 50% 0%;
+}
+.t-tt[data-show="true"] {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity   var(--tt-in-dur) var(--tt-in-ease) var(--tt-delay),
+    scale     var(--tt-in-dur) var(--tt-in-ease) var(--tt-delay);
+}
+.t-tt-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.shortcut-dialog {
+  width: min(760px, calc(100vw - 24px));
+  max-width: none;
+  max-height: min(84dvh, 800px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--c-edge-strong);
+  border-radius: var(--radius-ui, 2px);
+  background: var(--color-face);
+  color: var(--color-ink);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 35%);
+}
+.shortcut-dialog[open] { display: flex; }
+.shortcut-dialog > div { max-height: min(84dvh, 800px); width: 100%; }
+.shortcut-dialog::backdrop { background: rgb(0 0 0 / 60%); }
+
+.release-notes-dialog,
+.conversion-help-dialog {
+  width: min(680px, calc(100vw - 24px));
+  max-width: none;
+  max-height: min(84dvh, 760px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--c-edge-strong);
+  border-radius: var(--radius-ui, 2px);
+  background: var(--color-face);
+  color: var(--color-ink);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 35%);
+}
+.conversion-help-dialog { width: min(560px, calc(100vw - 24px)); }
+/* Reserve the info button's height even for labels without a help button. */
+.conversion-view .field-heading,
+.discord-sender-fields .field-heading { min-height: 24px; }
+.conversion-view input,
+.conversion-view select,
+.conversion-view .select-face,
+.discord-sender-fields input,
+.discord-sender-fields select,
+.discord-sender-fields .select-face { height: 34px; }
+.number-input { appearance: textfield; -moz-appearance: textfield; }
+.number-input::-webkit-inner-spin-button,
+.number-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.select-control:not([data-open="true"]) .select-native:focus-visible + .select-face {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--c-route);
+  outline-offset: 2px;
+  border-radius: var(--hw-r);
+}
+.select-control[data-open="true"] .select-face {
+  border-color: var(--c-route);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--c-route) 45%, transparent);
+}
+.select-option-active, .select-option:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--c-route) 12%, var(--c-panel-recess));
+}
+.conversion-paths-input {
+  field-sizing: content;
+  min-height: 40px;
+  max-height: 192px;
+  resize: none;
+  overflow-y: auto;
+}
+.release-notes-dialog[open],
+.conversion-help-dialog[open] { display: flex; flex-direction: column; }
+.release-notes-dialog > header,
+.release-notes-dialog > footer,
+.conversion-help-dialog > header,
+.conversion-help-dialog > footer { flex-shrink: 0; }
+.release-notes-dialog::backdrop,
+.conversion-help-dialog::backdrop { background: rgb(0 0 0 / 60%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .t-resize,
+  .t-dropdown,
+  .t-modal,
+  .t-acc-panel,
+  .t-acc-panel-inner,
+  .t-acc-chevron,
+  .t-toast,
+  .t-badge,
+  .t-badge-dot,
+  .t-tt {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+
+
+ .settings-search-hit { outline: 2px solid var(--color-route); outline-offset: 5px; }
+
+.discord-send-dialog { width: min(1040px, calc(100vw - 24px)); }
+.discord-send-dialog,
+.discord-send-dialog > div { max-height: min(92dvh, 900px); }
+
+/* Shared entry controls: squircle feedback stays inside each existing hit target. */
+.entry-icon-button {
+  position: relative;
+  display: inline-flex;
+  width: var(--entry-action-size, 32px);
+  height: var(--entry-action-size, 32px);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 32%;
+  color: var(--c-ink-dim);
+  cursor: pointer;
+}
+.download-entry-action { --entry-action-size: 28px; }
+.entry-icon-glyph { display: inline-flex; align-items: center; justify-content: center; }
+.entry-icon-button[data-action="remove"] { --entry-action-accent: var(--c-danger); }
+.entry-icon-button[data-action="share"] { --entry-action-accent: #5865f2; color: var(--entry-action-accent); }
+.entry-icon-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  clip-path: polygon(100.00% 50.00%, 99.88% 65.65%, 99.52% 72.08%, 98.91% 76.94%, 98.06% 80.93%, 96.96% 84.33%, 95.59% 87.27%, 93.96% 89.82%, 92.04% 92.04%, 89.82% 93.96%, 87.27% 95.59%, 84.33% 96.96%, 80.93% 98.06%, 76.94% 98.91%, 72.08% 99.52%, 65.65% 99.88%, 50.00% 100.00%, 34.35% 99.88%, 27.92% 99.52%, 23.06% 98.91%, 19.07% 98.06%, 15.67% 96.96%, 12.73% 95.59%, 10.18% 93.96%, 7.96% 92.04%, 6.04% 89.82%, 4.41% 87.27%, 3.04% 84.33%, 1.94% 80.93%, 1.09% 76.94%, 0.48% 72.08%, 0.12% 65.65%, 0.00% 50.00%, 0.12% 34.35%, 0.48% 27.92%, 1.09% 23.06%, 1.94% 19.07%, 3.04% 15.67%, 4.41% 12.73%, 6.04% 10.18%, 7.96% 7.96%, 10.18% 6.04%, 12.73% 4.41%, 15.67% 3.04%, 19.07% 1.94%, 23.06% 1.09%, 27.92% 0.48%, 34.35% 0.12%, 50.00% 0.00%, 65.65% 0.12%, 72.08% 0.48%, 76.94% 1.09%, 80.93% 1.94%, 84.33% 3.04%, 87.27% 4.41%, 89.82% 6.04%, 92.04% 7.96%, 93.96% 10.18%, 95.59% 12.73%, 96.96% 15.67%, 98.06% 19.07%, 98.91% 23.06%, 99.52% 27.92%, 99.88% 34.35%);
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity var(--duration-quick) var(--ease-smooth-out), transform var(--duration-quick) var(--ease-smooth-out);
+  pointer-events: none;
+}
+.entry-icon-button > .entry-icon-glyph {
+  position: relative;
+  transition: transform var(--duration-quick) var(--ease-smooth-out);
+}
+.entry-icon-button:disabled { cursor: default; opacity: 0.45; }
+.entry-icon-button:focus-visible { color: var(--entry-action-accent, var(--c-route)); }
+.entry-icon-button:focus-visible::before { opacity: 0.1; transform: none; transition: none; }
+.entry-icon-button:focus-visible > .entry-icon-glyph { transform: none; transition: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .entry-icon-button:hover:enabled { color: var(--entry-action-accent, var(--c-route)); }
+  .entry-icon-button:hover:enabled::before { opacity: 0.1; transform: none; }
+  .entry-icon-button:hover:enabled:not(:focus-visible) > .entry-icon-glyph { transform: translateY(-1px) scale(1.06); }
+  .entry-icon-button[data-action="remove"]:hover:enabled:not(:focus-visible) > .entry-icon-glyph { transform: rotate(-8deg) scale(1.06); }
+  .entry-icon-button[data-action="retry"]:hover:enabled:not(:focus-visible) > .entry-icon-glyph { transform: rotate(-25deg); }
+  .entry-icon-button:hover:active:enabled:not(:focus-visible) > .entry-icon-glyph { transform: scale(0.94); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entry-icon-button > .entry-icon-glyph,
+  .entry-icon-button::before { transform: none !important; transition-property: opacity !important; }
+}
+:root[data-motion="reduced"] .entry-icon-button > .entry-icon-glyph,
+:root[data-motion="reduced"] .entry-icon-button::before {
+  transform: none !important;
+  transition-property: opacity !important;
+}
+
+/* Sliding selection
+   Tab-like groups (filter chips, settings tabs and outline, the main tabs,
+   segmented option rows) draw their highlight as one element that moves to the
+   chosen item; see SlideGroup. The slide is an ordinary transition on the
+   animation tokens, so Interface Motion governs it: Subtle shortens it and
+   Reduced (or the system preference) makes it an instant cut. */
+.slide-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.slide-indicator[data-visible="true"] {
+  opacity: 1;
+}
+.slide-indicator[data-ready="true"] {
+  transition:
+    transform var(--duration-fast) var(--ease-smooth-out),
+    width var(--duration-fast) var(--ease-smooth-out),
+    height var(--duration-fast) var(--ease-smooth-out),
+    opacity var(--duration-quick) var(--ease-smooth-out);
+}
+.slide-group > :not(.slide-indicator) {
+  position: relative;
+  z-index: 1;
+}
+/* The main tabs: a recessed tab with a lit strip along its foot. */
+.main-tab-indicator {
+  background: var(--c-panel-recess);
+}
+.main-tab-indicator::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--c-route);
+}

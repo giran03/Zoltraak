@@ -1,0 +1,7 @@
+{
+  "_comment": "Every FFmpeg component the engine invokes. scripts/stage_media_tools.ps1 refuses a bundled build that lacks one, and engine tests fail when code starts using one not listed here. A smaller FFmpeg build only has to provide this list plus the decoders/demuxers for inputs.",
+  "encoders": ["libx264", "libvpx-vp9", "gif", "libwebp_anim", "libwebp", "png", "mjpeg", "bmp", "tiff", "libmp3lame", "aac", "alac", "flac", "pcm_s16le", "pcm_s16be", "libopus", "libvorbis"],
+  "filters": ["scale", "crop", "setsar", "format", "aformat", "transpose", "hflip", "vflip", "pad", "fps", "overlay", "drawbox", "palettegen", "paletteuse", "loudnorm", "afade", "split", "null"],
+  "muxers": ["mp4", "matroska", "mov", "webm", "gif", "webp", "image2", "ipod", "mp3", "flac", "wav", "aiff", "opus", "ogg", "null"],
+  "demuxers": ["concat"]
+}

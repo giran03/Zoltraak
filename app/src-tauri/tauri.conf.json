@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Zoltraak",
+  "version": "1.0.1",
+  "identifier": "dev.zoltraak.app",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1440",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run bundle:prepare && npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Zoltraak",
+        "width": 1450,
+        "height": 840,
+        "minWidth": 640,
+        "minHeight": 480,
+        "maxWidth": 2560,
+        "maxHeight": 1600,
+        "resizable": true,
+        "decorations": false,
+        "dragDropEnabled": false,
+        "generalAutofillEnabled": false,
+        "theme": "Dark",
+        "visible": false
+      }
+    ],
+    "security": {
+      "capabilities": ["default"],
+      "csp": "default-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; img-src 'self' asset: data: https:; media-src 'self' asset: data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": true,
+    "windows": {
+      "nsis": {
+        "compression": "lzma"
+      }
+    },
+    "resources": [
+      "resources/zoltraak-signed.xpi",
+      "resources/bin/*.exe",
+      "resources/bin/*.dll",
+      "resources/bin/LICENSE",
+      "resources/bin/README.txt",
+      "resources/bin/media_tools.lock.json"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.png",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDRCMDZBRkY2MDRBOEVEQUYKUldTdjdhZ0U5cThHUzJhOSsvd2pFN1dPYm5tL05YaWFVbnoxSmM3V29UYjl3bzZPZ3UwblZsSmkK",
+      "endpoints": [
+        "https://github.com/giran03/Zoltraak/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  }
+}

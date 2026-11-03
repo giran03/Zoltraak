@@ -1,0 +1,43 @@
+[package]
+name = "zoltraak-core"
+description = "Zoltraak download engine: segmented HTTP downloads, resume, verification"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+futures-util = { workspace = true }
+chrono = { workspace = true }
+uuid = { workspace = true }
+regex = { workspace = true }
+quick-xml = { workspace = true }
+sha1 = { workspace = true }
+rquickjs = { workspace = true }
+aes-gcm = { workspace = true }
+zeroize = { workspace = true }
+base64 = { workspace = true }
+getrandom = { workspace = true }
+sha2 = { workspace = true }
+
+fs2 = "0.4"
+
+[target.'cfg(windows)'.dependencies]
+# DPAPI, to wrap the session vault key with the user's Windows credentials.
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_Storage_FileSystem"] }
+
+[dev-dependencies]
+# `multipart` is test-only: it parses the Discord upload body back apart in
+# `discord::rest`'s round-trip test.
+axum = { workspace = true, features = ["multipart"] }
+tempfile = { workspace = true }
+tracing-subscriber = { workspace = true }

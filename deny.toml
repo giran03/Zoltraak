@@ -1,0 +1,23 @@
+# cargo-deny policy for both Rust trees (engine/ and app/src-tauri/).
+# Run: cargo deny --manifest-path engine/Cargo.toml check advisories bans sources
+#      cargo deny --manifest-path app/src-tauri/Cargo.toml check advisories bans sources
+
+[graph]
+targets = ["x86_64-pc-windows-msvc"]
+
+[advisories]
+# Unmaintained crates are reported but do not fail the build; known
+# vulnerabilities do.
+unmaintained = "workspace"
+yanked = "deny"
+
+[bans]
+# Duplicate versions grow the binary. Reported, not fatal: several come from
+# Tauri itself and cannot be unified from here.
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

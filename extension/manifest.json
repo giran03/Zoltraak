@@ -1,0 +1,171 @@
+{
+  "manifest_version": 3,
+  "name": "Zoltraak",
+  "short_name": "Zoltraak",
+  "version": "0.2.8",
+  "description": "Send downloads to Zoltraak — segmented, resumable, and running on your own machine.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "zoltraak@zoltraak.app",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Zoltraak (Alt+Shift+D)",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+D",
+        "windows": "Alt+Shift+D"
+      },
+      "description": "Open Zoltraak extension popup menu"
+    },
+    "toggle-pill": {
+      "suggested_key": {
+        "default": "Alt+Shift+P",
+        "windows": "Alt+Shift+P"
+      },
+      "description": "Open or fold the Dispatch Board pill on this page"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.facebook.com/*"
+      ],
+      "js": [
+        "facebook-post.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "media-probe.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "generic-media.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "theme.js",
+        "intercept.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "*://*.facebook.com/*"
+      ],
+      "js": [
+        "facebook-post.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "video-identity.js",
+        "pill-placement.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "yt-inject.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    }
+  ],
+  "permissions": [
+    "contextMenus",
+    "downloads",
+    "cookies",
+    "storage",
+    "alarms",
+    "notifications",
+    "nativeMessaging",
+    "webRequest",
+    "webRequestBlocking",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/archivo-subset.woff2",
+        "fonts/martian-mono-subset.woff2"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ]
+}
