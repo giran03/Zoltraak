@@ -1,4 +1,5 @@
 [package]
+publish = false
 name = "zoltraak-app"
 description = "Zoltraak desktop shell"
 version = "1.0.1"

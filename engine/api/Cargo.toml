@@ -1,4 +1,5 @@
 [package]
+publish = false
 name = "zoltraak-api"
 description = "Token-authenticated localhost REST API for the Zoltraak engine"
 version.workspace = true
