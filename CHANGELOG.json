@@ -1641,24 +1641,52 @@
           "files": [
             ".gitignore"
           ]
+        },
+        {
+          "id": "dependency-security-updates",
+          "category": "Security",
+          "brief": "Update dependencies to fix reported vulnerabilities.",
+          "details": [
+            "Lockfiles refreshed within existing version ranges: Vite, PostCSS, nanoid, browserslist, source-map-js and baseline-browser-mapping in the app, and rustls in the engine and desktop crate.",
+            "GitHub Actions used by the security and showcase workflows moved to their latest major versions.",
+            "npm audit reports no known vulnerabilities; engine, desktop crate and app tests pass.",
+            "Internal crates are marked publish = false so the cargo-deny wildcard check accepts their path dependencies.",
+            "The desktop app moves to zip 9, which fixes the archive extraction advisories in zip 2.x.",
+            "cargo-deny ignores four zip 4.6.1 advisories that come only from tauri-plugin-updater (no stable fix upstream), with the reason recorded in deny.toml."
+          ],
+          "files": [
+            ".github/workflows/security.yml",
+            ".github/workflows/showcase-pages.yml",
+            "app/package-lock.json",
+            "app/src-tauri/Cargo.lock",
+            "engine/Cargo.lock",
+            "app/src-tauri/Cargo.toml",
+            "engine/api/Cargo.toml",
+            "engine/cli/Cargo.toml",
+            "engine/core/Cargo.toml",
+            "deny.toml"
+          ]
         }
       ],
-      "updatedAt": "2026-11-03"
+      "updatedAt": "2026-11-04"
     }
   },
   "development": {
     "version": "1.0.1",
     "previousVersion": "1.0.0",
-    "baselineCommit": "311b83a64bea5e87c78cd2d2b599a621b469ee5c",
+    "baselineCommit": "d2b05287fc419f50a535d10e101fe58ffa499e56",
     "baselineFileHashes": {},
     "fileHashes": {
-      "app/package-lock.json": "468f25a7df3cb48c9378dade7707f77d3b627ff7094873f5c2ebce22aa494446",
-      "app/package.json": "5d7b15a340c966e78f5b5d4ff4d65f138989065bf3b80732c180d2fa582e02a9",
-      "app/src-tauri/Cargo.lock": "a2df4a99d6bb330db714c65168cf5ce7924e43b15575671c16fab8d5f1db0525",
-      "app/src-tauri/Cargo.toml": "0454665bc98432a42b69e6391f6c8f7549c24ab55ab91e021dfecdb9cb773007",
-      "app/src-tauri/tauri.conf.json": "3ad0b25890d2f65b9d7f9beb434a88be47cec9616aacb90617d0e01253ded5de",
-      "engine/Cargo.lock": "68e22fba15903f0bcd078dcd0f15086bcd10287c1d20e05bf06c4a9357e6c279",
-      "engine/Cargo.toml": "72e14c42a0f1fbd86daa6d3bece648125a53ec71b2a21b2fa2a058e77dcfc76f"
+      ".github/workflows/security.yml": "bd3d4721d8a78fd0482aee952fbdd5038856d81d75828de3c8c91203a4ef16a7",
+      ".github/workflows/showcase-pages.yml": "8a09dbef02ddff0ce4550b23724978a19682826b8d843b7a9ed8eed5b672642e",
+      "app/package-lock.json": "fedf15a9fc5b3656e55bce809b8f28cbbf143d27457c549f6e95ac8f2ea015b2",
+      "app/src-tauri/Cargo.lock": "4db6fd7e36c39e8651f321946614a36c456085676eb24205453e41516639288b",
+      "app/src-tauri/Cargo.toml": "56371f5297ec710dacb334a5e5a94b9609a6677ad9dcc450eaa4798be47f503a",
+      "deny.toml": "89121e0766135ca9924ff01a3b5f7ed7ddf788ba14f746bfc7b9594d4388b9c3",
+      "engine/Cargo.lock": "6f0bad466054153c83172dedb942f76e424461c7ab6317303965d75c3f3bd1be",
+      "engine/api/Cargo.toml": "5955c5cc2a6a5a3ffa29da07f205b1cdd2aee5ee6aa1d1755096bdca98612c6a",
+      "engine/cli/Cargo.toml": "6bb29505dd104f6bcae3c83691da1e8329ddbffcec486d68553f9571b8e14c06",
+      "engine/core/Cargo.toml": "ff22065623f0363764f3e7683676dea5ae7b99a612bc359a51f5105628e09bf3"
     }
   },
   "historyStartVersion": "1.0.0"

@@ -1,4 +1,5 @@
 [package]
+publish = false
 name = "zoltraak-cli"
 description = "Headless Zoltraak: drives the engine without a UI, for servers and NAS"
 version.workspace = true

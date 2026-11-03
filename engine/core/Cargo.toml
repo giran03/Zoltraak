@@ -1,4 +1,5 @@
 [package]
+publish = false
 name = "zoltraak-core"
 description = "Zoltraak download engine: segmented HTTP downloads, resume, verification"
 version.workspace = true

@@ -10,6 +10,17 @@ targets = ["x86_64-pc-windows-msvc"]
 # vulnerabilities do.
 unmaintained = "workspace"
 yanked = "deny"
+# zip 4.6.1 is pulled in only by tauri-plugin-updater 2.12.0, whose newest
+# release is a 3.0 alpha. These advisories affect ZipArchive::extract on
+# untrusted archives; updates here ship as a minisign-verified installer, not
+# a zip, and our own zip use is on 9.x. Revisit when tauri-plugin-updater 3
+# is stable.
+ignore = [
+    "RUSTSEC-2026-0367",
+    "RUSTSEC-2026-0368",
+    "RUSTSEC-2026-0369",
+    "RUSTSEC-2026-0429",
+]
 
 [bans]
 # Duplicate versions grow the binary. Reported, not fatal: several come from
