@@ -7337,7 +7337,7 @@ dependencies = [
  "chrono",
  "fs2",
  "futures-util",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "quick-xml 0.41.0",
  "regex",
  "reqwest 0.12.28",
