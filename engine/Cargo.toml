@@ -48,7 +48,7 @@ uuid = { version = "1", features = ["v4", "serde"] }
 clap = { version = "4", features = ["derive"] }
 tempfile = "3"
 regex = "1"
-quick-xml = { version = "0.41", features = ["serialize"] }
+quick-xml = { version = "0.42", features = ["serialize"] }
 sha1 = "0.10"
 # YouTube's player script has to be *run* to undo its URL obfuscation; QuickJS
 # is the smallest complete engine that does so in well under a second.
