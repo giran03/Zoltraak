@@ -1,6 +1,6 @@
 # Release notes
 
-For each meaningful change, update the current app version's entry in `CHANGELOG.json` as part of the same work. Include a concise user-facing `brief` and an array of `details`; document behavior changes, fixes, build tooling, and other substantive changes. Do not include credentials or sensitive implementation details.
+For each meaningful change, update the current app version's entry in `CHANGELOG.json` as part of the same work. Include a concise user-facing `brief` and an array of `details`; document behavior changes, fixes, build tooling, and other substantive changes. Do not include credentials or sensitive implementation details. Repository-only changes (README, AGENTS.md, and similar housekeeping) are not app changes and must not be logged.
 
 Each current change also needs a unique `id`, `category` (`Added`, `Fixed`, `Changed`, `Security`, or `Tooling`), and exact repository-relative `files`. Check `development.version`, `previousVersion`, and `baselineCommit` before writing notes. Do not infer published releases from version numbers or Git commits; historical snapshots must be identified as such.
 

@@ -1,103 +1,6 @@
 {
   "schemaVersion": 1,
   "releases": {
-    "0.2.4": {
-      "status": "historical",
-      "sourceCommit": "47eb3ebd368bc409b68dacdb5d0f32248288cc34",
-      "summary": "Repository snapshot of the previous app version. Publication as a release has not been verified.",
-      "changes": [
-        {
-          "brief": "Open downloads with configurable mouse and keyboard shortcuts.",
-          "details": [
-            "Middle-click opens completed files and can be rebound in Keyboard shortcuts.",
-            "Appearance settings control double-click timing and the optional file-open highlight.",
-            "Double-clicking the description column no longer opens files."
-          ],
-          "id": "open-file",
-          "category": "Added"
-        },
-        {
-          "brief": "Send files to Discord from the row or expanded entry.",
-          "details": [
-            "Download entries provide an action to send completed files to Discord.",
-            "Expanded entries expose the available context-menu actions.",
-            "The sharing dialog switches between webhook and bot delivery, shows configuration status, and previews the message and available sender profile."
-          ],
-          "id": "discord-sharing",
-          "category": "Added"
-        },
-        {
-          "brief": "Fine-tune grain size and enjoy cleaner input and tooltip behavior.",
-          "details": [
-            "Appearance settings include a grain-size slider independent of grain density.",
-            "The music input grows with its placeholder and entered text without internal scrollbars.",
-            "The Discord icon outline and appearance descriptions have been cleaned up."
-          ],
-          "id": "appearance",
-          "category": "Added"
-        },
-        {
-          "brief": "Find developer information and support in About.",
-          "details": [
-            "About identifies CafeTako Team and links to support-zoltraak@cafetako.com."
-          ],
-          "id": "developer-info",
-          "category": "Added"
-        },
-        {
-          "brief": "Manage extension versions with a dedicated release script.",
-          "details": [
-            "The extension version batch file validates and updates the manifest version.",
-            "Extension signing uses the configured version without automatically increasing it."
-          ],
-          "id": "extension-version",
-          "category": "Tooling"
-        }
-      ],
-      "sourceRepository": "https://github.com/giran03/Zoltraak-old"
-    },
-    "0.2.5": {
-      "status": "superseded",
-      "previousVersion": "0.2.4",
-      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
-      "changes": [],
-      "updatedAt": "2026-10-04",
-      "supersededBy": "1.0.0"
-    },
-    "0.2.6": {
-      "status": "superseded",
-      "previousVersion": "0.2.5",
-      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
-      "changes": [],
-      "transferredFrom": "0.2.5",
-      "updatedAt": "2026-10-06",
-      "supersededBy": "1.0.0"
-    },
-    "0.2.7": {
-      "status": "superseded",
-      "previousVersion": "0.2.6",
-      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
-      "changes": [],
-      "transferredFrom": "0.2.6",
-      "updatedAt": "2026-10-08",
-      "supersededBy": "1.0.0"
-    },
-    "0.2.8": {
-      "status": "superseded",
-      "previousVersion": "0.2.7",
-      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
-      "changes": [],
-      "transferredFrom": "0.2.7",
-      "supersededBy": "1.0.0"
-    },
-    "0.2.9": {
-      "status": "superseded",
-      "previousVersion": "0.2.8",
-      "summary": "Pre-standalone development snapshot, consolidated into 1.0.0. This draft was not released.",
-      "changes": [],
-      "updatedAt": "2026-11-03",
-      "supersededBy": "1.0.0"
-    },
     "1.0.0": {
       "status": "published",
       "summary": "The first standalone Zoltraak release brings together browser-integrated downloads, local media conversion, Discord sharing and a customizable desktop interface.",
@@ -1708,6 +1611,23 @@
           ]
         },
         {
+          "id": "themed-tray-menu",
+          "category": "Changed",
+          "brief": "The tray icon right-click menu now matches the app theme and opens beside the icon.",
+          "details": [
+            "The plain system menu is replaced by a styled menu that follows the active theme, preset, corner radius and font, and updates as soon as appearance settings change.",
+            "The menu opens against the taskbar edge with its corner at the tray icon, on any taskbar position and monitor scale, and never covers the icon.",
+            "It closes when you click elsewhere or press Escape, supports arrow-key navigation, and right-clicking the icon again toggles it."
+          ],
+          "files": [
+            "app/src-tauri/src/tray_menu.rs",
+            "app/src-tauri/src/lib.rs",
+            "app/src-tauri/capabilities/default.json",
+            "app/src/TrayMenu.tsx",
+            "app/src/main.tsx"
+          ]
+        },
+        {
           "id": "bundled-sqlite-3-54",
           "category": "Security",
           "brief": "The app's built-in SQLite database engine is updated to 3.54.1, fixing a memory-disclosure flaw.",
@@ -1787,6 +1707,80 @@
           "files": [
             "scripts/measure_connections.ps1"
           ]
+        },
+        {
+          "id": "download-name-not-selectable",
+          "category": "Changed",
+          "brief": "The file name in the Downloads list can no longer be text-selected.",
+          "details": [
+            "The description column no longer shows a selection highlight when dragging or double-clicking the downloaded file name."
+          ],
+          "files": [
+            "app/src/components/DownloadRow.tsx"
+          ]
+        },
+        {
+          "id": "developer-tools-section",
+          "category": "Added",
+          "brief": "Added a Developer tools section to Settings > About for testing app features on demand.",
+          "details": [
+            "Fire each toast type, a six-toast stack, long-text, action and custom-lifetime toasts, plus the completion confetti and sound, without waiting for a download."
+          ],
+          "files": [
+            "app/src/components/DeveloperTools.tsx",
+            "app/src/components/AboutView.tsx",
+            "app/src/components/SettingsShell.tsx",
+            "app/src/lib/settingsOutlines.ts"
+          ]
+        },
+        {
+          "id": "toast-fold-stack",
+          "category": "Changed",
+          "brief": "Stacked notifications now fold into narrow side strips instead of piling up vertically.",
+          "details": [
+            "The newest notification stays fully open; older ones collapse into slim strips to its left showing their lamp and icon (title on hover), always matching the open card's height.",
+            "Clicking a strip brings that notification back to full size."
+          ],
+          "files": [
+            "app/src/components/Toast.tsx",
+            "app/src/styles.css"
+          ]
+        },
+        {
+          "id": "tray-webview-suspend",
+          "category": "Fixed",
+          "brief": "Hiding the window to the tray now really stops its graphics and page work.",
+          "details": [
+            "The window is now marked hidden to the web view before it is suspended, so the GPU process no longer keeps rendering behind the tray icon.",
+            "Measured on a debug build: with the window hidden, the GPU process went from about 36% of one core to 0% and the page process to 0%."
+          ],
+          "files": [
+            "app/src-tauri/src/webview_power.rs"
+          ]
+        },
+        {
+          "id": "downloads-cleanup-button",
+          "category": "Added",
+          "brief": "Added a button to remove all missing or failed downloads from the list at once.",
+          "details": [
+            "A Clean up button appears beside Arrange columns when finished downloads have lost their file or downloads have failed. The first click filters the table to just those entries; the button then turns solid red as Proceed to clean up, and the next click asks for confirmation before removing them. Cancel returns to the normal list.",
+            "Only list entries are removed, never files on disk, the removal can be undone briefly, and downloads on a disconnected drive are left alone."
+          ],
+          "files": [
+            "app/src/components/CleanupDialog.tsx",
+            "app/src/components/DownloadsView.tsx"
+          ]
+        },
+        {
+          "id": "convert-paths-spacing",
+          "category": "Changed",
+          "brief": "Added spacing between the Convert drop area and the path input.",
+          "details": [
+            "The paste-paths field no longer sits flush against the drop area or the file list above it."
+          ],
+          "files": [
+            "app/src/components/ConvertView.tsx"
+          ]
         }
       ],
       "updatedAt": "2026-11-10"
@@ -1805,7 +1799,18 @@
       "app/package-lock.json": "fedf15a9fc5b3656e55bce809b8f28cbbf143d27457c549f6e95ac8f2ea015b2",
       "app/src-tauri/Cargo.lock": "0cd868c2a993f4ba977fd1ec5ea7ad25c4bd915284252b30b7e845e5335613af",
       "app/src-tauri/Cargo.toml": "8568455ad287ae88ccc8a2665e355a279ce051455f93de3d6056b78220866752",
-      "app/src-tauri/src/lib.rs": "d60e811540df8e4f44a4017187f9447a5272fc8dd24ceb9b5c581f1ae8734bcb",
+      "app/src-tauri/capabilities/default.json": "8c6722ade4c22e196a1a8c6f54ef701a3f2b6f85e4dfd4a947436d14803a6cbd",
+      "app/src-tauri/src/lib.rs": "eb4ac9a82a13f8e16a66fc13e88e4c5c576b09f1e2de009128affeca10aea952",
+      "app/src-tauri/src/webview_power.rs": "42f2636f8ac8428f5bb8cce939a578746417c411c567d06fdf1ab3dff1ac3cbe",
+      "app/src/components/AboutView.tsx": "5b3ab0f26855e5a0c3d0dc2e888a415d221735156e85ad5d61249f568a96573e",
+      "app/src/components/ConvertView.tsx": "40497d7a36f19ae102ed6424a282c7298fcb7b0e9d228b6b1f031f48970d2daa",
+      "app/src/components/DownloadRow.tsx": "297b42be008adda4c702b7c96d268f6bdf8468e96da8c86e0f2ebd51ea5e1d68",
+      "app/src/components/DownloadsView.tsx": "f87d36a82957064c88350b960c92fe5b681e82d8b2e6e2bd5b7276d2c941a5b7",
+      "app/src/components/SettingsShell.tsx": "71dfe6237edda2a42a4df7f318f9cac7df7d7c5f49fcf729fa2fe8cb940f609f",
+      "app/src/components/Toast.tsx": "4c881acc43b20da3e6d1780b82ebeca118d958bb23d3fec49e90006af64743b5",
+      "app/src/lib/settingsOutlines.ts": "1064c57a3855b2c9e336f091880892e4a32463b46757f24351820bd97c8ea8ce",
+      "app/src/main.tsx": "d49376ee3f24a33a85bdeddf59ff5cd4de3428e2ccec87dc4eee3992d2451712",
+      "app/src/styles.css": "77027d50a37f6f17e9ff4e70df3934426ec4f9d237df1d5c3e07ffe09977e064",
       "deny.toml": "89121e0766135ca9924ff01a3b5f7ed7ddf788ba14f746bfc7b9594d4388b9c3",
       "engine/Cargo.lock": "b30ab57b9b9b7c78df076e6831a0950dea265b6a8f0d50e55b80a2f9de387780",
       "engine/Cargo.toml": "cd47ed9ccd6ca3a791a70bfc8605a638489c2c5609c8a6a5289b1c8ebb0afcf2",
@@ -1844,7 +1849,7 @@
       "scripts/bat/update_extension_version.bat": "97ca263281b5bb1822b37d4630b6ad8cb84873b9a5b34a4c3f8c770297a036c8",
       "scripts/bat/update_version.bat": "b76e009b5fe4d9d6aae062eb309ab7e86fc97705c01ca096a589df6d20ce7ed2",
       "scripts/changelog-view.js": "9b12a3a8bde3b73b85cc5f4392f44c951ba4cbbc59559d297a074789f75aa63a",
-      "scripts/changelog.mjs": "702ab5d54c81a4ffb88dc415afe5e7fcb787e87216bdca90f7e4ac26476f4513",
+      "scripts/changelog.mjs": "3c4fb9dae6860c7c23ebc771f9c1cddb5be0947b08bd0011e90c18932a660031",
       "scripts/generate_latest_json.ps1": "b22516ee939cb73557a2b044a4b3f5c703dff134e6fb9a85895acf6d5d84ad2b",
       "scripts/generate_update_keys.ps1": "4dd2ccbd01383a1c8c3214d32039f837e5cdfa4053c78189e88280bf68896775",
       "scripts/measure_connections.ps1": "277cf43f1424511c6537623f689f5fc705ce094c78e2ee96d6a6663f85f6a89d",
@@ -1862,7 +1867,11 @@
       "scripts/tests/media_tools.test.ps1": "a7048239c93e1fee1f24f72511b2984fbd4fb595090e48e0a79f2ad93205af86",
       "scripts/tests/release_notes.test.ps1": "8db31b500f92ae35121b115765e232b3d4093c0758fa7c02d074391e630ef718",
       "scripts/update_extension_version.ps1": "4eb3aae737fc60fb0d5a6bb50cd2e2559632fb580e0c40ab9b066f45706d8d43",
-      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3"
+      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3",
+      "app/src-tauri/src/tray_menu.rs": "786b50ede7d995d609b838d27eb8cb96b46c39d2000542654e49370cd50d1541",
+      "app/src/TrayMenu.tsx": "4f11718d06c4117ed1543a9c7a60aebfdfa5dffa43d7e8e154aa780cf042e591",
+      "app/src/components/CleanupDialog.tsx": "1fb3d5ef8122ba27d64b9496274e1dfd4c8ed919c56dcc1790269e60e8587a68",
+      "app/src/components/DeveloperTools.tsx": "ec7296578a20afd747be9be6f5e7e86bfed1b63fee382d48fee49af2209726e9"
     }
   },
   "historyStartVersion": "1.0.0"

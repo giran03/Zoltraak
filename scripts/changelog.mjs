@@ -14,6 +14,8 @@ const log = JSON.parse(read('CHANGELOG.json'));
 const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 const save = () => writeFileSync(sourcePath, JSON.stringify(log, null, 2) + '\n');
 const categories = ['Added', 'Fixed', 'Changed', 'Security', 'Tooling'];
+// Repository housekeeping, not app changes: never logged in the app changelog.
+const repoOnly = new Set(['README.md', 'AGENTS.md']);
 const generated = new Set(['CHANGELOG.json', 'app/public/guide.html', 'extension/guide.html', 'extension/guide.js', 'app/public/legal.html', 'extension/legal.html', 'extension/legal.js']);
 const guideSource = 'scripts/templates/guide.html';
 // Ignored local copies must fingerprint as removed after git rm --cached,
@@ -33,7 +35,7 @@ function changedFiles() {
   const tracked = execFileSync('git', ['diff', '--name-only', '-z', baseline], {cwd:root}).toString().split('\0');
   const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], {cwd:root}).toString().split('\0');
   return [...new Set([...tracked,...untracked])].filter(file=>{
-    if (!file || generated.has(file)) return false;
+    if (!file || generated.has(file) || repoOnly.has(file)) return false;
     if (log.development.baselineFileHashes?.[file] === fingerprint(file)) return false;
     if (file === guideSource && existsSync(path.join(root,file))) {
       try { if (withoutGenerated(git('show',baseline+':'+file)) === withoutGenerated(read(file))) return false; }
