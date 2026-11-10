@@ -1511,7 +1511,7 @@
       "sourceCommit": "29bec5249581a53a34928ed84e36bddad2f0441c"
     },
     "1.0.1": {
-      "status": "development",
+      "status": "published",
       "previousVersion": "1.0.0",
       "summary": "Development updates for Zoltraak 1.0.1.",
       "changes": [
@@ -1795,7 +1795,9 @@
           ]
         }
       ],
-      "updatedAt": "2026-11-10"
+      "updatedAt": "2026-11-10",
+      "releasedAt": "2026-11-10T13:24:07Z",
+      "sourceCommit": "b770215dc0f219cca9b6dc50893ddf7e76d63494"
     }
   },
   "development": {
