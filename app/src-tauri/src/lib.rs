@@ -26,6 +26,7 @@ mod window_corners;
 mod file_drop;
 mod queue_push;
 mod webview_power;
+mod tray_menu;
 
 use tauri_plugin_dialog::DialogExt;
 
@@ -40,7 +41,6 @@ use zoltraak_core::{
     DownloadId, DownloadSnapshot, Downloader, MusicEnqueued, MusicJob, MusicManager, MusicSettings, MusicSource, NewMusicDownload,
     NewVideoDownload, OutputOptions, Queue, Supervisor, VideoFormat, VideoJob, VideoManager,
 };
-use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{Emitter, Manager};
 
@@ -2269,6 +2269,45 @@ fn downloads_dir(app: &tauri::AppHandle) -> PathBuf {
         .join("Zoltraak")
 }
 
+/// What the tray icon and its menu can do: "show", "folder" or "quit".
+fn tray_action(app: &tauri::AppHandle, action: &str) {
+    match action {
+        "show" => {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+        }
+        "folder" => {
+            if let Some(sup) = app.try_state::<Supervisor>() {
+                let dir = sup.settings().default_directory.unwrap_or_else(|| downloads_dir(app));
+                let _ = zoltraak_core::shell::reveal_dir(&dir);
+            }
+        }
+        "quit" => app.exit(0),
+        _ => {}
+    }
+}
+
+/// The tray menu page has mounted; show it if it was opened while loading.
+#[tauri::command]
+fn tray_menu_ready(window: tauri::WebviewWindow) {
+    if window.label() == tray_menu::LABEL {
+        tray_menu::ready(window.app_handle());
+    }
+}
+
+/// An item chosen in the tray menu (or "close" for Escape).
+#[tauri::command]
+fn tray_menu_action(window: tauri::WebviewWindow, action: String) {
+    if window.label() != tray_menu::LABEL {
+        return;
+    }
+    tray_menu::dismiss(&window);
+    tray_action(window.app_handle(), &action);
+}
+
 #[tauri::command]
 fn get_app_version(app: tauri::AppHandle) -> String {
     app.package_info().version.to_string()
@@ -2521,49 +2560,20 @@ pub fn run() {
             }
 
             // System tray icon setup
-            let show_i = MenuItem::with_id(app, "show", "Show Zoltraak", true, None::<&str>)?;
-            let folder_i = MenuItem::with_id(app, "folder", "Open Downloads Folder", true, None::<&str>)?;
-            let quit_i = MenuItem::with_id(app, "quit", "Quit Zoltraak", true, None::<&str>)?;
-            let tray_menu = Menu::with_items(app, &[&show_i, &folder_i, &quit_i])?;
-
+            // No native menu: right-click opens the themed `tray_menu` window.
             let mut tray_builder = TrayIconBuilder::with_id("main")
-                .menu(&tray_menu)
                 .show_menu_on_left_click(false)
                 .tooltip("Zoltraak")
-                .on_menu_event(|app, event| {
-                    match event.id.as_ref() {
-                        "show" => {
-                            if let Some(window) = app.get_webview_window("main") {
-                                let _ = window.show();
-                                let _ = window.unminimize();
-                                let _ = window.set_focus();
-                            }
-                        }
-                        "folder" => {
-                            if let Some(sup) = app.try_state::<Supervisor>() {
-                                let dir = sup.settings().default_directory.unwrap_or_else(|| downloads_dir(app));
-                                let _ = zoltraak_core::shell::reveal_dir(&dir);
-                            }
-                        }
-                        "quit" => {
-                            app.exit(0);
-                        }
-                        _ => {}
-                    }
-                })
                 .on_tray_icon_event(|tray, event| {
-                    if let TrayIconEvent::Click {
-                        button: MouseButton::Left,
-                        button_state: MouseButtonState::Up,
-                        ..
-                    } = event
-                    {
-                        let app = tray.app_handle();
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.show();
-                            let _ = window.unminimize();
-                            let _ = window.set_focus();
-                        }
+                    let TrayIconEvent::Click { button, button_state: MouseButtonState::Up, position, rect, .. } = event
+                    else {
+                        return;
+                    };
+                    let app = tray.app_handle();
+                    match button {
+                        MouseButton::Left => tray_action(app, "show"),
+                        MouseButton::Right => tray_menu::toggle(app, &rect, position),
+                        _ => {}
                     }
                 });
 
@@ -2590,6 +2600,15 @@ pub fn run() {
                 if let Some(webview) = window.get_webview_window(window.label()) {
                     webview_power::shown(&webview);
                 }
+            }
+            // The tray menu closes like a native one: on any click elsewhere.
+            if window.label() == tray_menu::LABEL {
+                if let tauri::WindowEvent::Focused(false) = event {
+                    if let Some(webview) = window.get_webview_window(tray_menu::LABEL) {
+                        tray_menu::dismiss(&webview);
+                    }
+                }
+                return;
             }
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                 if let Some(sup) = window.try_state::<Supervisor>() {
@@ -2628,6 +2647,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             app_icon::sync_app_icon,
+            tray_menu_ready,
+            tray_menu_action,
             set_extension_theme,
             window_corners::set_window_corners,
             engine_ready,

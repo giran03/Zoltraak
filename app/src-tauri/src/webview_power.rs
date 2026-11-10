@@ -31,13 +31,23 @@ fn set_hidden(window: &tauri::WebviewWindow, hidden: bool) {
             };
             let _ = core.SetMemoryUsageTargetLevel(level);
         }
+        // Hiding the native window does not tell WebView2 it is hidden. While
+        // it still counts as visible it keeps compositing and TrySuspend is
+        // refused, so the GPU process stayed busy behind the tray icon.
+        let controller = webview.controller();
+        if !hidden {
+            let _ = controller.SetIsVisible(true);
+        }
         if let Ok(core) = core.cast::<ICoreWebView2_3>() {
             if hidden {
+                let _ = controller.SetIsVisible(false);
                 let handler = TrySuspendCompletedHandler::create(Box::new(|_, _| Ok(())));
                 let _ = core.TrySuspend(&handler);
             } else {
                 let _ = core.Resume();
             }
+        } else if hidden {
+            let _ = controller.SetIsVisible(false);
         }
     });
     if let Err(e) = result {
