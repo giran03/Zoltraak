@@ -60,7 +60,7 @@ windows-sys = { version = "0.59", features = [
 ] }
 # The same WebView2 bindings Tauri itself uses, to read dropped file paths.
 webview2-com = "0.38"
-windows = "0.61"
+windows = "0.62"
 
 # SQLite 3.54.1 instead of the 3.46.0 that libsqlite3-sys 0.30.1 bundles, to
 # fix RUSTSEC-2026-0459 (uninitialized page-cache memory with a mismatched
