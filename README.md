@@ -12,7 +12,6 @@
 <img src="https://img.shields.io/badge/Rust-1.88%2B-1c1f1d?style=for-the-badge&logo=rust&logoColor=white" alt="Rust 1.88+">
 <img src="https://img.shields.io/badge/Tauri-v2-1c1f1d?style=for-the-badge&logo=tauri&logoColor=24C8DB" alt="Tauri v2">
 <img src="https://img.shields.io/badge/React-TypeScript-1c1f1d?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React + TypeScript">
-<img src="https://img.shields.io/badge/version-1.0.0-4a7a52?style=for-the-badge" alt="Version 1.0.0">
 <img src="https://img.shields.io/badge/license-MIT-4a7a52?style=for-the-badge" alt="MIT license">
 
 <br><br>
@@ -32,7 +31,7 @@
 <br>
 
 > [!NOTE]
-> **No accounts, no license keys, no activation.** Zoltraak 1.0.0 is a standalone app — every feature works as soon as it is installed. It sends no usage heartbeat or running-instance count to a Zoltraak webserver.
+> **No accounts, no license keys, no activation.** Every feature works as soon as Zoltraak is installed.
 
 <br>
 
@@ -178,7 +177,7 @@ Browser sessions shared by the extension are treated like your browser's own coo
 
 <img src="app/src/assets/zoltraak-emblem.png" alt="" width="36">
 
-**Zoltraak** &nbsp;·&nbsp; Rust + Tauri &nbsp;·&nbsp; 1.0.0
+**Zoltraak** &nbsp;·&nbsp; Rust + Tauri
 
 <sub><a href="LICENSE">MIT License</a> &nbsp;·&nbsp; <a href="https://giran03.github.io/Zoltraak/guide.html">User Guide</a> &nbsp;·&nbsp; <a href="https://giran03.github.io/Zoltraak/">Showcase</a></sub>
 
