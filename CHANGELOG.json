@@ -1781,6 +1781,18 @@
           "files": [
             "app/src/components/ConvertView.tsx"
           ]
+        },
+        {
+          "id": "tauri-api-version-alignment",
+          "category": "Tooling",
+          "brief": "Aligned the Tauri JavaScript API package with the Tauri engine version so release builds succeed.",
+          "details": [
+            "The release build rejected @tauri-apps/api 2.12 against the bundled Tauri 2.11 crate, so the package is now kept on the matching 2.11 line."
+          ],
+          "files": [
+            "app/package.json",
+            "app/package-lock.json"
+          ]
         }
       ],
       "updatedAt": "2026-11-10"
@@ -1796,14 +1808,19 @@
       ".github/workflows/security.yml": "bd3d4721d8a78fd0482aee952fbdd5038856d81d75828de3c8c91203a4ef16a7",
       ".github/workflows/showcase-pages.yml": "8a09dbef02ddff0ce4550b23724978a19682826b8d843b7a9ed8eed5b672642e",
       ".gitignore": "163116aae5db2b44d743f0d07cd52a4a69009510742fde8703cf80712eb93a0b",
-      "app/package-lock.json": "fedf15a9fc5b3656e55bce809b8f28cbbf143d27457c549f6e95ac8f2ea015b2",
+      "app/package-lock.json": "e4c8af94812184c1498e0131c9565552c76cdab78758a48edcfbef537cafef56",
+      "app/package.json": "379dc1b35fa4a50523b4f12a17a62520736cfbc0e29e1b0d7b60eed71b48666f",
       "app/src-tauri/Cargo.lock": "0cd868c2a993f4ba977fd1ec5ea7ad25c4bd915284252b30b7e845e5335613af",
       "app/src-tauri/Cargo.toml": "8568455ad287ae88ccc8a2665e355a279ce051455f93de3d6056b78220866752",
       "app/src-tauri/capabilities/default.json": "8c6722ade4c22e196a1a8c6f54ef701a3f2b6f85e4dfd4a947436d14803a6cbd",
       "app/src-tauri/src/lib.rs": "eb4ac9a82a13f8e16a66fc13e88e4c5c576b09f1e2de009128affeca10aea952",
+      "app/src-tauri/src/tray_menu.rs": "786b50ede7d995d609b838d27eb8cb96b46c39d2000542654e49370cd50d1541",
       "app/src-tauri/src/webview_power.rs": "42f2636f8ac8428f5bb8cce939a578746417c411c567d06fdf1ab3dff1ac3cbe",
+      "app/src/TrayMenu.tsx": "4f11718d06c4117ed1543a9c7a60aebfdfa5dffa43d7e8e154aa780cf042e591",
       "app/src/components/AboutView.tsx": "5b3ab0f26855e5a0c3d0dc2e888a415d221735156e85ad5d61249f568a96573e",
+      "app/src/components/CleanupDialog.tsx": "1fb3d5ef8122ba27d64b9496274e1dfd4c8ed919c56dcc1790269e60e8587a68",
       "app/src/components/ConvertView.tsx": "40497d7a36f19ae102ed6424a282c7298fcb7b0e9d228b6b1f031f48970d2daa",
+      "app/src/components/DeveloperTools.tsx": "ec7296578a20afd747be9be6f5e7e86bfed1b63fee382d48fee49af2209726e9",
       "app/src/components/DownloadRow.tsx": "297b42be008adda4c702b7c96d268f6bdf8468e96da8c86e0f2ebd51ea5e1d68",
       "app/src/components/DownloadsView.tsx": "f87d36a82957064c88350b960c92fe5b681e82d8b2e6e2bd5b7276d2c941a5b7",
       "app/src/components/SettingsShell.tsx": "71dfe6237edda2a42a4df7f318f9cac7df7d7c5f49fcf729fa2fe8cb940f609f",
@@ -1867,11 +1884,7 @@
       "scripts/tests/media_tools.test.ps1": "a7048239c93e1fee1f24f72511b2984fbd4fb595090e48e0a79f2ad93205af86",
       "scripts/tests/release_notes.test.ps1": "8db31b500f92ae35121b115765e232b3d4093c0758fa7c02d074391e630ef718",
       "scripts/update_extension_version.ps1": "4eb3aae737fc60fb0d5a6bb50cd2e2559632fb580e0c40ab9b066f45706d8d43",
-      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3",
-      "app/src-tauri/src/tray_menu.rs": "786b50ede7d995d609b838d27eb8cb96b46c39d2000542654e49370cd50d1541",
-      "app/src/TrayMenu.tsx": "4f11718d06c4117ed1543a9c7a60aebfdfa5dffa43d7e8e154aa780cf042e591",
-      "app/src/components/CleanupDialog.tsx": "1fb3d5ef8122ba27d64b9496274e1dfd4c8ed919c56dcc1790269e60e8587a68",
-      "app/src/components/DeveloperTools.tsx": "ec7296578a20afd747be9be6f5e7e86bfed1b63fee382d48fee49af2209726e9"
+      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3"
     }
   },
   "historyStartVersion": "1.0.0"
