@@ -43,6 +43,32 @@ pub struct Config {
     pub fail_first: AtomicU32,
     pub range_requests: AtomicUsize,
     pub full_requests: AtomicUsize,
+    /// This many range responses send their first piece, then go silent —
+    /// a connection stuck on a bad path.
+    pub stall_first: AtomicU32,
+    /// This many range responses use `slow_piece_delay` instead of
+    /// `piece_delay`, so one connection crawls while its peers run normally.
+    pub slow_first: AtomicU32,
+    pub slow_piece_delay: Duration,
+    /// Refuse range requests with 503 while this many are already streaming,
+    /// like hosts that limit connections per client.
+    pub max_concurrent_ranges: Option<usize>,
+    pub ranges_in_flight: Arc<AtomicUsize>,
+}
+
+/// Counts a range response as in flight until its body is dropped.
+struct InFlight(Arc<AtomicUsize>);
+
+impl Drop for InFlight {
+    fn drop(&mut self) {
+        self.0.fetch_sub(1, Ordering::Relaxed);
+    }
+}
+
+fn take_one(counter: &AtomicU32) -> bool {
+    counter
+        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_sub(1))
+        .is_ok()
 }
 
 impl Config {
@@ -64,6 +90,11 @@ impl Config {
             fail_first: AtomicU32::new(0),
             range_requests: AtomicUsize::new(0),
             full_requests: AtomicUsize::new(0),
+            stall_first: AtomicU32::new(0),
+            slow_first: AtomicU32::new(0),
+            slow_piece_delay: Duration::ZERO,
+            max_concurrent_ranges: None,
+            ranges_in_flight: Arc::new(AtomicUsize::new(0)),
         }
     }
 
@@ -167,6 +198,12 @@ async fn serve(
             {
                 return StatusCode::SERVICE_UNAVAILABLE.into_response();
             }
+            if cfg
+                .max_concurrent_ranges
+                .is_some_and(|limit| cfg.ranges_in_flight.load(Ordering::Relaxed) >= limit)
+            {
+                return StatusCode::SERVICE_UNAVAILABLE.into_response();
+            }
 
             response_headers.push((
                 axum::http::header::CONTENT_RANGE,
@@ -216,17 +253,34 @@ async fn serve(
         return builder.body(Body::empty()).unwrap();
     }
 
-    let delay = cfg.piece_delay;
+    let ranged = status == StatusCode::PARTIAL_CONTENT;
+    let stall = ranged && take_one(&cfg.stall_first);
+    let delay = if ranged && take_one(&cfg.slow_first) {
+        cfg.slow_piece_delay
+    } else {
+        cfg.piece_delay
+    };
+    let in_flight = ranged.then(|| {
+        cfg.ranges_in_flight.fetch_add(1, Ordering::Relaxed);
+        Arc::new(InFlight(Arc::clone(&cfg.ranges_in_flight)))
+    });
     let pieces: Vec<Bytes> = slice
         .chunks(cfg.piece_size.max(1))
         .map(Bytes::copy_from_slice)
         .collect();
 
-    let stream = futures_util::stream::iter(pieces).then(move |piece| async move {
-        if !delay.is_zero() {
-            tokio::time::sleep(delay).await;
+    let stream = futures_util::stream::iter(pieces.into_iter().enumerate()).then(move |(index, piece)| {
+        let in_flight = in_flight.clone();
+        async move {
+            let _held = in_flight;
+            if stall && index > 0 {
+                std::future::pending::<()>().await;
+            }
+            if !delay.is_zero() {
+                tokio::time::sleep(delay).await;
+            }
+            Ok::<_, Infallible>(piece)
         }
-        Ok::<_, Infallible>(piece)
     });
 
     builder.body(Body::from_stream(stream)).unwrap()

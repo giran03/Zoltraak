@@ -930,6 +930,7 @@ struct LinkInspection {
 /// before it is queued. A server that does not answer is judged by its URL.
 #[tauri::command]
 async fn inspect_download_link(
+    sup: tauri::State<'_, Supervisor>,
     url: String,
     headers: Option<Vec<(String, String)>>,
 ) -> IpcResult<LinkInspection> {
@@ -938,14 +939,18 @@ async fn inspect_download_link(
         return Err("Only http:// and https:// URLs are supported.".to_string().into());
     }
     let headers = zoltraak_core::headers::sanitize(headers.unwrap_or_default());
-    let client = reqwest::Client::builder()
-        .redirect(reqwest::redirect::Policy::limited(10))
-        .timeout(std::time::Duration::from_secs(10))
-        .build()
-        .map_err(|e| IpcError::from(format!("could not prepare the link check: {e}")))?;
-    let caps = zoltraak_core::probe::probe(&client, &url, &headers)
-        .await
-        .unwrap_or_default();
+    // The download client, not a throwaway one: the connection this check
+    // opens stays in its pool, so the download that usually follows skips
+    // the TCP and TLS handshakes.
+    let client = sup.http_client();
+    let caps = tokio::time::timeout(
+        std::time::Duration::from_secs(10),
+        zoltraak_core::probe::probe(&client, &url, &headers),
+    )
+    .await
+    .ok()
+    .and_then(Result::ok)
+    .unwrap_or_default();
     let filename = zoltraak_core::probe::resolve_filename(None, &url, &caps);
     let is_html = zoltraak_core::probe::is_html(&filename, caps.content_type.as_deref());
     Ok(LinkInspection { filename, content_type: caps.content_type, is_html })
@@ -2346,8 +2351,7 @@ pub fn run() {
 
             let supervisor = tauri::async_runtime::block_on(async {
                 let queue = Queue::open(&db).await?;
-                let client = reqwest::Client::builder()
-                    .redirect(reqwest::redirect::Policy::limited(10))
+                let client = zoltraak_core::downloader::client_builder()
                     .build()
                     .expect("failed to build the HTTP client");
 

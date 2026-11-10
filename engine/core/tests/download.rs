@@ -288,6 +288,7 @@ async fn transient_failures_are_retried() {
             persist_every: Duration::from_millis(50),
             // Disable proactive scaling so this test is purely about retry logic.
             scaler_interval: Duration::MAX,
+            ..Options::default()
         },
     );
 
@@ -755,4 +756,118 @@ async fn range_probe_rejection_can_still_download_an_empty_file() {
         std::fs::metadata(dir.path().join("empty")).unwrap().len(),
         0
     );
+}
+
+/// Options for the recovery tests: fast retries, quick stall detection.
+fn recovering(connections: u8) -> Options {
+    Options {
+        connections: Some(connections),
+        min_steal_bytes: 256 * 1024,
+        persist_every: Duration::from_millis(50),
+        retry: zoltraak_core::retry::RetryPolicy {
+            base: Duration::from_millis(5),
+            max_delay: Duration::from_millis(20),
+            max_attempts: 2,
+        },
+        stall_timeout: Duration::from_millis(300),
+        slow_connection_grace: Duration::from_millis(100),
+        ..Options::default()
+    }
+}
+
+async fn fetch(server: &TestServer, options: Options) -> zoltraak_core::Result<Vec<u8>> {
+    let dir = tempfile::tempdir().unwrap();
+    let (tx, _rx) = progress_channel(DownloadId::new());
+    let outcome = Downloader::new(reqwest::Client::new(), options)
+        .download(&Request::new(server.url(), dir.path()), CancellationToken::new(), &tx)
+        .await?;
+    let Outcome::Completed { path, .. } = outcome else {
+        panic!("expected completion, got {outcome:?}");
+    };
+    Ok(std::fs::read(path).unwrap())
+}
+
+#[tokio::test]
+async fn stalled_range_reconnects_without_waiting_for_a_long_timeout() {
+    let data = payload(400_000);
+    let mut config = Config::new(data.clone());
+    config.piece_size = 16_384;
+    config.stall_first.store(1, Ordering::Relaxed);
+    let server = TestServer::start(config).await;
+
+    let started = std::time::Instant::now();
+    let bytes = tokio::time::timeout(Duration::from_secs(5), fetch(&server, recovering(1)))
+        .await
+        .expect("a stall must be detected long before the old 60 s timeout")
+        .unwrap();
+    assert_eq!(bytes, data);
+    assert!(started.elapsed() < Duration::from_secs(3));
+    assert!(server.config.range_requests.load(Ordering::Relaxed) >= 2);
+}
+
+#[tokio::test]
+async fn range_errors_do_not_fail_a_download_that_is_still_receiving_data() {
+    // Twelve interrupted responses across four connections, with a retry
+    // budget of two: only resetting the budget while bytes keep arriving lets
+    // this finish.
+    let data = payload(1_000_000);
+    let mut config = Config::new(data.clone());
+    config.piece_size = 16_384;
+    config.piece_delay = Duration::from_millis(1);
+    config.truncate_first.store(12, Ordering::Relaxed);
+    let server = TestServer::start(config).await;
+
+    let bytes = fetch(&server, recovering(4)).await.expect("flaky ranges must not be fatal");
+    assert_eq!(bytes, data);
+}
+
+#[tokio::test]
+async fn server_refusing_extra_connections_continues_with_fewer() {
+    let data = payload(2_000_000);
+    let mut config = Config::new(data.clone());
+    config.piece_size = 16_384;
+    config.piece_delay = Duration::from_millis(2);
+    config.max_concurrent_ranges = Some(2);
+    let server = TestServer::start(config).await;
+
+    let options = Options {
+        retry: zoltraak_core::retry::RetryPolicy {
+            base: Duration::from_millis(10),
+            max_delay: Duration::from_millis(40),
+            max_attempts: 3,
+        },
+        scaler_interval: Duration::from_millis(25),
+        ..recovering(6)
+    };
+    let bytes = tokio::time::timeout(Duration::from_secs(10), fetch(&server, options))
+        .await
+        .unwrap()
+        .expect("a connection limit must reduce connections, not fail the download");
+    assert_eq!(bytes, data);
+}
+
+#[tokio::test]
+async fn connection_far_slower_than_its_peers_is_reconnected() {
+    // Four 1 MiB ranges at ~1.6 MB/s each, except one first response that
+    // crawls at 80 KB/s (under the stall timeout, so only the slow-peer check
+    // can catch it). Without a reconnect that range alone takes seconds
+    // even after peers steal most of it.
+    let data = payload(4 * 1024 * 1024);
+    let mut config = Config::new(data.clone());
+    config.piece_size = 16_384;
+    config.piece_delay = Duration::from_millis(10);
+    config.slow_first.store(1, Ordering::Relaxed);
+    config.slow_piece_delay = Duration::from_millis(200);
+    let server = TestServer::start(config).await;
+
+    let options = Options { scaler_interval: Duration::MAX, ..recovering(4) };
+    let started = std::time::Instant::now();
+    let bytes = fetch(&server, options).await.unwrap();
+    assert_eq!(bytes, data);
+    assert!(
+        started.elapsed() < Duration::from_secs(4),
+        "slow range was not reconnected: took {:?}",
+        started.elapsed()
+    );
+    assert!(server.config.range_requests.load(Ordering::Relaxed) > 4);
 }
