@@ -52,7 +52,7 @@ image = { version = "=0.25.6", default-features = false, features = ["png", "ico
 tauri-plugin-drag = "2.1.1"
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.59", features = [
+windows-sys = { version = "0.61", features = [
     "Win32_UI_WindowsAndMessaging",
     "Win32_UI_Shell",
     "Win32_Foundation",

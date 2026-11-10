@@ -7320,7 +7320,7 @@ dependencies = [
  "uuid",
  "webview2-com",
  "windows 0.61.3",
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
  "zip 9.3.0",
  "zoltraak-api",
  "zoltraak-core",
