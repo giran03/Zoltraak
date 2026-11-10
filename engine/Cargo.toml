@@ -1,6 +1,7 @@
 [workspace]
 resolver = "3"
 members = ["core", "api", "cli"]
+exclude = ["vendor"]
 
 [workspace.package]
 version = "1.0.1"
@@ -58,6 +59,15 @@ zeroize = "1"
 base64 = "0.22"
 getrandom = "0.3"
 sha2 = "0.10"
+
+# SQLite 3.54.1 instead of the 3.46.0 that libsqlite3-sys 0.30.1 bundles, to
+# fix RUSTSEC-2026-0459 (uninitialized page-cache memory with a mismatched
+# -wal file). No sqlx release accepts libsqlite3-sys 0.39 yet (0.8 needs 0.30,
+# 0.9 needs <0.38), so the same crate version is vendored with the newer
+# amalgamation. Remove this and engine/vendor/ once sqlx allows >=0.39.
+# See engine/vendor/libsqlite3-sys/VENDORED.md.
+[patch.crates-io]
+libsqlite3-sys = { path = "vendor/libsqlite3-sys" }
 
 [profile.release]
 lto = "thin"

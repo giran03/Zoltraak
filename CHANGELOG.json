@@ -1706,9 +1706,45 @@
             "scripts/update_extension_version.ps1",
             "scripts/update_version.ps1"
           ]
+        },
+        {
+          "id": "bundled-sqlite-3-54",
+          "category": "Security",
+          "brief": "The app's built-in SQLite database engine is updated to 3.54.1, fixing a memory-disclosure flaw.",
+          "details": [
+            "SQLite before 3.54.0 could return leftover memory when a database was opened next to a crafted -wal file with a different page size (RUSTSEC-2026-0459). Zoltraak's download database now uses SQLite 3.54.1.",
+            "No sqlx release accepts the fixed libsqlite3-sys yet, so libsqlite3-sys 0.30.1 is vendored with the SQLite 3.54.1 source swapped in, verified against the SHA3-256 hash published on sqlite.org. engine/vendor/libsqlite3-sys/VENDORED.md records the source and how to remove it once sqlx catches up.",
+            "Existing download databases open unchanged; the SQLite file format is the same.",
+            "A test checks that the SQLite linked at runtime is 3.54.0 or newer."
+          ],
+          "files": [
+            ".gitattributes",
+            "engine/Cargo.toml",
+            "engine/Cargo.lock",
+            "app/src-tauri/Cargo.toml",
+            "app/src-tauri/Cargo.lock",
+            "engine/core/tests/sqlite_version.rs",
+            "engine/vendor/libsqlite3-sys/Cargo.toml",
+            "engine/vendor/libsqlite3-sys/LICENSE",
+            "engine/vendor/libsqlite3-sys/README.md",
+            "engine/vendor/libsqlite3-sys/VENDORED.md",
+            "engine/vendor/libsqlite3-sys/bindgen-bindings/bindgen_3.14.0.rs",
+            "engine/vendor/libsqlite3-sys/bindgen-bindings/bindgen_3.14.0_ext.rs",
+            "engine/vendor/libsqlite3-sys/build.rs",
+            "engine/vendor/libsqlite3-sys/sqlite3/bindgen_bundled_version.rs",
+            "engine/vendor/libsqlite3-sys/sqlite3/bindgen_bundled_version_ext.rs",
+            "engine/vendor/libsqlite3-sys/sqlite3/sqlite3.c",
+            "engine/vendor/libsqlite3-sys/sqlite3/sqlite3.h",
+            "engine/vendor/libsqlite3-sys/sqlite3/sqlite3ext.h",
+            "engine/vendor/libsqlite3-sys/sqlite3/wasm32-wasi-vfs.c",
+            "engine/vendor/libsqlite3-sys/src/error.rs",
+            "engine/vendor/libsqlite3-sys/src/lib.rs",
+            "engine/vendor/libsqlite3-sys/wrapper.h",
+            "engine/vendor/libsqlite3-sys/wrapper_ext.h"
+          ]
         }
       ],
-      "updatedAt": "2026-11-04"
+      "updatedAt": "2026-11-10"
     }
   },
   "development": {
@@ -1717,14 +1753,16 @@
     "baselineCommit": "d2b05287fc419f50a535d10e101fe58ffa499e56",
     "baselineFileHashes": {},
     "fileHashes": {
+      ".gitattributes": "be1ffc72e135f0e159d6e76a6dc9cb6183acaa35592059fdc9455fc6092a1113",
       ".github/workflows/security.yml": "bd3d4721d8a78fd0482aee952fbdd5038856d81d75828de3c8c91203a4ef16a7",
       ".github/workflows/showcase-pages.yml": "8a09dbef02ddff0ce4550b23724978a19682826b8d843b7a9ed8eed5b672642e",
       ".gitignore": "163116aae5db2b44d743f0d07cd52a4a69009510742fde8703cf80712eb93a0b",
       "app/package-lock.json": "fedf15a9fc5b3656e55bce809b8f28cbbf143d27457c549f6e95ac8f2ea015b2",
-      "app/src-tauri/Cargo.lock": "4db6fd7e36c39e8651f321946614a36c456085676eb24205453e41516639288b",
-      "app/src-tauri/Cargo.toml": "56371f5297ec710dacb334a5e5a94b9609a6677ad9dcc450eaa4798be47f503a",
+      "app/src-tauri/Cargo.lock": "0cd868c2a993f4ba977fd1ec5ea7ad25c4bd915284252b30b7e845e5335613af",
+      "app/src-tauri/Cargo.toml": "8568455ad287ae88ccc8a2665e355a279ce051455f93de3d6056b78220866752",
       "deny.toml": "89121e0766135ca9924ff01a3b5f7ed7ddf788ba14f746bfc7b9594d4388b9c3",
-      "engine/Cargo.lock": "6f0bad466054153c83172dedb942f76e424461c7ab6317303965d75c3f3bd1be",
+      "engine/Cargo.lock": "b30ab57b9b9b7c78df076e6831a0950dea265b6a8f0d50e55b80a2f9de387780",
+      "engine/Cargo.toml": "cd47ed9ccd6ca3a791a70bfc8605a638489c2c5609c8a6a5289b1c8ebb0afcf2",
       "engine/api/Cargo.toml": "5955c5cc2a6a5a3ffa29da07f205b1cdd2aee5ee6aa1d1755096bdca98612c6a",
       "engine/cli/Cargo.toml": "6bb29505dd104f6bcae3c83691da1e8329ddbffcec486d68553f9571b8e14c06",
       "engine/core/Cargo.toml": "ff22065623f0363764f3e7683676dea5ae7b99a612bc359a51f5105628e09bf3",
@@ -1754,7 +1792,25 @@
       "scripts/tests/media_tools.test.ps1": "a7048239c93e1fee1f24f72511b2984fbd4fb595090e48e0a79f2ad93205af86",
       "scripts/tests/release_notes.test.ps1": "8db31b500f92ae35121b115765e232b3d4093c0758fa7c02d074391e630ef718",
       "scripts/update_extension_version.ps1": "4eb3aae737fc60fb0d5a6bb50cd2e2559632fb580e0c40ab9b066f45706d8d43",
-      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3"
+      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3",
+      "engine/core/tests/sqlite_version.rs": "c8360afcc7af75c0f675a232e7366d5107cf57410861c84f4b3f2ad57dd32486",
+      "engine/vendor/libsqlite3-sys/Cargo.toml": "6e56712cae3c09bc4dc1cad1eb23bfe3fbb9bcb7cfe084f00b3060d3c94440da",
+      "engine/vendor/libsqlite3-sys/LICENSE": "f59ba65550f2a5adff98ec6478d783402c8e0a3eb515025c0b3438f3d30dc39e",
+      "engine/vendor/libsqlite3-sys/README.md": "de905526400596293730c6a30535bc2f14ca507ed82e4f755df503c645b6a6ab",
+      "engine/vendor/libsqlite3-sys/VENDORED.md": "d9408fd9a0cd35cd0a0d0d95209c8edc64c9bd9d2c9b459bff9bea5fcd161c52",
+      "engine/vendor/libsqlite3-sys/bindgen-bindings/bindgen_3.14.0.rs": "40ed6c9c0788f1556f10a26efabc50dd01088ebf04e1fd326b605c44ca8f9a46",
+      "engine/vendor/libsqlite3-sys/bindgen-bindings/bindgen_3.14.0_ext.rs": "9037be69504eb407812cc9a8ba2c4645849bc520abeb7b1d8173d74751865071",
+      "engine/vendor/libsqlite3-sys/build.rs": "11bebc3787657749279375ab2e875e52259f995dce8916b4907103975e2a76ee",
+      "engine/vendor/libsqlite3-sys/sqlite3/bindgen_bundled_version.rs": "8a77e8d566d1637a551ab4e35837e016f6132aa64e9c92fd07b1039898734559",
+      "engine/vendor/libsqlite3-sys/sqlite3/bindgen_bundled_version_ext.rs": "0e3486440273a1d2ac600bf9172d19946e1690e6069d1a93cb813d7992a39d52",
+      "engine/vendor/libsqlite3-sys/sqlite3/sqlite3.c": "0c657666d819f261cc4007526ad57e1669de9949df7a8ea847aa284a2bf0ee52",
+      "engine/vendor/libsqlite3-sys/sqlite3/sqlite3.h": "d6c84557261893439b341d2e6c35187ae3ea24fbfd843ad94616f72d89242b8c",
+      "engine/vendor/libsqlite3-sys/sqlite3/sqlite3ext.h": "48963abfefb41ac329ef9d706acb5eadba952a99a748285c9ded6b5e0942721b",
+      "engine/vendor/libsqlite3-sys/sqlite3/wasm32-wasi-vfs.c": "b95842044da2b8777876b7d3fef8c9711e8c201fb4a4255dbac98729a456bb5d",
+      "engine/vendor/libsqlite3-sys/src/error.rs": "c09656237b7e51eec9cac261de83555e60c401071eeaecb7649f8e94b769c156",
+      "engine/vendor/libsqlite3-sys/src/lib.rs": "7efb61223be16f97bb65c4541e0c37b97c624b06356d18041654e30b27fb4114",
+      "engine/vendor/libsqlite3-sys/wrapper.h": "b78f576f7eeabf316e183d476b0f16344b6897680b4df47628d3ce38c0aa979a",
+      "engine/vendor/libsqlite3-sys/wrapper_ext.h": "fa7a53fea99318ee29d75e6d5fab4d7ed26e9599803268e6a24396265f2a6f3a"
     }
   },
   "historyStartVersion": "1.0.0"

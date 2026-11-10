@@ -17,3 +17,8 @@
 # Generated lockfiles: keep them out of review diffs.
 package-lock.json linguist-generated=true -diff
 Cargo.lock linguist-generated=true -diff
+
+# Vendored third-party source (see engine/vendor/libsqlite3-sys/VENDORED.md):
+# keep it out of review diffs and language stats.
+engine/vendor/** linguist-vendored=true
+engine/vendor/**/sqlite3/sqlite3.c -diff
