@@ -3,6 +3,7 @@ import { SlideGroup } from "./SlideGroup";
 import { AddDownload } from "./AddDownload";
 import { ContextMenu, type ContextMenuItem } from "./ContextMenu";
 import { SelectInput } from "./Controls";
+import { CleanupDialog } from "./CleanupDialog";
 import { DownloadRow } from "./DownloadRow";
 import { ChevronDown, Copy, Discord, ExternalLink, FolderOpen, Pause, Play, RotateCcw, Search, Transfer, Trash } from "./Icons";
 import { FaultSlug, Legend } from "./Panel";
@@ -214,9 +215,20 @@ export const DownloadsView = memo(function DownloadsView({
 
   const fileStatuses = useFileStatuses(allItems);
 
+  // "inaccessible" is a disconnected drive, which may come back, so it is not cleaned up.
+  const cleanable = useMemo(() => allItems.filter(item =>
+    item.state === "failed" || (item.state === "finished" && fileStatuses[item.id]?.status === "missing")), [allItems, fileStatuses]);
+  const [cleanupOpen, setCleanupOpen] = useState(false);
+  // Step one of cleanup: the table shows only the candidates until confirmed or cancelled.
+  const [cleanupReview, setCleanupReview] = useState(false);
+  const reviewing = cleanupReview && cleanable.length > 0;
+  const cleanableIds = useMemo(() => new Set(cleanable.map(item => item.id)), [cleanable]);
+  const cleanableFailed = cleanable.filter(item => item.state === "failed").length;
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return sortDownloads(allItems.filter((item) => {
+      if (reviewing) return cleanableIds.has(item.id);
       if (filter === "videos") {
         if (!item.isVideo) return false;
       } else if (filter === "music") {
@@ -227,7 +239,7 @@ export const DownloadsView = memo(function DownloadsView({
       if (!q) return true;
       return item.filename.toLowerCase().includes(q) || item.url.toLowerCase().includes(q);
     }), view);
-  }, [allItems, query, filter, view.sort, view.direction]);
+  }, [allItems, query, filter, view.sort, view.direction, reviewing, cleanableIds]);
 
   const groups = useMemo(() => groupDownloads(filtered, view.groupBy), [filtered, view.groupBy]);
   const visibleRows = useMemo(() => groups.flatMap(group => collapsedGroups.has(group.key) ? [] : group.items), [groups, collapsedGroups]);
@@ -886,7 +898,20 @@ export const DownloadsView = memo(function DownloadsView({
           <div className="flex items-center gap-1.5"><span>Rows</span>
             <SelectInput size="sm" ariaLabel="Download row density" value={view.density} onChange={density => setView(prev => ({ ...prev, density }))} options={[{ value: "compact", label: "Compact" }, { value: "comfortable", label: "Comfortable" }]} />
           </div>
-          <details className="ml-auto min-w-0"><summary className="focus-ring cursor-pointer rounded-hw border border-edge-strong px-2 py-1 text-ink">Arrange columns</summary>
+          <div className="ml-auto flex min-w-0 items-start gap-2">
+          {cleanable.length > 0 && (reviewing ? (
+            <>
+              <button type="button" className="focus-ring rounded-hw border border-danger bg-danger px-2 py-1 text-on-signal hover:opacity-90" onClick={() => setCleanupOpen(true)}>
+                Proceed to clean up ({cleanable.length})
+              </button>
+              <button type="button" className="focus-ring rounded-hw border border-edge-strong px-2 py-1 text-ink hover:bg-recess" onClick={() => setCleanupReview(false)}>Cancel</button>
+            </>
+          ) : (
+            <button type="button" className="focus-ring rounded-hw border border-danger/50 px-2 py-1 text-danger hover:bg-danger/10" onClick={() => setCleanupReview(true)}>
+              Clean up {cleanable.length} missing or failed
+            </button>
+          ))}
+          <details className="min-w-0"><summary className="focus-ring cursor-pointer rounded-hw border border-edge-strong px-2 py-1 text-ink">Arrange columns</summary>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <SelectInput size="sm" ariaLabel="Column to move" value={(visibleColumns.some(column => column.id === arrangeColumn) ? arrangeColumn : visibleColumns[0]?.id ?? "") as ColumnId} className="max-w-48" onChange={value => setArrangeColumn(value)} options={visibleColumns.map(column => ({ value: column.id, label: column.menuLabel }))} />
               {([-1, 1] as const).map(offset => {
@@ -898,6 +923,7 @@ export const DownloadsView = memo(function DownloadsView({
               <button type="button" className="focus-ring rounded-hw border border-edge-strong px-2 py-1 text-ink" onClick={() => { setCollapsedGroups(new Set()); setView({ ...DEFAULT_VIEW }); resetColumns(); }}>Reset view</button>
             </div>
           </details>
+          </div>
         </div>
 
         {/* Column legends, cut into the panel above the record. Right-clicking
@@ -1007,6 +1033,14 @@ export const DownloadsView = memo(function DownloadsView({
         inputRef={composerRef}
       />
 
+      {cleanupOpen && cleanable.length > 0 && (
+        <CleanupDialog
+          missing={cleanable.length - cleanableFailed}
+          failed={cleanableFailed}
+          onConfirm={() => { actions.remove(cleanable, false); setCleanupReview(false); }}
+          onClose={() => setCleanupOpen(false)}
+        />
+      )}
       {contextMenu && (
         <ContextMenu
           x={contextMenu.x}

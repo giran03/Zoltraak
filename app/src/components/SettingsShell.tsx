@@ -345,7 +345,7 @@ export function SettingsShell({
           <VisitedPanel active={tab === "Appearance"}><AppearanceView /></VisitedPanel>
           <VisitedPanel active={tab === "Timetable"}><SchedulerView settingsState={settings} /></VisitedPanel>
           <VisitedPanel active={tab === "Extension"}><ExtensionSettings updates={extensionUpdates} onAddToast={onAddToast} /></VisitedPanel>
-          <VisitedPanel active={tab === "About"}><AboutView /></VisitedPanel>
+          <VisitedPanel active={tab === "About"}><AboutView onAddToast={onAddToast} /></VisitedPanel>
         </div>
       </div>
     </div>

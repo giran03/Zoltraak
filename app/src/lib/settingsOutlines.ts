@@ -42,6 +42,7 @@ export const TAB_OUTLINES: Record<SettingsTab, OutlineItem[]> = {
   About: [
     { id: "section-software-identity", label: "Software Identity" },
     { id: "section-developer", label: "Developer" },
+    { id: "section-developer-tools", label: "Developer Tools" },
     { id: "section-legal-privacy-documentation", label: "Legal & Manuals" },
     { id: "section-licensing-attributions", label: "Licensing & Attributions" },
   ],

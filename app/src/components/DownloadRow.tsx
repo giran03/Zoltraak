@@ -620,7 +620,7 @@ export const DownloadRow = memo(
             }
           }}
           onDoubleClick={(event) => {
-            // Opening is timed by onClick; description text keeps native selection.
+            // Opening is timed by onClick; the description column is not text-selectable.
             if (!(event.target as HTMLElement).closest("button, a, input, select, textarea, [data-download-name]")) event.preventDefault();
           }}
           onMouseDown={(event) => {
@@ -681,7 +681,6 @@ export const DownloadRow = memo(
                 <Note className="size-3.5 shrink-0 text-ink-faint" aria-label="Music job" />
               )}
               <span
-                data-selectable
                 className={`truncate text-[13px] ${done ? "text-ink-dim" : "text-ink"}`}
               >
                 {item.filename}

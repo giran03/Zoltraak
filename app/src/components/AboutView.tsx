@@ -4,9 +4,11 @@ import { ArrowUpRight, BookOpen, Coffee, Shield } from "./Icons";
 import { Legend } from "./Panel";
 import { engine, openGuide, openLegal, openUrl } from "../lib/engine";
 import { ReleaseNotesDialog } from "./ReleaseNotesDialog";
+import { DeveloperTools } from "./DeveloperTools";
+import type { ToastItem } from "./Toast";
 import { currentRelease } from "../lib/releaseNotes";
 
-export function AboutView() {
+export function AboutView({ onAddToast }: { onAddToast?: (toast: ToastItem) => void }) {
   const [notesOpen, setNotesOpen] = useState(false);
   const [appVersion, setAppVersion] = useState<string>("0.1.0");
   const [extensionVersion, setExtensionVersion] = useState<string | null>(null);
@@ -112,6 +114,8 @@ export function AboutView() {
           </div>
         </div>
       </Section>
+
+      <DeveloperTools onAddToast={onAddToast} />
 
       <Section
         title="Legal, privacy & documentation"

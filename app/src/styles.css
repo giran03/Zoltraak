@@ -1405,6 +1405,29 @@ body[data-effect-warmth="true"] #root::before {
     filter var(--toast-open) var(--toast-ease);
 }
 
+/* Older toasts fold into a narrow strip; the one in focus keeps full width. */
+.t-toast-fold {
+  --toast-w: 22rem;
+  width: min(var(--toast-w), calc(100vw - 2.5rem));
+}
+.t-toast-fold.is-folded {
+  --toast-w: 2.25rem;
+}
+.t-toast.t-toast-fold {
+  transition:
+    opacity var(--toast-close) var(--toast-ease),
+    transform var(--toast-close) var(--toast-ease),
+    filter var(--toast-close) var(--toast-ease),
+    width var(--toast-open) var(--toast-ease);
+}
+.t-toast.t-toast-fold.is-open {
+  transition:
+    opacity var(--toast-open) var(--toast-ease),
+    transform var(--toast-open) var(--toast-ease),
+    filter var(--toast-open) var(--toast-ease),
+    width var(--toast-open) var(--toast-ease);
+}
+
 /* 03. Notification badge (https://transitions.dev/detail.html?t=notification-badge) */
 @keyframes t-badge-slide-in {
   from { transform: translate(var(--badge-offset-x), var(--badge-offset-y)); }
