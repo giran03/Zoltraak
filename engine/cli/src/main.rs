@@ -702,9 +702,7 @@ async fn run_queue(
 ) -> Result<(), Box<dyn std::error::Error>> {
     let queue = Queue::open(db).await?;
     let downloader = Downloader::new(
-        reqwest::Client::builder()
-            .redirect(reqwest::redirect::Policy::limited(10))
-            .build()?,
+        zoltraak_core::downloader::client_builder().build()?,
         Options {
             connections,
             ..Options::default()
@@ -779,9 +777,7 @@ async fn get(
     filename: Option<String>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let downloader = Downloader::new(
-        reqwest::Client::builder()
-            .redirect(reqwest::redirect::Policy::limited(10))
-            .build()?,
+        zoltraak_core::downloader::client_builder().build()?,
         Options {
             connections,
             ..Options::default()
@@ -988,9 +984,7 @@ async fn serve(
     let supervisor = Supervisor::start(
         Queue::open(db).await?,
         Downloader::new(
-            reqwest::Client::builder()
-                .redirect(reqwest::redirect::Policy::limited(10))
-                .build()?,
+            zoltraak_core::downloader::client_builder().build()?,
             Options::default(),
         ),
         RunnerConfig {

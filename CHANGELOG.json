@@ -1706,9 +1706,54 @@
             "scripts/update_extension_version.ps1",
             "scripts/update_version.ps1"
           ]
+        },
+        {
+          "id": "parallel-download-connections",
+          "category": "Fixed",
+          "brief": "Segmented downloads now really use separate connections, making them several times faster on many CDNs.",
+          "details": [
+            "On servers that speak HTTP/2, every connection of a download was being merged onto a single network connection, so 8 or 16 \"connections\" behaved like one. Downloads now use HTTP/1.1, where each connection is independent.",
+            "Measured with 8 connections: a kernel.org file went from 1 open connection at 10.8 MiB/s to 7–8 connections at 57 MiB/s, and an OVH test file from about 0.7 MiB/s to 2.3 MiB/s.",
+            "Connection attempts now give up after 10 seconds instead of the much longer Windows default, and idle connections are kept alive between ranges.",
+            "Checking a link before adding it now uses the same connection pool as the download, so the download can reuse that already-open connection."
+          ],
+          "files": [
+            "engine/core/src/downloader.rs",
+            "engine/core/src/supervisor.rs",
+            "engine/cli/src/main.rs",
+            "app/src-tauri/src/lib.rs"
+          ]
+        },
+        {
+          "id": "faster-connection-recovery",
+          "category": "Changed",
+          "brief": "Downloads recover from stalled, slow or refused connections in about a second instead of failing or waiting a minute.",
+          "details": [
+            "A connection that receives nothing for 15 seconds is reopened at once (previously 60 seconds), while the other connections keep going.",
+            "A connection running far slower than the others (below one eighth of their typical speed for 20 seconds) is reopened, which often lands on a better route or server.",
+            "While other connections are still receiving data, a failed range is retried within a second and no longer counts toward the retry limit, so a flaky connection can no longer fail the whole download. The long backoff is kept for when nothing is arriving at all.",
+            "When a server refuses extra connections (busy or rate-limit responses) while others are working, the download continues with fewer connections instead of failing.",
+            "Without a bandwidth limit, received data no longer passes through the shared limiter lock, and resume checkpoints are written in the background instead of on the download threads."
+          ],
+          "files": [
+            "engine/core/src/downloader.rs",
+            "engine/core/tests/download.rs",
+            "engine/core/tests/support/mod.rs"
+          ]
+        },
+        {
+          "id": "connection-measurement-script",
+          "category": "Tooling",
+          "brief": "Added a script that measures how many connections a download really opens and how fast it runs.",
+          "details": [
+            "scripts/measure_connections.ps1 runs the CLI against a URL for a set time, samples the process's open connections, and reports the speed from the resume checkpoint or the finished file."
+          ],
+          "files": [
+            "scripts/measure_connections.ps1"
+          ]
         }
       ],
-      "updatedAt": "2026-11-04"
+      "updatedAt": "2026-11-10"
     }
   },
   "development": {
@@ -1754,7 +1799,14 @@
       "scripts/tests/media_tools.test.ps1": "a7048239c93e1fee1f24f72511b2984fbd4fb595090e48e0a79f2ad93205af86",
       "scripts/tests/release_notes.test.ps1": "8db31b500f92ae35121b115765e232b3d4093c0758fa7c02d074391e630ef718",
       "scripts/update_extension_version.ps1": "4eb3aae737fc60fb0d5a6bb50cd2e2559632fb580e0c40ab9b066f45706d8d43",
-      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3"
+      "scripts/update_version.ps1": "583615ae57604eb043a764f2441ec7adbeae3525ff6693590d3467f434c7a4f3",
+      "engine/core/src/downloader.rs": "ae12418dbdd03923efe52911afc9ad5017b96ba1fd2f02a08ba382146088cad8",
+      "engine/core/src/supervisor.rs": "f65f8ce7112253734b24201e7d0eabc1e4556eb5b893eae769be8663144ea0bd",
+      "engine/cli/src/main.rs": "1bdb52ebfdc554137602fbc9158a6577118129813c059436b62df2b470507945",
+      "app/src-tauri/src/lib.rs": "d60e811540df8e4f44a4017187f9447a5272fc8dd24ceb9b5c581f1ae8734bcb",
+      "engine/core/tests/download.rs": "d957b00374f82f698b0b94d774c1d1c4053b841e1c46cc8cfbd7275c154a5a88",
+      "engine/core/tests/support/mod.rs": "6f43a93fa897261c41a2e818a04d65e2d1c38330a5807b4cb6ee7fd7ca7691a2",
+      "scripts/measure_connections.ps1": "277cf43f1424511c6537623f689f5fc705ce094c78e2ee96d6a6663f85f6a89d"
     }
   },
   "historyStartVersion": "1.0.0"

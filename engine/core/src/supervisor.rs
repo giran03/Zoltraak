@@ -233,6 +233,12 @@ impl Supervisor {
         self.inner.downloader.rate_limiter()
     }
 
+    /// The client queued downloads use. Checking a link with it first leaves
+    /// a warm connection the download then picks up from the pool.
+    pub fn http_client(&self) -> reqwest::Client {
+        self.inner.downloader.client().clone()
+    }
+
     /// Add a download and start it as soon as a slot frees up.
     pub async fn enqueue(&self, new: NewDownload) -> Result<DownloadId> {
         let id = self.inner.queue.enqueue(new).await?;

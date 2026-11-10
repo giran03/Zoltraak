@@ -11,9 +11,10 @@
 //! new worker for the stolen range — reproducing the IDM behaviour of adding
 //! connections mid-download rather than waiting for one to finish.
 
+use std::collections::HashMap;
 use std::io::SeekFrom;
 use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU8, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU8, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
@@ -48,6 +49,14 @@ pub struct Options {
     /// be added. Set to `Duration::MAX` to disable proactive scaling entirely
     /// (work-stealing on completion still fires).
     pub scaler_interval: Duration,
+    /// A ranged connection that delivers nothing for this long is dropped and
+    /// its range re-requested. Its peers prove the network is still up, so a
+    /// fresh connection — often a different route or CDN edge — beats waiting.
+    pub stall_timeout: Duration,
+    /// How long a connection must run before it can be judged slow against its
+    /// peers (see [`SLOW_PEER_RATIO`]). Also the minimum gap between two such
+    /// judgements of the same range, so a reconnect gets a fair chance.
+    pub slow_connection_grace: Duration,
 }
 
 impl Default for Options {
@@ -58,8 +67,43 @@ impl Default for Options {
             min_steal_bytes: 1024 * 1024,
             persist_every: Duration::from_millis(500),
             scaler_interval: Duration::from_secs(2),
+            stall_timeout: Duration::from_secs(15),
+            slow_connection_grace: Duration::from_secs(20),
         }
     }
+}
+
+/// Fail a connection attempt after this long instead of the OS default
+/// (about 21 s on Windows), so a dead route is retried on a new one quickly.
+pub const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+/// TCP keepalive probes keep idle pooled connections from being silently
+/// dropped by NATs and home routers between ranges.
+const TCP_KEEPALIVE: Duration = Duration::from_secs(30);
+/// A connection running below `1 / SLOW_PEER_RATIO` of its peers' median
+/// speed is reconnected. Loose on purpose: links share bandwidth unevenly,
+/// and only a connection stuck on a bad path is this far behind.
+const SLOW_PEER_RATIO: u64 = 8;
+/// Slow-peer judgements need a few peers to compare against.
+const SLOW_PEER_MIN_PEERS: usize = 3;
+/// The single-stream fallback has no peers to prove the network is alive and
+/// a reconnect restarts it from zero, so it waits much longer before giving up.
+const SINGLE_STREAM_STALL: Duration = Duration::from_secs(60);
+
+/// The HTTP client every download should use.
+///
+/// HTTP/1.1 only, deliberately. Over HTTP/2 the connection pool keeps one
+/// connection per host and multiplexes every request onto it, so N ranged
+/// workers become N streams on a single TCP socket: one lost packet stalls all
+/// of them, and servers that cap speed per connection see one connection.
+/// Measured against an HTTP/2 CDN, 8 requested connections held 1 socket.
+pub fn client_builder() -> reqwest::ClientBuilder {
+    Client::builder()
+        // Redirects are normal for download links (CDN hops, signed URLs).
+        .redirect(reqwest::redirect::Policy::limited(10))
+        .http1_only()
+        .connect_timeout(CONNECT_TIMEOUT)
+        .tcp_keepalive(TCP_KEEPALIVE)
+        .tcp_nodelay(true)
 }
 
 #[derive(Debug, Clone)]
@@ -116,11 +160,34 @@ struct Shared {
     /// cancel, or error). The dynamic scaler reads this to decide whether
     /// spawning another connection is still worthwhile.
     active_workers: Arc<AtomicU8>,
+    /// Current speed of each connection that has been running for at least
+    /// [`Options::slow_connection_grace`], keyed by worker id. What a
+    /// connection's speed is compared against to decide it is stuck.
+    worker_rates: HashMap<u32, u64>,
+    /// Lowered when the server refuses an extra connection while others are
+    /// working, so the scaler stops re-adding connections it will refuse.
+    connection_cap: u8,
 }
 
 impl Shared {
     fn downloaded(&self) -> u64 {
         self.chunks.iter().map(|c| c.downloaded).sum()
+    }
+
+    /// Median speed of every judged connection except `worker`, when there are
+    /// enough of them to compare against.
+    fn peer_median(&self, worker: u32) -> Option<u64> {
+        let mut peers: Vec<u64> = self
+            .worker_rates
+            .iter()
+            .filter(|(id, _)| **id != worker)
+            .map(|(_, rate)| *rate)
+            .collect();
+        if peers.len() < SLOW_PEER_MIN_PEERS {
+            return None;
+        }
+        peers.sort_unstable();
+        Some(peers[peers.len() / 2])
     }
 }
 
@@ -138,6 +205,10 @@ pub struct Downloader {
     /// Holding the lock through the sleep serializes consumption, so the next
     /// waiter's own delay is computed against real elapsed time.
     limiter: SharedRateLimit,
+    /// Mirrors whether [`Self::limiter`] has a cap, so unthrottled transfers —
+    /// the common case — skip the shared lock entirely instead of serializing
+    /// every received buffer of every connection through it.
+    limited: Arc<AtomicBool>,
 }
 
 /// Progress channel seeded with an empty snapshot for `id`.
@@ -161,15 +232,19 @@ impl Downloader {
                 None,
                 Instant::now(),
             ))),
+            limited: Arc::new(AtomicBool::new(false)),
         }
     }
 
     pub fn with_defaults() -> Result<Self> {
-        let client = Client::builder()
-            // Redirects are normal for download links (CDN hops, signed URLs).
-            .redirect(reqwest::redirect::Policy::limited(10))
-            .build()?;
-        Ok(Self::new(client, Options::default()))
+        Ok(Self::new(client_builder().build()?, Options::default()))
+    }
+
+    /// The client downloads go through. Probing a link with it before queuing
+    /// leaves a warm keep-alive connection the download then reuses, saving a
+    /// TCP and TLS handshake.
+    pub fn client(&self) -> &Client {
+        &self.client
     }
 
     /// The bandwidth cap this instance enforces, for handing to a subsystem
@@ -183,10 +258,9 @@ impl Downloader {
     /// Change the global bandwidth cap live. `None` lifts it. Applies to every
     /// download already in flight, not just ones started afterward.
     pub async fn set_bandwidth_limit(&self, bytes_per_second: Option<u64>) {
-        self.limiter
-            .lock()
-            .await
-            .set_limit(bytes_per_second, Instant::now());
+        let mut limiter = self.limiter.lock().await;
+        limiter.set_limit(bytes_per_second, Instant::now());
+        self.limited.store(!limiter.is_unlimited(), Ordering::Release);
     }
 
     pub async fn download(
@@ -287,6 +361,8 @@ impl Downloader {
             last_persist: Instant::now(),
             last_emit: Instant::now(),
             active_workers: Arc::clone(&active_workers),
+            worker_rates: HashMap::new(),
+            connection_cap: connections,
         }));
 
         if let Err(e) = self
@@ -399,15 +475,20 @@ impl Downloader {
         // Worker failure cancels this attempt, never the caller's token: a
         // range refusal can then safely fall back to an ordinary GET.
         let workers_cancel = cancel.child_token();
+        let (persist, persister) = spawn_persister(path.to_path_buf());
+        let next_worker = AtomicU32::new(0);
         let mut set = tokio::task::JoinSet::new();
         let spawn = |set: &mut tokio::task::JoinSet<Result<()>>, slot| {
             let ctx = WorkerCtx {
+                worker: next_worker.fetch_add(1, Ordering::Relaxed),
                 slot,
                 shared: Arc::clone(shared),
                 client: self.client.clone(),
                 url: request.url.clone(),
                 headers: request.headers.clone(),
                 limiter: Arc::clone(&self.limiter),
+                limited: Arc::clone(&self.limited),
+                persist: persist.clone(),
                 path: path.to_path_buf(),
                 cancel: workers_cancel.clone(),
                 progress: progress.clone(),
@@ -445,7 +526,19 @@ impl Downloader {
         let mut ticker = tokio::time::interval_at(tokio::time::Instant::now() + interval, interval);
         ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
         let mut first_error = None;
-        while !set.is_empty() {
+        loop {
+            if set.is_empty() {
+                // Workers can retire while work remains (a server refusing an
+                // extra connection hands its range back). If every one of them
+                // did, start one more rather than mistaking that for the end.
+                let slot = (first_error.is_none() && !workers_cancel.is_cancelled())
+                    .then(|| shared.lock().expect("engine mutex poisoned").pending_slots.pop())
+                    .flatten();
+                match slot {
+                    Some(slot) => spawn(&mut set, slot),
+                    None => break,
+                }
+            }
             tokio::select! {
                 joined = set.join_next() => {
                     let error = match joined {
@@ -464,15 +557,24 @@ impl Downloader {
                     }
                 }
                 _ = ticker.tick(), if scaling && !workers_cancel.is_cancelled() => {
-                    if active_workers.load(Ordering::Relaxed) < max_connections {
-                        let slot = {
-                            let mut guard = shared.lock().expect("engine mutex poisoned");
-                            guard.pending_slots.pop().or_else(|| chunk::steal_from(&mut guard.chunks, self.options.min_steal_bytes))
-                        };
-                        if let Some(slot) = slot { spawn(&mut set, slot); }
-                    }
+                    let slot = {
+                        let mut guard = shared.lock().expect("engine mutex poisoned");
+                        let limit = max_connections.min(guard.connection_cap);
+                        (active_workers.load(Ordering::Relaxed) < limit)
+                            .then(|| guard.pending_slots.pop().or_else(|| chunk::steal_from(&mut guard.chunks, self.options.min_steal_bytes)))
+                            .flatten()
+                    };
+                    if let Some(slot) = slot { spawn(&mut set, slot); }
                 }
             }
+        }
+        // Every worker's sender is gone with its task; dropping this last one
+        // lets the persister write the final checkpoint and stop. Waiting for
+        // it keeps a late background write from racing the caller's own
+        // save or discard of the sidecar.
+        drop(persist);
+        if let Err(e) = persister.await {
+            tracing::warn!(error = %e, "resume checkpoint task failed");
         }
         match first_error {
             Some(e) => Err(e),
@@ -619,7 +721,7 @@ impl Downloader {
         loop {
             let item = tokio::select! {
                 _ = cancel.cancelled() => break,
-                item = tokio::time::timeout(Duration::from_secs(60), stream.next()) =>
+                item = tokio::time::timeout(SINGLE_STREAM_STALL, stream.next()) =>
                     item.map_err(|_| Error::NetworkTimeout)?,
             };
             let Some(item) = item else {
@@ -629,7 +731,7 @@ impl Downloader {
 
             // See the comment in `fetch_range`: the lock must stay held across
             // the sleep, not just across the delay computation.
-            {
+            if self.limited.load(Ordering::Acquire) {
                 let mut limiter = tokio::select! {
                     _ = cancel.cancelled() => break,
                     limiter = self.limiter.lock() => limiter,
@@ -704,13 +806,60 @@ impl Downloader {
     }
 }
 
+/// Writes resume checkpoints off the download threads.
+///
+/// Workers publish the latest state and move on; a slow disk then delays only
+/// the checkpoint, never the next network read. A watch channel keeps just the
+/// newest state, so a backlog can never write an older one over a newer one.
+fn spawn_persister(
+    path: PathBuf,
+) -> (watch::Sender<Option<ResumeState>>, tokio::task::JoinHandle<()>) {
+    let (tx, mut rx) = watch::channel(None::<ResumeState>);
+    let task = tokio::spawn(async move {
+        // `changed` still reports a value sent just before the last sender
+        // dropped, so the final checkpoint is always written.
+        while rx.changed().await.is_ok() {
+            let Some(state) = rx.borrow_and_update().clone() else {
+                continue;
+            };
+            let path = path.clone();
+            match tokio::task::spawn_blocking(move || state.save(&path)).await {
+                Ok(Ok(())) => {}
+                // A failed checkpoint costs resume accuracy, not correctness.
+                Ok(Err(e)) => tracing::warn!(error = %e, "failed to checkpoint resume state"),
+                Err(e) => tracing::warn!(error = %e, "resume checkpoint write panicked"),
+            }
+        }
+    });
+    (tx, task)
+}
+
+/// How often a running connection is compared against its peers.
+const JUDGE_EVERY: Duration = Duration::from_secs(1);
+/// Bounds of the quick retry used while peers are still receiving data.
+const QUICK_RETRY_MIN_MS: u64 = 250;
+const QUICK_RETRY_SPREAD_MS: u64 = 750;
+
+/// What a worker does after a retryable range failure.
+enum Recovery {
+    Retry(Duration),
+    /// The server refused this connection while others work: hand the range
+    /// back and run with one connection fewer.
+    Retire,
+    GiveUp,
+}
+
 struct WorkerCtx {
+    /// Unique within one download attempt; keys [`Shared::worker_rates`].
+    worker: u32,
     slot: usize,
     shared: Arc<Mutex<Shared>>,
     client: Client,
     url: String,
     headers: Headers,
     limiter: Arc<tokio::sync::Mutex<RateLimit>>,
+    limited: Arc<AtomicBool>,
+    persist: watch::Sender<Option<ResumeState>>,
     path: PathBuf,
     cancel: CancellationToken,
     progress: watch::Sender<Progress>,
@@ -731,6 +880,9 @@ async fn worker(mut ctx: WorkerCtx) -> Result<()> {
         })?;
 
     let mut attempt = 0u32;
+    // Download-wide bytes as of this worker's last failure: whether anything
+    // arrived since is what tells a flaky connection from a dead network.
+    let mut baseline = ctx.shared.lock().expect("engine mutex poisoned").downloaded();
 
     loop {
         if ctx.cancel.is_cancelled() {
@@ -761,29 +913,80 @@ async fn worker(mut ctx: WorkerCtx) -> Result<()> {
             }
         }
 
-        match fetch_range(&mut ctx, &mut file, cursor, end).await {
-            Ok(()) => attempt = 0,
-            Err(e) if e.is_retryable() => {
-                attempt += 1;
-                match ctx.options.retry.delay_for(attempt) {
-                    Some(delay) => {
-                        tracing::warn!(
-                            error = %e,
-                            attempt,
-                            delay_secs = delay.as_secs(),
-                            "range failed; retrying"
-                        );
-                        tokio::select! {
-                            _ = ctx.cancel.cancelled() => return Ok(()),
-                            _ = tokio::time::sleep(delay) => {},
-                        }
-                    }
-                    None => return Err(e),
-                }
+        let result = fetch_range(&mut ctx, &mut file, cursor, end).await;
+        // A fresh request earns a fresh grace period before it is judged.
+        ctx.shared
+            .lock()
+            .expect("engine mutex poisoned")
+            .worker_rates
+            .remove(&ctx.worker);
+        match result {
+            Ok(()) => {
+                attempt = 0;
+                baseline = ctx.shared.lock().expect("engine mutex poisoned").downloaded();
             }
+            Err(e) if e.is_retryable() => match recover(&ctx, &e, &mut attempt, &mut baseline) {
+                Recovery::Retry(delay) => {
+                    tracing::warn!(
+                        error = %e,
+                        attempt,
+                        delay_ms = delay.as_millis() as u64,
+                        "range failed; retrying"
+                    );
+                    tokio::select! {
+                        _ = ctx.cancel.cancelled() => return Ok(()),
+                        _ = tokio::time::sleep(delay) => {},
+                    }
+                }
+                Recovery::Retire => {
+                    tracing::info!(error = %e, "server refused an extra connection; continuing with fewer");
+                    return Ok(());
+                }
+                Recovery::GiveUp => return Err(e),
+            },
             Err(e) => return Err(e),
         }
     }
+}
+
+/// Decide how to recover from a retryable failure of this worker's range.
+///
+/// When other bytes have arrived since this worker last failed, the network
+/// is up and only this connection is in trouble: retry it within a second,
+/// and do not spend the retry budget. That budget, with its long backoff, is
+/// kept for failures with no progress anywhere — a link that is actually down.
+/// A server that answers "busy" while other connections work is asking for
+/// fewer connections, so the worker gives its range back instead of retrying.
+fn recover(ctx: &WorkerCtx, error: &Error, attempt: &mut u32, baseline: &mut u64) -> Recovery {
+    let mut guard = ctx.shared.lock().expect("engine mutex poisoned");
+    let downloaded = guard.downloaded();
+    let progressed = downloaded > *baseline;
+    *baseline = downloaded;
+
+    let refused = matches!(error, Error::UnexpectedStatus { .. });
+    let active = guard.active_workers.load(Ordering::Relaxed);
+    if progressed && refused && active > 1 {
+        guard.pending_slots.push(ctx.slot);
+        guard.connection_cap = guard.connection_cap.min(active - 1).max(1);
+        return Recovery::Retire;
+    }
+    if progressed && !refused {
+        *attempt = 1;
+        return Recovery::Retry(quick_retry_delay(ctx, *attempt));
+    }
+    *attempt += 1;
+    match ctx.options.retry.delay_for(*attempt) {
+        Some(delay) => Recovery::Retry(delay),
+        None => Recovery::GiveUp,
+    }
+}
+
+/// A short delay, spread per worker so several connections that dropped
+/// together do not reconnect in lockstep. Never longer than the policy's own
+/// first backoff.
+fn quick_retry_delay(ctx: &WorkerCtx, attempt: u32) -> Duration {
+    let spread = (u64::from(ctx.worker) * 211 + u64::from(attempt) * 97) % QUICK_RETRY_SPREAD_MS;
+    Duration::from_millis(QUICK_RETRY_MIN_MS + spread).min(ctx.options.retry.base)
 }
 
 async fn fetch_range(
@@ -857,12 +1060,19 @@ async fn fetch_range(
     // Writes advance the file's own cursor from the seek above, and the claim
     // below is computed from shared state, so no local position is needed.
     let mut stream = response.bytes_stream();
+    let started = Instant::now();
+    let mut meter = SpeedMeter::default();
+    let mut last_judged = started;
+    let judge_every = ctx.options.slow_connection_grace.min(JUDGE_EVERY);
 
     loop {
         let item = tokio::select! {
             _ = ctx.cancel.cancelled() => break,
-            item = tokio::time::timeout(Duration::from_secs(60), stream.next()) =>
-                item.map_err(|_| Error::NetworkTimeout)?,
+            item = tokio::time::timeout(ctx.options.stall_timeout, stream.next()) =>
+                item.map_err(|_| {
+                    tracing::warn!(stall_secs = ctx.options.stall_timeout.as_secs_f32(), "connection stalled; reconnecting");
+                    Error::NetworkTimeout
+                })?,
         };
         let Some(item) = item else {
             break;
@@ -900,7 +1110,7 @@ async fn fetch_range(
         // of compound — N connections would add up to N times the cap
         // instead of sharing it. Serializing the sleep is what makes the
         // next waiter's own delay reflect real elapsed time.
-        {
+        if ctx.limited.load(Ordering::Acquire) {
             let mut limiter = tokio::select! {
                 _ = ctx.cancel.cancelled() => {
                     ctx.shared.lock().expect("engine mutex poisoned").chunks[ctx.slot].claimed -= claim;
@@ -928,13 +1138,32 @@ async fn fetch_range(
             });
         }
 
+        let now = Instant::now();
+        meter.record(claim, now);
+        let mut too_slow = false;
         let snapshot = {
             let mut guard = ctx.shared.lock().expect("engine mutex poisoned");
             let c = &mut guard.chunks[ctx.slot];
             // Promote the reservation to written now that it is on disk.
             c.claimed -= claim;
             c.downloaded += claim;
-            guard.meter.record(claim, Instant::now());
+            let remaining = c.remaining();
+            guard.meter.record(claim, now);
+
+            if now.duration_since(started) >= ctx.options.slow_connection_grace {
+                let rate = meter.bytes_per_second();
+                guard.worker_rates.insert(ctx.worker, rate);
+                if now.duration_since(last_judged) >= judge_every {
+                    last_judged = now;
+                    // A throttled transfer's speeds say nothing about paths,
+                    // and a nearly finished range is not worth a reconnect.
+                    too_slow = !ctx.limited.load(Ordering::Acquire)
+                        && remaining >= ctx.options.min_steal_bytes
+                        && guard
+                            .peer_median(ctx.worker)
+                            .is_some_and(|median| rate.saturating_mul(SLOW_PEER_RATIO) < median);
+                }
+            }
 
             let downloaded = guard.downloaded();
             let rate = guard.meter.bytes_per_second();
@@ -946,8 +1175,9 @@ async fn fetch_range(
                 guard.last_emit = Instant::now();
             }
 
-            // Flush resume state on a timer, not per data chunk — the sidecar
-            // write is synchronous and would otherwise dominate throughput.
+            // Checkpoint resume state on a timer, not per data chunk. The
+            // write itself happens on the persister task (see
+            // [`spawn_persister`]), never on this network loop.
             if guard.last_persist.elapsed() >= ctx.options.persist_every {
                 guard.last_persist = Instant::now();
                 let state = ResumeState {
@@ -957,10 +1187,7 @@ async fn fetch_range(
                     chunks: guard.chunks.clone(),
                 };
                 drop(guard);
-                // A failed checkpoint costs resume accuracy, not correctness.
-                if let Err(e) = state.save(&ctx.path) {
-                    tracing::warn!(error = %e, "failed to checkpoint resume state");
-                }
+                ctx.persist.send_replace(Some(state));
             }
 
             emit.then_some(Progress {
@@ -975,6 +1202,15 @@ async fn fetch_range(
 
         if let Some(snapshot) = snapshot {
             let _ = ctx.progress.send(snapshot);
+        }
+
+        if too_slow {
+            // Treated like a stall: retried at once, since peers are healthy.
+            tracing::warn!(
+                bytes_per_second = meter.bytes_per_second(),
+                "connection far slower than its peers; reconnecting"
+            );
+            return Err(Error::NetworkTimeout);
         }
 
         if claim < bytes.len() as u64 {
