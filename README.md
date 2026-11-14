@@ -24,7 +24,7 @@
 
 <br><br>
 
-[**User Guide**](https://giran03.github.io/Zoltraak/guide.html) &nbsp;·&nbsp; [**Features**](#-features) &nbsp;·&nbsp; [**Privacy & security**](#-privacy--security)
+[**User Guide**](https://zoltraak.cafetako.com/guide.html) &nbsp;·&nbsp; [**Features**](#-features) &nbsp;·&nbsp; [**Privacy & security**](#-privacy--security)
 
 </div>
 
@@ -179,6 +179,6 @@ Browser sessions shared by the extension are treated like your browser's own coo
 
 **Zoltraak** &nbsp;·&nbsp; Rust + Tauri
 
-<sub><a href="LICENSE">MIT License</a> &nbsp;·&nbsp; <a href="https://giran03.github.io/Zoltraak/guide.html">User Guide</a> &nbsp;·&nbsp; <a href="https://giran03.github.io/Zoltraak/">Showcase</a></sub>
+<sub><a href="LICENSE">MIT License</a> &nbsp;·&nbsp; <a href="https://zoltraak.cafetako.com/guide.html">User Guide</a> &nbsp;·&nbsp; <a href="https://giran03.github.io/Zoltraak/">Showcase</a></sub>
 
 </div>
